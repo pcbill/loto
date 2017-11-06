@@ -1,5 +1,6 @@
 var express = require('express');
 var app = express();
+var pg = require('pg');
 
 app.set('port', (process.env.PORT || 5000));
 
@@ -13,6 +14,15 @@ app.listen(app.get('port'), function() {
     console.log('Node app is running on port', app.get('port'));
 });
 
+var bodyParser = require('body-parser');
+app.use(bodyParser.json());
+//app.use(bodyParser.urlencoded());
+// in latest body-parser use like below.
+app.use(bodyParser.urlencoded({ extended: true }));
+
+
+const connectionString = process.env.DATABASE_URL || 'postgres://localhost:5432/mydb';
+
 //// Route
 
 app.get('/', (req, res) => {
@@ -20,11 +30,31 @@ app.get('/', (req, res) => {
   }
 );
 
+//// registration
 app.get('/registration', (req, res) => {
     res.render('pages/registration');
   }
 );
 
+app.post('/registerSubmit', (req, res) => {
+    console.log(req.body['uid']);
+
+    pg.connect(connectionString, function(err, client, done) {
+        client.query('SELECT * FROM person', function(err, result) {
+          done();
+          if (err)
+           { console.error(err); response.send("Error " + err); }
+          else
+           { response.render('pages/db', {results: result.rows} ); }
+        });
+      });
+
+
+    res.render('pages/registration');
+  }
+);
+
+//// game
 app.get('/gameplay', (req, res) => {
     res.render('pages/gameplay');
   }

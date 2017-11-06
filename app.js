@@ -7,8 +7,7 @@ app.use(express.static(__dirname + '/public'));
 
 // views is directory for all template files
 app.set('views', __dirname + '/views');
-app.set('view engine', 'jsx');
-app.engine('jsx', require('express-react-views').createEngine());
+app.set('view engine', 'ejs');
 
 app.listen(app.get('port'), function() {
     console.log('Node app is running on port', app.get('port'));
@@ -16,13 +15,27 @@ app.listen(app.get('port'), function() {
 
 //// Route
 
-//app.get('/', require('./routes').index);
 app.get('/', (req, res) => {
-    res.render('HelloPage');
+    res.render('pages/index');
   }
 );
 
-//app.get('/', (req, res) => {
-//    res.render('index', { name: 'John.' });
-//  }
-//);
+app.get('/registration', (req, res) => {
+    res.render('pages/registration');
+  }
+);
+
+app.get('/gameplay', (req, res) => {
+    res.render('pages/gameplay');
+  }
+);
+
+app.get('/execute', (req, res) => {
+    res.render('pages/execute');
+  }
+);
+
+app.get('/check', (req, res) => {
+    res.render('pages/check');
+  }
+);

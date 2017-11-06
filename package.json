@@ -12,10 +12,8 @@
   "dependencies": {
     "ejs": "2.4.1",
     "express": "4.13.3",
-    "express-react-views": "^0.10.4",
-    "pg": "4.x",
-    "react": "^16.0.0",
-    "react-dom": "^16.0.0"
+    "pg": "4.x"
+   
   },
   "repository": {
     "type": "git",

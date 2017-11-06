@@ -17,6 +17,11 @@ app.listen(app.get('port'), function() {
 
 //app.get('/', require('./routes').index);
 app.get('/', (req, res) => {
-    res.render('index', { name: 'John.' });
+    res.render('index', { name: 'John.e' });
   }
 );
+
+//app.get('/', (req, res) => {
+//    res.render('index', { name: 'John.' });
+//  }
+//);

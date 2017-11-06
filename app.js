@@ -14,10 +14,11 @@ app.listen(app.get('port'), function() {
     console.log('Node app is running on port', app.get('port'));
 });
 
+//// Route
 
 //app.get('/', require('./routes').index);
 app.get('/', (req, res) => {
-    res.render('index', { name: 'John.e' });
+    res.render('HelloPage');
   }
 );
 

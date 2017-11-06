@@ -2,6 +2,9 @@ var express = require('express');
 var app = express();
 var pg = require('pg');
 
+const connectionString = process.env.DATABASE_URL || 'postgres://localhost:5432/mydb';
+
+
 app.set('port', (process.env.PORT || 5000));
 
 app.use(express.static(__dirname + '/public'));
@@ -21,7 +24,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 
-const connectionString = process.env.DATABASE_URL || 'postgres://localhost:5432/mydb';
 
 //// Route
 

@@ -1,0 +1,40 @@
+     
+     sudo -u postgres psql
+
+     postgres=> alter user postgres password 'apassword';
+     postgres=> create user yerusername createdb createuser password 
+'somepass';
+     postgres=> create database yerusername owner yerusername;
+     postgres=> \q
+
+
+var conString = "postgresql://username:password@lacalhost/postgres";
+
+schema
+======
+
+create database mydb;
+
+CREATE TABLE person (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    uid VARCHAR(255) NOT NULL,
+    registration_time TIMESTAMP,
+    award VARCHAR(255),
+    award_time TIMESTAMP,
+    getgift_time TIMESTAMP
+);
+
+
+CREATE TABLE game (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    award_list VARCHAR(255) NOT NULL,
+    participant_count integer,
+
+);
+
+
+CREATE TABLE turn (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    game_id UUID NOT NULL,
+    person_id UUID NOT NULL
+);

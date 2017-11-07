@@ -41,18 +41,22 @@ app.get('/registration', (req, res) => {
 app.post('/registerSubmit', (req, res) => {
     console.log(req.body['uid']);
 
+    //const sl = 'SELECT * FROM person';
+    const sl = 'INSERT INTO person(name) VALUES($1) RETURNING *'
+    const vle = [req.body['uid']];
     pg.connect(connectionString, function(err, client, done) {
-        client.query('SELECT * FROM person', function(err, result) {
-          done();
-          if (err)
-           { console.error(err); response.send("Error " + err); }
-          else
-           { response.render('pages/db', {results: result.rows} ); }
-        });
+      client.query(sl, vle, function(err, result) {
+        done();
+        if (err) { 
+          console.error(err); res.send("Error " + err); 
+        } else { 
+          res.render('pages/registration');
+ //         res.render('pages/db', {results: result.rows} ); 
+        }
       });
+    });
 
 
-    res.render('pages/registration');
   }
 );
 

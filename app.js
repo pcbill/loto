@@ -2,7 +2,7 @@ var express = require('express');
 var app = express();
 var pg = require('pg');
 
-const connectionString = process.env.DATABASE_URL || 'postgres://localhost:5432/mydb';
+const connectionString = process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/mydb';
 
 
 app.set('port', (process.env.PORT || 5000));
@@ -23,6 +23,22 @@ app.use(bodyParser.json());
 // in latest body-parser use like below.
 app.use(bodyParser.urlencoded({ extended: true }));
 
+//// helper functions
+
+function findAllPeople(callback) {
+    const sl = 'SELECT * from person';
+    
+    pg.connect(connectionString, function(err, client, done) {
+      client.query(sl, function(err, result) {
+        done();
+        if (err) { 
+          console.error(err); res.send("Error " + err); 
+        } else {
+          callback({results: result.rows});
+        }
+      });
+    });
+}
 
 
 //// Route
@@ -34,29 +50,31 @@ app.get('/', (req, res) => {
 
 //// registration
 app.get('/registration', (req, res) => {
-    res.render('pages/registration');
+    findAllPeople((list)=>{
+      res.render('pages/registration', list);
+    });
   }
 );
 
 app.post('/registerSubmit', (req, res) => {
-    console.log(req.body['uid']);
+    var uid = req.body['uid'];
+   
+    if (!uid | uid == '') return;
 
-    //const sl = 'SELECT * FROM person';
-    const sl = 'INSERT INTO person(name) VALUES($1) RETURNING *'
-    const vle = [req.body['uid']];
+    const sl = 'INSERT INTO person(uid) VALUES($1) RETURNING *'
+    const vle = [uid];
     pg.connect(connectionString, function(err, client, done) {
       client.query(sl, vle, function(err, result) {
         done();
         if (err) { 
           console.error(err); res.send("Error " + err); 
         } else { 
-          res.render('pages/registration');
- //         res.render('pages/db', {results: result.rows} ); 
+	  findAllPeople((list)=>{
+	    res.render('pages/registration', list);
+	  });
         }
       });
     });
-
-
   }
 );
 

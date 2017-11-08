@@ -16,14 +16,14 @@ schema
 create database mydb;
 
 CREATE TABLE person (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id serial primary key,
     uid VARCHAR(255) NOT NULL,
-    registration_time TIMESTAMP,
+    registration_time TIMESTAMP default NOW(),
     award VARCHAR(255),
     award_time TIMESTAMP,
     getgift_time TIMESTAMP
 );
-
+insert into person(uid ) values('u1');
 
 CREATE TABLE game (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

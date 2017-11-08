@@ -19,6 +19,14 @@
       uid <input name="uid" type="text" />
         <button type="submit" value="submit">submit</button>
       </form>
+
+      <ul>
+      <% if (results) { %>
+	      <% results.forEach( (it) => { %>
+		<li><%= it.uid %>, <%= it.registration_time %></li>
+	      <% }); %>
+	      </ul>
+      <% } %>
     </div>
   </div>
 </div>

@@ -19,11 +19,11 @@
       uid <input name="uid" type="text" />
         <button type="submit" value="submit">submit</button>
       </form>
-
+      <br/>
       <ul>
       <% if (results) { %>
 	      <% results.forEach( (it) => { %>
-		<li><%= it.uid %>, <%= it.registration_time %></li>
+		      <li><a href='/deleteRegistration/<%= it.id %>'>del</a><%= it.id %>, <%= it.uid %>, <%= it.registration_time %></li>
 	      <% }); %>
 	      </ul>
       <% } %>

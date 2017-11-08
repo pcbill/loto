@@ -15,15 +15,25 @@ schema
 
 create database mydb;
 
+drop table person;
 CREATE TABLE person (
     id serial primary key,
     uid VARCHAR(255) NOT NULL,
-    registration_time TIMESTAMP default NOW(),
+    registration_time TIMESTAMP ,
     award VARCHAR(255),
     award_time TIMESTAMP,
-    getgift_time TIMESTAMP
+    getgift_time TIMESTAMP,
+    create_time TIMESTAMP default NOW()
 );
-insert into person(uid ) values('u1');
+insert into person(uid) values('u1');
+insert into person(uid) values('u2');
+insert into person(uid) values('u3');
+insert into person(uid) values('u4');
+insert into person(uid) values('u5');
+insert into person(uid) values('u6');
+insert into person(uid) values('u7');
+insert into person(uid) values('u8');
+insert into person(uid) values('u9');
 
 CREATE TABLE game (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

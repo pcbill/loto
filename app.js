@@ -41,6 +41,20 @@ function findAllPeople(callback) {
 }
 
 
+function deleteOnePerson(id, callback) {
+    const sl = 'DELETE from person WHERE id = $1';
+    const v = [id]
+    pg.connect(connectionString, function(err, client, done) {
+      client.query(sl, v, function(err, result) {
+        done();
+        if (err) { 
+          console.error(err); res.send("Error " + err); 
+        } else {
+          callback();
+        }
+      });
+    });
+}
 //// Route
 
 app.get('/', (req, res) => {
@@ -75,8 +89,14 @@ app.post('/registerSubmit', (req, res) => {
         }
       });
     });
-  }
-);
+  });
+
+app.get('/deleteRegistration/:id', (req, res) => {
+    var id = req.params.id;
+    deleteOnePerson(id, ()=>{
+        console.log('success');
+    });
+});
 
 //// game
 app.get('/gameplay', (req, res) => {

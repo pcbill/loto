@@ -19,21 +19,22 @@ drop table person;
 CREATE TABLE person (
     id serial primary key,
     uid VARCHAR(255) NOT NULL,
+    name VARCHAR(255) NOT NULL,
     registration_time TIMESTAMP ,
     award VARCHAR(255),
     award_time TIMESTAMP,
     getgift_time TIMESTAMP,
     create_time TIMESTAMP default NOW()
 );
-insert into person(uid) values('u1');
-insert into person(uid) values('u2');
-insert into person(uid) values('u3');
-insert into person(uid) values('u4');
-insert into person(uid) values('u5');
-insert into person(uid) values('u6');
-insert into person(uid) values('u7');
-insert into person(uid) values('u8');
-insert into person(uid) values('u9');
+insert into person(uid, name) values('u1', 'bill');
+insert into person(uid, name) values('u2', 'b2ll');
+insert into person(uid, name) values('u3', 'b3ll');
+insert into person(uid, name) values('u4', 'b4ll');
+insert into person(uid, name) values('u5', 'b5ll');
+insert into person(uid, name) values('u6', 'b6ll');
+insert into person(uid, name) values('u7', 'b7ll');
+insert into person(uid, name) values('u8', 'b8ll');
+insert into person(uid, name) values('u9', 'b9ll');
 
 CREATE TABLE game (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

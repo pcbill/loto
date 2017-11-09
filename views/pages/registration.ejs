@@ -20,10 +20,12 @@
         <button type="submit" value="submit">submit</button>
       </form>
       <br/>
-      <ul>
       <% if (results) { %>
+        <br/>
+        There are <%= results.length %> people registered
+        <ul>
 	      <% results.forEach( (it) => { %>
-		      <li><a href='/deleteRegistration/<%= it.id %>'>del</a><%= it.id %>, <%= it.uid %>, <%= it.registration_time %></li>
+		      <li><a href='/deleteRegistration/<%= it.id %>'>del</a><%= it.id %>, <%= it.uid %>, <%= it.name %>, <%= it.registration_time %></li>
 	      <% }); %>
 	      </ul>
       <% } %>

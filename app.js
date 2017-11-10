@@ -113,7 +113,9 @@ function deleteOneGame(id, callback) {
 //// Route
 
 app.get('/', (req, res) => {
-    res.render('pages/index');
+    findAllGames( (list) => {
+      res.render('pages/index', list);
+    });
   }
 );
 

@@ -11,7 +11,26 @@
 <div class="container">
   <div class="row">
     <div class="col-md-6">
-        hi
+      <h3>Welcome!!</h3>
+
+      <% if (results) { %>
+        There are <%= results.length %> gameplaies
+        <table class="table table-bordered table-hover">
+          <tr>
+            <th>gid</th>
+            <th>award list</th>
+            <th>count</th>
+          </tr>
+        <% results.forEach( (it) => { %>
+          <tr>
+            <td><%= it.gid %></td>
+            <td><%= it.award_list %></td>
+            <td><%= it.participant_count%></td>
+          </tr>
+        <% }); %>
+        </table>
+      <% } %>
+
     </div>
   </div>
 </div>

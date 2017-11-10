@@ -9,21 +9,31 @@
   <% include ../partials/nav.ejs %>
 
 <div class="container">
-  <div class="row">
-    <div class="col-md-6">
-      <h3>
-      Gameplay
-      </h3>
+  <h3>
+    Gameplay
+  </h3>
 
-<!--
-      <form action="/registerSubmit" method="POST">
-      uid <input name="uid" type="text" />
+  <div class="row">
+    <div class="col-md-3">
+      <form action="/createGame" method="POST">
+        <div class="form-group">
+        
+        <label>Gid</label>
+        <input class="form-control" name="gid" type="text" /><br/>
+
+        <label>Award List</label>
+        <input class="form-control" name="award_list" type="text" /><br/>
+        
+        <label>Count</label>
+        <input class="form-control" name="participant_count" type="text" /><br/>
+
         <button type="submit" value="submit">submit</button>
+        </div>
       </form>
-      <br/>
--->
+    </div>
+
+    <div class="col-md-6">
       <% if (results) { %>
-        <br/>
         There are <%= results.length %> gameplaies
         <table class="table table-bordered table-hover">
           <tr>

@@ -69,6 +69,47 @@ function deleteOnePerson(id, callback) {
       });
     });
 }
+
+function findAllGames(callback) {
+  findGame('all', callback);
+}
+
+function findGame(scope, callback) {
+    var sl = 'SELECT * from game ';
+    if (scope != 'all') {
+        sl += ' AND gid = ' + scope;
+    }
+
+    pg.connect(connectionString, (err, client, done) => {
+      client.query(sl, (err, result) => {
+        done();
+        if (err) { 
+          console.error(err); res.send("Error " + err); 
+        } else {
+          //result.rows.forEach((it)=>{
+          //  it.registration_time = dateFormat(it.registration_time, 'yyyy/mm/dd hh:MM:ss');
+          //});
+          callback({results: result.rows});
+        }
+      });
+    });
+}
+
+function deleteOneGame(id, callback) {
+    const sl = 'DELETE from game WHERE id = $1';
+    const v = [id]
+    pg.connect(connectionString, function(err, client, done) {
+      client.query(sl, v, function(err, result) {
+        done();
+        if (err) { 
+          console.error(err); res.send("Error " + err); 
+        } else {
+          callback();
+        }
+      });
+    });
+}
+
 //// Route
 
 app.get('/', (req, res) => {
@@ -116,7 +157,16 @@ app.get('/deleteRegistration/:id', (req, res) => {
 
 //// game
 app.get('/gameplay', (req, res) => {
-    res.render('pages/gameplay');
+    findAllGames( (list) => {
+      res.render('pages/gameplay', list);
+    });
+});
+
+app.get('/deleteGame/:id', (req, res) => {
+    var id = req.params.id;
+    deleteOneGame(id, ()=>{
+        res.redirect('/gameplay');
+    });
 });
 
 app.get('/execute', (req, res) => {

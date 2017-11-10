@@ -36,13 +36,15 @@ insert into person(uid, name) values('u7', 'b7ll');
 insert into person(uid, name) values('u8', 'b8ll');
 insert into person(uid, name) values('u9', 'b9ll');
 
+drop table game;
 CREATE TABLE game (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    award_list VARCHAR(255) NOT NULL,
+    id serial primary key,
+    gid VARCHAR(255) NOT NULL,
+    award_list VARCHAR(1024) NOT NULL,
     participant_count integer,
-
+    create_time TIMESTAMP default NOW()
 );
-
+insert into game(gid, award_list, participant_count) values('1', '電視機,computer', '5');
 
 CREATE TABLE turn (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

@@ -1,15 +1,22 @@
 var express = require('express');
 var app = express();
 var pg = require('pg');
+var basicAuth = require('express-basic-auth');
 
 var dateFormat = require('dateformat');
 
-const connectionString = process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/mydb';
-//const connectionString = process.env.DATABASE_URL || 'postgres://localhost:5432/mydb';
-
+//const connectionString = process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/mydb';
+const connectionString = process.env.DATABASE_URL || 'postgres://localhost:5432/mydb';
 
 app.set('port', (process.env.PORT || 5000));
 
+var basicAuth = basicAuth({
+  users: {
+      'admin': 'kdorkwj'
+  },
+  challenge: true
+});
+//app.use(basicAuth);
 app.use(express.static(__dirname + '/public'));
 
 // views is directory for all template files
@@ -42,7 +49,7 @@ function findPeople(scope, callback) {
       client.query(sl, (err, result) => {
         done();
         if (err) { 
-          console.error(err); res.send("Error " + err); 
+          console.error(err); //res.send("Error " + err); 
         } else {
           result.rows.forEach((it)=>{
             it.registration_time = dateFormat(it.registration_time, 'yyyy/mm/dd hh:MM:ss');
@@ -62,7 +69,7 @@ function deleteOnePerson(id, callback) {
       client.query(sl, v, function(err, result) {
         done();
         if (err) { 
-          console.error(err); res.send("Error " + err); 
+          console.error(err); //res.send("Error " + err); 
         } else {
           callback();
         }
@@ -84,7 +91,7 @@ function findGame(scope, callback) {
       client.query(sl, (err, result) => {
         done();
         if (err) { 
-          console.error(err); res.send("Error " + err); 
+          console.error(err); //res.send("Error " + err); 
         } else {
           //result.rows.forEach((it)=>{
           //  it.registration_time = dateFormat(it.registration_time, 'yyyy/mm/dd hh:MM:ss');
@@ -102,7 +109,7 @@ function deleteOneGame(id, callback) {
       client.query(sl, v, function(err, result) {
         done();
         if (err) { 
-          console.error(err); res.send("Error " + err); 
+          console.error(err); //res.send("Error " + err); 
         } else {
           callback();
         }
@@ -110,7 +117,7 @@ function deleteOneGame(id, callback) {
     });
 }
 
-//// Route
+//// Route /////////////////////////////////
 
 app.get('/', (req, res) => {
     findAllGames( (list) => {
@@ -120,14 +127,14 @@ app.get('/', (req, res) => {
 );
 
 //// registration
-app.get('/registration', (req, res) => {
+app.get('/registration', basicAuth, (req, res) => {
     findAllPeople( (list) => {
       res.render('pages/registration', list);
     });
   }
 );
 
-app.post('/registerSubmit', (req, res) => {
+app.post('/registerSubmit', basicAuth, (req, res) => {
   var uid = req.body['uid'];
    
   if (!uid | uid == '') {
@@ -142,7 +149,7 @@ app.post('/registerSubmit', (req, res) => {
     client.query(sl, vle, function(err, result) {
       done();
       if (err) { 
-        console.error(err); res.send("Error " + err); 
+        console.error(err); //res.send("Error " + err); 
       } else { 
         res.redirect('/registration');
       }
@@ -150,7 +157,7 @@ app.post('/registerSubmit', (req, res) => {
   });
 });
 
-app.get('/deleteRegistration/:id', (req, res) => {
+app.get('/deleteRegistration/:id', basicAuth, (req, res) => {
     var id = req.params.id;
     deleteOnePerson(id, ()=>{
         res.redirect('/registration');
@@ -158,13 +165,13 @@ app.get('/deleteRegistration/:id', (req, res) => {
 });
 
 //// game
-app.get('/gameplay', (req, res) => {
+app.get('/gameplay', basicAuth, (req, res) => {
     findAllGames( (list) => {
       res.render('pages/gameplay', list);
     });
 });
 
-app.post('/createGame', (req, res) => {
+app.post('/createGame', basicAuth, (req, res) => {
   var gid = req.body['gid'];
   var award_list = req.body['award_list'];
   var participant_count = req.body['participant_count'];
@@ -181,7 +188,7 @@ app.post('/createGame', (req, res) => {
     client.query(sl, vle, function(err, result) {
       done();
       if (err) { 
-        console.error(err); res.send("Error " + err); 
+        console.error(err); //res.send("Error " + err); 
       } else { 
         res.redirect('/gameplay');
       }
@@ -189,17 +196,23 @@ app.post('/createGame', (req, res) => {
   });
 });
 
-app.get('/deleteGame/:id', (req, res) => {
+app.get('/deleteGame/:id', basicAuth, (req, res) => {
     var id = req.params.id;
     deleteOneGame(id, ()=>{
         res.redirect('/gameplay');
     });
 });
 
-app.get('/execute', (req, res) => {
+app.get('/execute', basicAuth, (req, res) => {
     res.render('pages/execute');
 });
 
 app.get('/check', (req, res) => {
     res.render('pages/check');
+});
+
+app.get('/logout', (req, res) => {
+  res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
+  res.sendStatus(401);
+  res.redirect('/');
 });

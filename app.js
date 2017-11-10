@@ -4,8 +4,8 @@ var pg = require('pg');
 
 var dateFormat = require('dateformat');
 
-//const connectionString = process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/mydb';
-const connectionString = process.env.DATABASE_URL || 'postgres://localhost:5432/mydb';
+const connectionString = process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/mydb';
+//const connectionString = process.env.DATABASE_URL || 'postgres://localhost:5432/mydb';
 
 
 app.set('port', (process.env.PORT || 5000));
@@ -45,7 +45,7 @@ function findPeople(scope, callback) {
           console.error(err); res.send("Error " + err); 
         } else {
           result.rows.forEach((it)=>{
-            it.registration_time = dateFormat(it.registration_time, 'yyyyMMdd');
+            it.registration_time = dateFormat(it.registration_time, 'yyyy/mm/dd hh:MM:ss');
           });
           callback({results: result.rows});
         }

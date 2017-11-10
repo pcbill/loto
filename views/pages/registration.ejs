@@ -23,11 +23,24 @@
       <% if (results) { %>
         <br/>
         There are <%= results.length %> people registered
-        <ul>
-	      <% results.forEach( (it) => { %>
-		      <li><a href='/deleteRegistration/<%= it.id %>'>del</a><%= it.id %>, <%= it.uid %>, <%= it.name %>, <%= it.registration_time %></li>
-	      <% }); %>
-	      </ul>
+        <table class="table table-bordered table-hover">
+          <tr>
+            <th>operation</th>  
+            <th>#</th>  
+            <th>uid</th>  
+            <th>name</th>  
+            <th>registration time</th>  
+          </tr>
+        <% results.forEach( (it) => { %>
+          <tr>
+            <td><a class="btn btn-primary" href='/deleteRegistration/<%= it.id %>'>del</a></td>
+            <td><%= it.id %></td>
+            <td><%= it.uid %></td> 
+            <td><%= it.name %></td> 
+            <td><%= it.registration_time %></td>
+          </tr>
+        <% }); %>
+        </table>
       <% } %>
     </div>
   </div>

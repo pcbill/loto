@@ -126,7 +126,7 @@ app.get('/', (req, res) => {
   }
 );
 
-//// registration
+//// registration //////////////////////////
 app.get('/registration', basicAuth, (req, res) => {
     findAllPeople( (list) => {
       res.render('pages/registration', list);
@@ -157,6 +157,13 @@ app.post('/registerSubmit', basicAuth, (req, res) => {
   });
 });
 
+app.get('/manageRegistration', basicAuth, (req, res) => {
+    findAllPeople( (list) => {
+      res.render('pages/manageRegistration', list);
+    });
+  }
+);
+
 app.get('/deleteRegistration/:id', basicAuth, (req, res) => {
     var id = req.params.id;
     deleteOnePerson(id, ()=>{
@@ -164,7 +171,7 @@ app.get('/deleteRegistration/:id', basicAuth, (req, res) => {
     });
 });
 
-//// game
+//// game //////////////////////////////////////
 app.get('/gameplay', basicAuth, (req, res) => {
     findAllGames( (list) => {
       res.render('pages/gameplay', list);
@@ -214,5 +221,4 @@ app.get('/check', (req, res) => {
 app.get('/logout', (req, res) => {
   res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
   res.sendStatus(401);
-  res.redirect('/');
 });

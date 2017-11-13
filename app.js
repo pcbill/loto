@@ -16,7 +16,14 @@ var basicAuth = basicAuth({
   },
   challenge: true
 });
-//app.use(basicAuth);
+
+// regAuth = basicAuth({
+//  users: {
+//      'register': 'kdorkwj'
+//  },
+//  challenge: true
+//});
+
 app.use(express.static(__dirname + '/public'));
 
 // views is directory for all template files
@@ -48,8 +55,8 @@ function findPeople(scope, callback) {
     pg.connect(connectionString, (err, client, done) => {
       client.query(sl, (err, result) => {
         done();
-        if (err) { 
-          console.error(err); //res.send("Error " + err); 
+        if (err) {
+          console.error(err); //res.send("Error " + err);
         } else {
           result.rows.forEach((it)=>{
             it.registration_time = dateFormat(it.registration_time, 'yyyy/mm/dd hh:MM:ss');
@@ -68,8 +75,8 @@ function deleteOnePerson(id, callback) {
     pg.connect(connectionString, function(err, client, done) {
       client.query(sl, v, function(err, result) {
         done();
-        if (err) { 
-          console.error(err); //res.send("Error " + err); 
+        if (err) {
+          console.error(err); //res.send("Error " + err);
         } else {
           callback();
         }
@@ -90,8 +97,8 @@ function findGame(scope, callback) {
     pg.connect(connectionString, (err, client, done) => {
       client.query(sl, (err, result) => {
         done();
-        if (err) { 
-          console.error(err); //res.send("Error " + err); 
+        if (err) {
+          console.error(err); //res.send("Error " + err);
         } else {
           //result.rows.forEach((it)=>{
           //  it.registration_time = dateFormat(it.registration_time, 'yyyy/mm/dd hh:MM:ss');
@@ -108,8 +115,8 @@ function deleteOneGame(id, callback) {
     pg.connect(connectionString, function(err, client, done) {
       client.query(sl, v, function(err, result) {
         done();
-        if (err) { 
-          console.error(err); //res.send("Error " + err); 
+        if (err) {
+          console.error(err); //res.send("Error " + err);
         } else {
           callback();
         }
@@ -136,11 +143,11 @@ app.get('/registration', basicAuth, (req, res) => {
 
 app.post('/registerSubmit', basicAuth, (req, res) => {
   var uid = req.body['uid'];
-   
+
   if (!uid | uid == '') {
     res.redirect('/registration');
     return;
-  }  
+  }
 
   //const sl = 'INSERT INTO person(uid) VALUES($1) RETURNING *'
   const sl = 'UPDATE person SET registration_time = NOW() WHERE uid = $1';
@@ -148,9 +155,9 @@ app.post('/registerSubmit', basicAuth, (req, res) => {
   pg.connect(connectionString, function(err, client, done) {
     client.query(sl, vle, function(err, result) {
       done();
-      if (err) { 
-        console.error(err); //res.send("Error " + err); 
-      } else { 
+      if (err) {
+        console.error(err); //res.send("Error " + erv);
+      } else {
         res.redirect('/registration');
       }
     });
@@ -167,7 +174,7 @@ app.get('/manageRegistration', basicAuth, (req, res) => {
 app.get('/deleteRegistration/:id', basicAuth, (req, res) => {
     var id = req.params.id;
     deleteOnePerson(id, ()=>{
-        res.redirect('/registration');
+        res.redirect('/manageRegistration');
     });
 });
 
@@ -182,11 +189,11 @@ app.post('/createGame', basicAuth, (req, res) => {
   var gid = req.body['gid'];
   var award_list = req.body['award_list'];
   var participant_count = req.body['participant_count'];
-   
+
   if (!gid | gid == '') {
     res.redirect('/gameplay');
     return;
-  }  
+  }
 
   //insert into game(gid, award_list, participant_count) values('1', '電視機,computer', '5');
   const sl = 'INSERT INTO game(gid, award_list, participant_count) VALUES($1, $2, $3) RETURNING *'
@@ -194,9 +201,9 @@ app.post('/createGame', basicAuth, (req, res) => {
   pg.connect(connectionString, function(err, client, done) {
     client.query(sl, vle, function(err, result) {
       done();
-      if (err) { 
-        console.error(err); //res.send("Error " + err); 
-      } else { 
+      if (err) {
+        console.error(err); //res.send("Error " + err);
+      } else {
         res.redirect('/gameplay');
       }
     });

@@ -41,8 +41,9 @@ CREATE TABLE game (
     id serial primary key,
     gid VARCHAR(255) NOT NULL,
     award_list VARCHAR(1024) NOT NULL,
-    participant_count integer,
-    create_time TIMESTAMP default NOW()
+    participant_count integer,       
+    exec integer default 0,               -- 0:normal, 1:drama
+    create_time TIMESTAMP default NOW(
 );
 insert into game(gid, award_list, participant_count) values('1', '電視機,computer', '5');
 

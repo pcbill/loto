@@ -189,6 +189,7 @@ app.post('/createGame', basicAuth, (req, res) => {
   var gid = req.body['gid'];
   var award_list = req.body['award_list'];
   var participant_count = req.body['participant_count'];
+  var type = req.body['type'];
 
   if (!gid | gid == '') {
     res.redirect('/gameplay');
@@ -196,8 +197,8 @@ app.post('/createGame', basicAuth, (req, res) => {
   }
 
   //insert into game(gid, award_list, participant_count) values('1', '電視機,computer', '5');
-  const sl = 'INSERT INTO game(gid, award_list, participant_count) VALUES($1, $2, $3) RETURNING *'
-  const vle = [gid, award_list, participant_count];
+  const sl = 'INSERT INTO game(gid, award_list, participant_count, exec) VALUES($1, $2, $3, $4) RETURNING *'
+  const vle = [gid, award_list, participant_count, type];
   pg.connect(connectionString, function(err, client, done) {
     client.query(sl, vle, function(err, result) {
       done();

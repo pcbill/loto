@@ -5,8 +5,9 @@ var basicAuth = require('express-basic-auth');
 
 var dateFormat = require('dateformat');
 
-//const connectionString = process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/mydb';
-const connectionString = process.env.DATABASE_URL || 'postgres://localhost:5432/mydb';
+var personDao = require('./lib/dao/personDao');
+
+const connectionString = require('./config').connectionString;
 
 app.set('port', (process.env.PORT || 5000));
 
@@ -42,47 +43,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 //// helper functions
 
-function findAllPeople(callback) {
-  findPeople('all', callback);
-}
-
-function findPeople(scope, callback) {
-    var sl = 'SELECT * from person where registration_time is not null';
-    if (scope != 'all') {
-        sl += ' AND uid = ' + scope;
-    }
-
-    pg.connect(connectionString, (err, client, done) => {
-      client.query(sl, (err, result) => {
-        done();
-        if (err) {
-          console.error(err); //res.send("Error " + err);
-        } else {
-          result.rows.forEach((it)=>{
-            it.registration_time = dateFormat(it.registration_time, 'yyyy/mm/dd hh:MM:ss');
-          });
-          callback({results: result.rows});
-        }
-      });
-    });
-}
-
-
-function deleteOnePerson(id, callback) {
-    //const sl = 'DELETE from person WHERE id = $1';
-    const sl = 'UPDATE person SET registration_time = null WHERE id = $1';
-    const v = [id]
-    pg.connect(connectionString, function(err, client, done) {
-      client.query(sl, v, function(err, result) {
-        done();
-        if (err) {
-          console.error(err); //res.send("Error " + err);
-        } else {
-          callback();
-        }
-      });
-    });
-}
 
 function findAllGames(callback) {
   findGame('all', callback);
@@ -135,7 +95,7 @@ app.get('/', (req, res) => {
 
 //// registration //////////////////////////
 app.get('/registration', basicAuth, (req, res) => {
-    findAllPeople( (list) => {
+    personDao.findAll( (list) => {
       res.render('pages/registration', list);
     });
   }
@@ -165,7 +125,7 @@ app.post('/registerSubmit', basicAuth, (req, res) => {
 });
 
 app.get('/manageRegistration', basicAuth, (req, res) => {
-    findAllPeople( (list) => {
+    personDao.findAll( (list) => {
       res.render('pages/manageRegistration', list);
     });
   }
@@ -173,7 +133,7 @@ app.get('/manageRegistration', basicAuth, (req, res) => {
 
 app.get('/deleteRegistration/:id', basicAuth, (req, res) => {
     var id = req.params.id;
-    deleteOnePerson(id, ()=>{
+    personDao.deleteOne(id, ()=>{
         res.redirect('/manageRegistration');
     });
 });

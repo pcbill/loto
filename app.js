@@ -6,8 +6,9 @@ var basicAuth = require('express-basic-auth');
 var dateFormat = require('dateformat');
 
 var personDao = require('./lib/dao/personDao');
+var gameDao = require('./lib/dao/gameDao');
 
-const connectionString = require('./config').connectionString;
+const connectionString = require('./lib/dao/config').connectionString;
 
 app.set('port', (process.env.PORT || 5000));
 
@@ -44,50 +45,50 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //// helper functions
 
 
-function findAllGames(callback) {
-  findGame('all', callback);
-}
+//function findAllGames(callback) {
+//  findGame('all', callback);
+//}
+//
+//function findGame(scope, callback) {
+//    var sl = 'SELECT * from game ';
+//    if (scope != 'all') {
+//        sl += ' AND gid = ' + scope;
+//    }
+//
+//    pg.connect(connectionString, (err, client, done) => {
+//      client.query(sl, (err, result) => {
+//        done();
+//        if (err) {
+//          console.error(err); //res.send("Error " + err);
+//        } else {
+//          //result.rows.forEach((it)=>{
+//          //  it.registration_time = dateFormat(it.registration_time, 'yyyy/mm/dd hh:MM:ss');
+//          //});
+//          callback({results: result.rows});
+//        }
+//      });
+//    });
+//}
 
-function findGame(scope, callback) {
-    var sl = 'SELECT * from game ';
-    if (scope != 'all') {
-        sl += ' AND gid = ' + scope;
-    }
-
-    pg.connect(connectionString, (err, client, done) => {
-      client.query(sl, (err, result) => {
-        done();
-        if (err) {
-          console.error(err); //res.send("Error " + err);
-        } else {
-          //result.rows.forEach((it)=>{
-          //  it.registration_time = dateFormat(it.registration_time, 'yyyy/mm/dd hh:MM:ss');
-          //});
-          callback({results: result.rows});
-        }
-      });
-    });
-}
-
-function deleteOneGame(id, callback) {
-    const sl = 'DELETE from game WHERE id = $1';
-    const v = [id]
-    pg.connect(connectionString, function(err, client, done) {
-      client.query(sl, v, function(err, result) {
-        done();
-        if (err) {
-          console.error(err); //res.send("Error " + err);
-        } else {
-          callback();
-        }
-      });
-    });
-}
+//function deleteOneGame(id, callback) {
+//    const sl = 'DELETE from game WHERE id = $1';
+//    const v = [id]
+//    pg.connect(connectionString, function(err, client, done) {
+//      client.query(sl, v, function(err, result) {
+//        done();
+//        if (err) {
+//          console.error(err); //res.send("Error " + err);
+//        } else {
+//          callback();
+//        }
+//      });
+//    });
+//}
 
 //// Route /////////////////////////////////
 
 app.get('/', (req, res) => {
-    findAllGames( (list) => {
+    gameDao.findAll( (list) => {
       res.render('pages/index', list);
     });
   }
@@ -140,7 +141,7 @@ app.get('/deleteRegistration/:id', basicAuth, (req, res) => {
 
 //// game //////////////////////////////////////
 app.get('/gameplay', basicAuth, (req, res) => {
-    findAllGames( (list) => {
+    gameDao.findAll( (list) => {
       res.render('pages/gameplay', list);
     });
 });
@@ -173,7 +174,7 @@ app.post('/createGame', basicAuth, (req, res) => {
 
 app.get('/deleteGame/:id', basicAuth, (req, res) => {
     var id = req.params.id;
-    deleteOneGame(id, ()=>{
+    gameDao.deleteOne(id, ()=>{
         res.redirect('/gameplay');
     });
 });

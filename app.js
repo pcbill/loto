@@ -71,18 +71,6 @@ app.post('/registerSubmit', basicAuth, (req, res) => {
   personDao.register(uid, () => {
     res.redirect('/registration');
   });
-//  const sl = 'UPDATE person SET registration_time = NOW() WHERE uid = $1';
-//  const vle = [uid];
-//  pg.connect(connectionString, function(err, client, done) {
-//    client.query(sl, vle, function(err, result) {
-//      done();
-//      if (err) {
-//        console.error(err); //res.send("Error " + erv);
-//      } else {
-//        res.redirect('/registration');
-//      }
-//    });
-//  });
 });
 
 app.get('/manageRegistration', basicAuth, (req, res) => {
@@ -117,19 +105,10 @@ app.post('/createGame', basicAuth, (req, res) => {
     return;
   }
 
-  //insert into game(gid, award_list, participant_count) values('1', '電視機,computer', '5');
-  const sl = 'INSERT INTO game(gid, award_list, participant_count, exec) VALUES($1, $2, $3, $4) RETURNING *'
-  const vle = [gid, award_list, participant_count, type];
-  pg.connect(connectionString, function(err, client, done) {
-    client.query(sl, vle, function(err, result) {
-      done();
-      if (err) {
-        console.error(err); //res.send("Error " + err);
-      } else {
-        res.redirect('/gameplay');
-      }
-    });
+  gameDao.saveOne(gid, award_list, participant_count, type, () => {
+    res.redirect('/gameplay');
   });
+  
 });
 
 app.get('/deleteGame/:id', basicAuth, (req, res) => {

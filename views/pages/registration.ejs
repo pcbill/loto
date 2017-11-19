@@ -16,7 +16,7 @@
       </h3>
 
       <form action="/registerSubmit" method="POST">
-      uid <input name="uid" type="text" />
+      uid <input id="uid" name="uid" type="text" forcus />
         <button type="submit" value="submit">submit</button>
       </form>
       <br/>
@@ -46,4 +46,6 @@
 
 
 </body>
+
+<script> document.getElementById("uid").focus(); </script>
 </html>

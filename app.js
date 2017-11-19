@@ -8,6 +8,8 @@ var dateFormat = require('dateformat');
 var personDao = require('./lib/dao/personDao');
 var gameDao = require('./lib/dao/gameDao');
 
+var shuffle = require('./lib/random').shuffle;
+
 const connectionString = require('./lib/dao/config').connectionString;
 
 app.set('port', (process.env.PORT || 5000));
@@ -119,6 +121,23 @@ app.get('/deleteGame/:id', basicAuth, (req, res) => {
 });
 
 app.get('/execute', basicAuth, (req, res) => {
+    personDao.findAll((re) => {
+        var list = re.results;
+
+        var uids = list.map((it) => { 
+          return it.uid 
+        });
+        
+
+        var re = uids;
+        for (i = 0; i < 1000; i++) {
+          //var re = uids.map((it) => {
+          //  return it;
+          //});
+          shuffle(re);
+          console.log(i+" "+re);
+        }
+    });
     res.render('pages/execute');
 });
 

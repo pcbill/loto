@@ -49,12 +49,17 @@
           </tr>
         <% results.forEach( (it) => { %>
           <tr>
-            <td><a class="btn btn-primary" href='/deleteGame/<%= it.id %>'>del</a></td>
+            <td>
+              <a class="btn btn-primary" href='/deleteGame/<%= it.id %>'>del</a>
+              <% if (it.played_time == null) { %>
+                 <a class="btn btn-primary" href='/execute/<%= it.id %>'>play</a>
+              <% } %>
+            </td>
             <td><%= it.id %></td>
             <td><%= it.gid %></td>
             <td><%= it.award_list %></td>
             <td><%= it.participant_count%></td>
-            <td><%= it.exec %></td>
+            <td><%= it.exec_type %></td>
           </tr>
         <% }); %>
         </table>

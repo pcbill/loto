@@ -7,8 +7,10 @@ var dateFormat = require('dateformat');
 
 var personDao = require('./lib/dao/personDao');
 var gameDao = require('./lib/dao/gameDao');
+var historyDao = require('./lib/dao/historyDao'); 
 
 var shuffle = require('./lib/random').shuffle;
+var dateFormat = require('dateformat');
 
 const connectionString = require('./lib/dao/config').connectionString;
 
@@ -57,6 +59,9 @@ app.get('/', (req, res) => {
 //// registration //////////////////////////
 app.get('/registration', basicAuth, (req, res) => {
     personDao.findAll( (list) => {
+      list.results.forEach((it)=>{
+        it.registration_time = dateFormat(it.registration_time, 'yyyy/mm/dd hh:MM:ss');
+      });
       res.render('pages/registration', list);
     });
   }
@@ -120,25 +125,37 @@ app.get('/deleteGame/:id', basicAuth, (req, res) => {
     });
 });
 
-app.get('/execute', basicAuth, (req, res) => {
-    personDao.findAll((re) => {
-        var list = re.results;
+app.get('/execute/:gameId', basicAuth, (req, res) => {
+    var gameId = req.params.gameId;
+    personDao.findAllRegisteredWithoutAward((re) => {
+      var list = re.results;
 
-        var uids = list.map((it) => { 
-          return it.uid 
+      var uids = list.map((it) => { 
+        return it.uid 
+      });
+
+      var re = uids;
+      for (i = 0; i < 1000; i++) {
+        //var re = uids.map((it) => {
+        //  return it;
+        //});
+        shuffle(re);
+        //console.log(i+" "+re);
+      }
+
+      historyDao.saveOne(gameId, re);
+      gameDao.played(gameId);
+      gameDao.find(gameId, (it) => {
+        var game = it.results[0];
+        personDao.updateReward(game, re, ()=>{
+            return;
         });
-        
-
-        var re = uids;
-        for (i = 0; i < 1000; i++) {
-          //var re = uids.map((it) => {
-          //  return it;
-          //});
-          shuffle(re);
-          console.log(i+" "+re);
-        }
+      });
     });
-    res.render('pages/execute');
+
+    setTimeout(function() {
+      res.redirect('/gameplay');
+    }, 1000);
 });
 
 app.get('/check', (req, res) => {

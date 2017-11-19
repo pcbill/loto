@@ -21,7 +21,7 @@ CREATE TABLE person (
     uid VARCHAR(255) NOT NULL,
     name VARCHAR(255) NOT NULL,
     registration_time TIMESTAMP ,
-    award VARCHAR(255),
+    award VARCHAR(255),          -- gid
     award_time TIMESTAMP,
     getgift_time TIMESTAMP,
     create_time TIMESTAMP default NOW()
@@ -42,13 +42,41 @@ CREATE TABLE game (
     gid VARCHAR(255) NOT NULL,
     award_list VARCHAR(1024) NOT NULL,
     participant_count integer,       
-    exec integer default 0,               -- 0:normal, 1:drama
-    create_time TIMESTAMP default NOW(
+    exec_type integer default 0,               -- 0:normal, 1:drama
+    played_time TIMESTAMP, 
+    create_time TIMESTAMP default NOW()
 );
 insert into game(gid, award_list, participant_count) values('1', '電視機,computer', '5');
 
-CREATE TABLE turn (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    game_id UUID NOT NULL,
-    person_id UUID NOT NULL
+-- drop table turn;
+-- CREATE TABLE turn (
+--     id serial primary key,
+--     game_id serial NOT NULL,
+--     person_id serial NOT NULL,
+--     create_time TIMESTAMP default NOW()
+-- );
+
+drop table history;
+CREATE TABLE history (
+    id serial primary key,
+    game_id serial NOT NULL,
+    result VARCHAR(2550) NOT NULL,
+    create_time TIMESTAMP default NOW()
 );
+insert into history(game_id, result) values('1', 'u1,u3');
+
+
+delete from history;
+delete from game;
+insert into game(gid, award_list, participant_count) values('1', '電視機,computer', '5');
+insert into game(gid, award_list, participant_count) values('特講', '電 dphone', '2');
+delete from person;
+insert into person(uid, name, registration_time) values('u1', 'bill', NOW());
+insert into person(uid, name, registration_time) values('u2', 'b2ll', NOW());
+insert into person(uid, name, registration_time) values('u3', 'b3ll', NOW());
+insert into person(uid, name, registration_time) values('u4', 'b4ll', NOW());
+insert into person(uid, name, registration_time) values('u5', 'b5ll', NOW());
+insert into person(uid, name, registration_time) values('u6', 'b6ll', NOW());
+insert into person(uid, name, registration_time) values('u7', 'b7ll', NOW());
+insert into person(uid, name, registration_time) values('u8', 'b8ll', NOW());
+insert into person(uid, name, registration_time) values('u9', 'b9ll', NOW());

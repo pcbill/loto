@@ -175,7 +175,20 @@ app.post('/checkSubmit', (req, res) => {
     });
 });
 
-app.get('/logout', (req, res) => {
-  res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
-  res.sendStatus(401);
+app.get('/updateGetgiftTime/:uid', (req, res) => {
+    var uid = req.params.uid;
+  
+    if (!uid | uid == '') {
+      res.redirect('/check');
+      return;
+    }
+  
+    personDao.getGift(uid, () => {
+      res.redirect('/check');
+    });
 });
+
+//app.get('/logout', (req, res) => {
+//  res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
+//  res.sendStatus(401);
+//});

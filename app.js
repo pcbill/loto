@@ -58,7 +58,7 @@ app.get('/', (req, res) => {
 
 //// registration //////////////////////////
 app.get('/registration', basicAuth, (req, res) => {
-    personDao.findAll( (list) => {
+    personDao.findAllRegistered( (list) => {
       list.results.forEach((it)=>{
         it.registration_time = dateFormat(it.registration_time, 'yyyy/mm/dd hh:MM:ss');
       });
@@ -81,7 +81,7 @@ app.post('/registerSubmit', basicAuth, (req, res) => {
 });
 
 app.get('/manageRegistration', basicAuth, (req, res) => {
-    personDao.findAll( (list) => {
+    personDao.findAllRegistered( (list) => {
       res.render('pages/manageRegistration', list);
     });
   }

@@ -159,7 +159,20 @@ app.get('/execute/:gameId', basicAuth, (req, res) => {
 });
 
 app.get('/check', (req, res) => {
-    res.render('pages/check');
+    res.render('pages/check', {results: []});
+});
+
+app.post('/checkSubmit', (req, res) => {
+    var uid = req.body['uid'];
+  
+    if (!uid | uid == '') {
+      res.redirect('/check', {results: []});
+      return;
+    }
+  
+    personDao.find(uid, (list) => {
+      res.render('pages/check', list);
+    });
 });
 
 app.get('/logout', (req, res) => {

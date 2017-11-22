@@ -106,6 +106,7 @@ app.post('/createGame', basicAuth, (req, res) => {
   var award_list = req.body['award_list'];
   var participant_count = req.body['participant_count'];
   var type = req.body['type'];
+  console.log(req.body);
 
   if (!gid | gid == '') {
     res.redirect('/gameplay');

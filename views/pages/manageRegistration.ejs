@@ -12,24 +12,22 @@
   <div class="row">
     <div class="col-md-6">
       <h3>
-      Manage Registration
+        報到管理
       </h3>
 
       <% if (results) { %>
         <br/>
-        There are <%= results.length %> people registered
+        共有 <%= results.length %> 人已經完成報到
         <table class="table table-bordered table-hover">
           <tr>
-            <th>operation</th>  
-            <th>#</th>  
-            <th>uid</th>  
-            <th>name</th>  
-            <th>registration time</th>  
+            <th>操作</th>  
+            <th>號碼</th>  
+            <th>姓名</th>  
+            <th>報到時間</th>  
           </tr>
         <% results.forEach( (it) => { %>
           <tr>
             <td><a class="btn btn-primary" href='/deleteRegistration/<%= it.id %>'>del</a></td>
-            <td><%= it.id %></td>
             <td><%= it.uid %></td> 
             <td><%= it.name %></td> 
             <td><%= it.registration_time %></td>

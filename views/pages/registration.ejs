@@ -12,27 +12,25 @@
   <div class="row">
     <div class="col-md-6">
       <h3>
-      Registration
+        報到
       </h3>
 
       <form action="/registerSubmit" method="POST">
-      uid <input id="uid" name="uid" type="text" forcus />
+      號碼 <input id="uid" name="uid" type="text" forcus />
         <button type="submit" value="submit">submit</button>
       </form>
       <br/>
       <% if (results) { %>
         <br/>
-        There are <%= results.length %> people registered
+        共有 <%= results.length %> 人已經完成報到
         <table class="table table-bordered table-hover">
           <tr>
-            <th>#</th>  
-            <th>uid</th>  
-            <th>name</th>  
-            <th>registration time</th>  
+            <th>號碼</th>  
+            <th>姓名</th>  
+            <th>報到時間</th>  
           </tr>
         <% results.forEach( (it) => { %>
           <tr>
-            <td><%= it.id %></td>
             <td><%= it.uid %></td> 
             <td><%= it.name %></td> 
             <td><%= it.registration_time %></td>

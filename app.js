@@ -46,7 +46,6 @@ app.use(bodyParser.json());
 // in latest body-parser use like below.
 app.use(bodyParser.urlencoded({ extended: true }));
 
-
 //// Route /////////////////////////////////
 
 app.get('/', (req, res) => {
@@ -128,35 +127,41 @@ app.get('/deleteGame/:id', basicAuth, (req, res) => {
 
 app.get('/execute/:gameId', basicAuth, (req, res) => {
     var gameId = req.params.gameId;
-    personDao.findAllRegisteredWithoutAward((re) => {
-      var list = re.results;
 
-      var uids = list.map((it) => { 
-        return it.uid 
-      });
+    gameDao.find(gameId, (it) => {
+      var game = it.results[0];
 
-      var re = uids;
-      for (i = 0; i < 1000; i++) {
-        //var re = uids.map((it) => {
-        //  return it;
-        //});
-        shuffle(re);
-        //console.log(i+" "+re);
-      }
-
-      historyDao.saveOne(gameId, re);
-      gameDao.played(gameId);
-      gameDao.find(gameId, (it) => {
-        var game = it.results[0];
-        personDao.updateReward(game, re, ()=>{
-            return;
+      var gameType = game.exec_type;
+      var count = game.participant_count;
+      var reminderCount = game.reminder_count;
+      personDao.findAllRegisteredWithoutAward((re) => {
+        var list = re.results;
+        
+        var uids = list.map((it) => { 
+          return it.uid 
         });
+        
+        var re = uids;
+        for (i = 0; i < 1000; i++) {
+          shuffle(re);
+        }
+ 
+        if (gameType == 0 && reminderCount >= count) {
+          historyDao.saveOne(gameId, re);
+          gameDao.played(game, count);
+          personDao.updateReward(game, re, count, ()=>{});
+        } else if (gameType == 1 && reminderCount >= 1) {
+          historyDao.saveOne(gameId, re);
+          gameDao.played(game, 1);
+          personDao.updateReward(game, re, 1, ()=>{}); 
+        }
       });
+
+      setTimeout(function() {
+        res.redirect('/gameplay');
+      }, 1000);
     });
 
-    setTimeout(function() {
-      res.redirect('/gameplay');
-    }, 1000);
 });
 
 app.get('/check', (req, res) => {

@@ -42,12 +42,12 @@ CREATE TABLE game (
     gid VARCHAR(255) NOT NULL,
     award_list VARCHAR(1024) NOT NULL,
     participant_count integer,       
+    reminder_count integer,
     exec_type integer default 0,               -- 0:normal, 1:drama
     ordered integer,
     played_time TIMESTAMP, 
     create_time TIMESTAMP default NOW()
 );
-insert into game(gid, award_list, participant_count, ordered) values('1', '電視機,computer', '5', 10);
 
 -- drop table turn;
 -- CREATE TABLE turn (
@@ -69,8 +69,8 @@ insert into history(game_id, result) values('1', 'u1,u3');
 
 delete from history;
 delete from game;
-insert into game(gid, award_list, participant_count, ordered) values('特講', '電 dphone', '2', 20);
-insert into game(gid, award_list, participant_count, ordered) values('1', '電視機,computer', '5', 10);
+insert into game(gid, award_list, participant_count, reminder_count, ordered) values('特講', '電 dphone', 2, 2, 20);
+insert into game(gid, award_list, participant_count, reminder_count, ordered) values('1', '電視機,computer', 5, 5, 10);
 delete from person;
 insert into person(uid, name, registration_time) values('u1', 'bill', NOW());
 insert into person(uid, name, registration_time) values('u2', 'b2ll', NOW());

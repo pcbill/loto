@@ -51,7 +51,7 @@
           <tr>
             <td>
               <a class="btn btn-primary" href='/deleteGame/<%= it.id %>'>del</a>
-              <% if (it.played_time == null) { %>
+              <% if (it.reminder_count > 0) { %>
                  <a class="btn btn-primary" href='/execute/<%= it.id %>'>play</a>
               <% } %>
             </td>

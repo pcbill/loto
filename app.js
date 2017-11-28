@@ -163,6 +163,7 @@ app.get('/execute/:gameId', basicAuth, (req, res) => {
 
 });
 
+// check //////////////////////////////////
 app.get('/check', (req, res) => {
     res.render('pages/check', {results: []});
 });
@@ -170,14 +171,28 @@ app.get('/check', (req, res) => {
 app.post('/checkSubmit', (req, res) => {
     var uid = req.body['uid'];
   
-    if (!uid | uid == '') {
+    if (!uid || uid == '') {
       res.redirect('/check', {results: []});
       return;
     }
   
-    personDao.find(uid, (list) => {
+    personDao.findByUid(uid, (list) => {
       res.render('pages/check', list);
     });
+});
+
+app.post('/searchPersonByName', (req, res) => {
+    var name = req.body['name'];
+  
+    if (!name || name == '') {
+      res.redirect('/check', {results: []});
+      return;
+    }
+  
+    personDao.findByName(name, (list) => {
+      res.render('pages/check', list);
+    });
+
 });
 
 app.get('/updateGetgiftTime/:uid', (req, res) => {

@@ -18,6 +18,7 @@
         號碼 <input id="uid" name="uid" type="text" forcus />
         <button type="submit" value="submit">submit</button>
       </form>
+      <br/>
 
       <form action="/searchPersonByName" method="POST">
         姓名 <input id="name" name="name" type="text" />
@@ -30,6 +31,7 @@
           <tr>
             <th>號碼</th>  
             <th>姓名</th>  
+            <th>桌次</th>  
             <th>報到時間</th>  
             <th>中獎獎項</th>  
             <th>中獎時間</th>  
@@ -39,6 +41,7 @@
           <tr>
             <td><%= it.uid %></td> 
             <td><%= it.name %></td> 
+            <td><%= it.table_num %></td> 
             <td><%= it.registration_time %></td>
 
             <% if (it.award_game_id ) { %>

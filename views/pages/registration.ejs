@@ -27,12 +27,14 @@
           <tr>
             <th>號碼</th>  
             <th>姓名</th>  
+            <th>桌次</th>  
             <th>報到時間</th>  
           </tr>
         <% results.forEach( (it) => { %>
           <tr>
             <td><%= it.uid %></td> 
             <td><%= it.name %></td> 
+            <td><%= it.table_num %></td> 
             <td><%= it.registration_time %></td>
           </tr>
         <% }); %>

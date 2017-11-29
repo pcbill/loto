@@ -160,8 +160,9 @@ app.get('/execute/:gameId', basicAuth, (req, res) => {
         res.redirect('/gameplay');
       }, 1000);
     });
-
 });
+
+
 
 // check //////////////////////////////////
 app.get('/check', (req, res) => {
@@ -195,7 +196,7 @@ app.post('/searchPersonByName', (req, res) => {
 
 });
 
-app.get('/updateGetgiftTime/:uid', (req, res) => {
+app.get('/updateGetgiftTime/:uid', basicAuth, (req, res) => {
     var uid = req.params.uid;
   
     if (!uid | uid == '') {

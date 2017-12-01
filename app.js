@@ -23,13 +23,6 @@ var basicAuth = basicAuth({
   challenge: true
 });
 
-// regAuth = basicAuth({
-//  users: {
-//      'register': 'kdorkwj'
-//  },
-//  challenge: true
-//});
-
 app.use(express.static(__dirname + '/public'));
 
 // views is directory for all template files
@@ -78,6 +71,23 @@ app.post('/registerSubmit', basicAuth, (req, res) => {
     res.redirect('/registration');
   });
 });
+
+//app.post('/registerByNameSubmit', basicAuth, (req, res) => {
+//  var name = req.body['name'];
+//
+//  if (!name | name == '') {
+//    res.redirect('/registration');
+//    return;
+//  }
+//
+//  personDao.registerByName(uid, (err) => {
+//    var msg = 'success';
+//    if (err) {
+//      msg = 'fail';
+//    }
+//    res.redirect('/registration', {message: msg});
+//  });
+//});
 
 app.get('/manageRegistration', basicAuth, (req, res) => {
     personDao.findAllRegistered( (list) => {

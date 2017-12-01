@@ -134,6 +134,23 @@ app.get('/deleteGame/:id', basicAuth, (req, res) => {
     });
 });
 
+app.get('/gameComplete', basicAuth, (req, res) => {
+    personDao.findAllRegisteredWithoutAward((re) => {
+      var list = re.results;
+      
+      var uids = list.map((it) => { 
+        return it.uid 
+      });
+      
+      var gameId = 99999;
+      personDao.updateReward(gameId, uids, uids.length, () => { });
+
+      setTimeout(function() {
+        res.redirect('/gameplay');
+      }, 1000);
+    });
+});
+
 app.get('/execute/:gameId', basicAuth, (req, res) => {
     var gameId = req.params.gameId;
 
@@ -158,11 +175,11 @@ app.get('/execute/:gameId', basicAuth, (req, res) => {
         if (gameType == 0 && reminderCount >= count) {
           historyDao.saveOne(gameId, re);
           gameDao.played(game, count);
-          personDao.updateReward(game, re, count, ()=>{});
+          personDao.updateReward(game.id, re, count, ()=>{});
         } else if (gameType == 1 && reminderCount >= 1) {
           historyDao.saveOne(gameId, re);
           gameDao.played(game, 1);
-          personDao.updateReward(game, re, 1, ()=>{}); 
+          personDao.updateReward(game.id, re, 1, ()=>{}); 
         }
       });
 

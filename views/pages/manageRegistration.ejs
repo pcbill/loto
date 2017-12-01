@@ -10,11 +10,30 @@
 
 <div class="container">
   <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-3">
       <h3>
         報到管理
       </h3>
 
+      手動報到
+      <form action="/createPerson" method="POST">
+        <div class="form-group">
+        
+        <label>號碼</label>
+        <input class="form-control" name="uid" type="text" /><br/>
+
+        <label>姓名</label>
+        <input class="form-control" name="name" type="text" /><br/>
+        
+        <label>桌次</label>
+        <input class="form-control" name="table_num" type="text" /><br/>
+
+        <button type="submit" value="submit">submit</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="col-md-6">
       <% if (results) { %>
         <br/>
         共有 <%= results.length %> 人已經完成報到

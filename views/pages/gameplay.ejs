@@ -45,6 +45,7 @@
             <th>獎項</th>
             <th>獎品列表</th>
             <th>數量</th>
+            <th>剩餘</th>
             <th></th>
           </tr>
         <% results.forEach( (it) => { %>
@@ -57,7 +58,8 @@
             </td>
             <td><%= it.gid %></td>
             <td><%= it.award_list %></td>
-            <td><%= it.participant_count%></td>
+            <td><%= it.participant_count %></td>
+            <td><%= it.reminder_count %></td>
             <td><%= (it.exec_type == 0) ? '快速抽獎' : '大獎' %></td>
           </tr>
         <% }); %>

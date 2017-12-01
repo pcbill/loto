@@ -93,6 +93,20 @@ app.get('/deleteRegistration/:id', basicAuth, (req, res) => {
     });
 });
 
+app.post('/createPerson', basicAuth, (req, res) => {
+  var uid = req.body['uid'];
+  var name = req.body['name'];
+  var table_num = req.body['table_num'];
+
+  if (!uid | uid == '') {
+    res.redirect('/manageRegistration');
+    return;
+  }
+
+  personDao.saveOne(uid, name, table_num, () => {
+    res.redirect('/manageRegistration');
+  });
+});
 //// game //////////////////////////////////////
 app.get('/gameplay', basicAuth, (req, res) => {
     gameDao.findAll( (list) => {

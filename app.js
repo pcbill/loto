@@ -73,12 +73,13 @@ app.post('/registerSubmit', basicAuth, (req, res) => {
   var uid = req.body['uid'];
 
   if (!uid | uid == '') {
-    req.session['msg'] = '請輸入號碼'
+    req.session['msg'] = '請輸入號碼';
     res.redirect('/registration');
     return;
   }
 
-  personDao.register(uid, () => {
+  personDao.register(uid, (reObj) => {
+    req.session['msg'] = reObj.msg;
     res.redirect('/registration');
   });
 });
@@ -111,8 +112,9 @@ app.get('/manageRegistration', basicAuth, (req, res) => {
 
 app.get('/deleteRegistration/:id', basicAuth, (req, res) => {
     var id = req.params.id;
-    personDao.deleteOne(id, ()=>{
-        res.redirect('/manageRegistration');
+    personDao.deleteOne(id, (reObj)=>{
+      req.session['msg'] = reObj.msg;
+      res.redirect('/manageRegistration');
     });
 });
 
@@ -132,11 +134,13 @@ app.post('/createGame', basicAuth, (req, res) => {
   var type = req.body['type'];
 
   if (!gid | gid == '') {
+    req.session['msg'] = '請輸入獎項';
     res.redirect('/gameplay');
     return;
   }
 
-  gameDao.saveOne(gid, award_list, participant_count, type, () => {
+  gameDao.saveOne(gid, award_list, participant_count, type, (reObj) => {
+    req.session['msg'] = reObj.msg;
     res.redirect('/gameplay');
   });
   
@@ -144,8 +148,9 @@ app.post('/createGame', basicAuth, (req, res) => {
 
 app.get('/deleteGame/:id', basicAuth, (req, res) => {
     var id = req.params.id;
-    gameDao.deleteOne(id, ()=>{
-        res.redirect('/gameplay');
+    gameDao.deleteOne(id, (reObj)=>{
+      req.session['msg'] = reObj.msg;
+      res.redirect('/gameplay');
     });
 });
 
@@ -161,6 +166,7 @@ app.get('/gameComplete', basicAuth, (req, res) => {
       personDao.updateReward(gameId, uids, uids.length, () => { });
 
       setTimeout(function() {
+        req.session['msg'] = re.msg + ' Game Finished!!';
         res.redirect('/gameplay');
       }, 1000);
     });
@@ -199,6 +205,7 @@ app.get('/execute/:gameId', basicAuth, (req, res) => {
       });
 
       setTimeout(function() {
+        req.session['msg'] = it.msg + 'Game Executed!!';
         res.redirect('/gameplay');
       }, 1000);
     });
@@ -250,11 +257,13 @@ app.get('/updateGetgiftTime/:uid', basicAuth, (req, res) => {
     var uid = req.params.uid;
   
     if (!uid | uid == '') {
+      req.session['msg'] = '請輸入姓名';
       res.redirect('/check');
       return;
     }
   
-    personDao.getGift(uid, () => {
+    personDao.getGift(uid, (reObj) => {
+      req.session['msg'] = reObj.msg + ' ' + uid +' got gift !!';
       res.redirect('/check');
     });
 });

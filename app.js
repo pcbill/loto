@@ -1,4 +1,5 @@
 var express = require('express');
+var session = require('express-session');
 var app = express();
 var pg = require('pg');
 var basicAuth = require('express-basic-auth');
@@ -24,6 +25,7 @@ var basicAuth = basicAuth({
 });
 
 app.use(express.static(__dirname + '/public'));
+app.use(session({ msg: '', secret: 'sec' }));
 
 // views is directory for all template files
 app.set('views', __dirname + '/views');
@@ -39,22 +41,30 @@ app.use(bodyParser.json());
 // in latest body-parser use like below.
 app.use(bodyParser.urlencoded({ extended: true }));
 
+var emptyObj = { msg: '', results: [] };
+
 //// Route /////////////////////////////////
 
 app.get('/', (req, res) => {
-    gameDao.findAll( (list) => {
-      res.render('pages/index', list);
+    gameDao.findAll( (reObj) => {
+
+      reObj.msg = req.session['msg'];
+      req.session['msg'] = '';
+      res.render('pages/index', reObj);
     });
   }
 );
 
 //// registration //////////////////////////
 app.get('/registration', basicAuth, (req, res) => {
-    personDao.findAllRegistered( (list) => {
-      list.results.forEach((it)=>{
+    personDao.findAllRegistered( (reObj) => {
+      reObj.results.forEach((it)=>{
         it.registration_time = dateFormat(it.registration_time, 'yyyy/mm/dd hh:MM:ss');
       });
-      res.render('pages/registration', list);
+
+      reObj.msg = req.session['msg'];
+      req.session['msg'] = '';
+      res.render('pages/registration', reObj);
     });
   }
 );
@@ -63,6 +73,7 @@ app.post('/registerSubmit', basicAuth, (req, res) => {
   var uid = req.body['uid'];
 
   if (!uid | uid == '') {
+    req.session['msg'] = '請輸入號碼'
     res.redirect('/registration');
     return;
   }
@@ -90,8 +101,10 @@ app.post('/registerSubmit', basicAuth, (req, res) => {
 //});
 
 app.get('/manageRegistration', basicAuth, (req, res) => {
-    personDao.findAllRegistered( (list) => {
-      res.render('pages/manageRegistration', list);
+    personDao.findAllRegistered( (reObj) => {
+      reObj.msg = req.session['msg'];
+      req.session['msg'] = '';
+      res.render('pages/manageRegistration', reObj);
     });
   }
 );
@@ -105,8 +118,10 @@ app.get('/deleteRegistration/:id', basicAuth, (req, res) => {
 
 //// game //////////////////////////////////////
 app.get('/gameplay', basicAuth, (req, res) => {
-    gameDao.findAll( (list) => {
-      res.render('pages/gameplay', list);
+    gameDao.findAll( (reObj) => {
+      reObj.msg = req.session['msg'];
+      req.session['msg'] = '';
+      res.render('pages/gameplay', reObj);
     });
 });
 
@@ -193,19 +208,24 @@ app.get('/execute/:gameId', basicAuth, (req, res) => {
 
 // check //////////////////////////////////
 app.get('/check', (req, res) => {
-    res.render('pages/check', {results: []});
+    emptyObj.msg = req.session['msg'];
+    req.session['msg'] = '';
+    res.render('pages/check', emptyObj);
 });
 
 app.post('/checkSubmit', (req, res) => {
     var uid = req.body['uid'];
   
     if (!uid || uid == '') {
-      res.redirect('/check', {results: []});
+      req.session['msg'] = '請輸入號碼';
+      res.redirect('/check');
       return;
     }
   
-    personDao.findByUid(uid, (list) => {
-      res.render('pages/check', list);
+    personDao.findByUid(uid, (reObj) => {
+      reObj.msg = req.session['msg'];
+      req.session['msg'] = '';
+      res.render('pages/check', reObj);
     });
 });
 
@@ -213,12 +233,15 @@ app.post('/searchPersonByName', (req, res) => {
     var name = req.body['name'];
   
     if (!name || name == '') {
-      res.redirect('/check', {results: []});
+      req.session['msg'] = '請輸入姓名';
+      res.redirect('/check');
       return;
     }
   
-    personDao.findByName(name, (list) => {
-      res.render('pages/check', list);
+    personDao.findByName(name, (reObj) => {
+      reObj.msg = req.session['msg'];
+      req.session['msg'] = '';
+      res.render('pages/check', reObj);
     });
 
 });

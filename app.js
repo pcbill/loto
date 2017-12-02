@@ -84,6 +84,21 @@ app.post('/registerSubmit', basicAuth, (req, res) => {
   });
 });
 
+app.post('/registerByNameSubmit', basicAuth, (req, res) => {
+  var name = req.body['name'];
+
+  if (!name | name == '') {
+    req.session['msg'] = '請輸入完整姓名';
+    res.redirect('/registration');
+    return;
+  }
+
+  personDao.registerByName(name, (reObj) => {
+    req.session['msg'] = reObj.msg;
+    res.redirect('/registration');
+  });
+});
+
 app.get('/manageRegistration', basicAuth, (req, res) => {
     personDao.findAllRegistered( (reObj) => {
       reObj.msg = req.session['msg'];

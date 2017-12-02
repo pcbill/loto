@@ -1,0 +1,51 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <% include ../partials/header.ejs %>
+</head>
+
+<body>
+  <% include ../partials/nav.ejs %>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <h3>
+        得獎者列表
+      </h3>
+    
+      <% if (results) { %>
+      <table class="table table-bordered table-hover">
+          <tr>
+            <th>號碼</th>  
+            <th>姓名</th>  
+            <th>桌次</th>  
+            <th>中獎獎項</th>  
+            <th>中獎時間</th>  
+            <th></th>  
+          </tr>
+        <% results.forEach( (it) => { %>
+          <tr>
+            <td><%= it.uid %></td> 
+            <td><%= it.name %></td> 
+            <td><%= it.table_num %></td> 
+
+            <% if (it.award_game_id ) { %>
+            <td><%= it.award_game_id %></td>
+            <% } else { %>
+            <td>尚未中獎</td>
+            <% } %>
+
+            <td><%= it.award_time %></td>
+
+            <td><a class="btn btn-primary" href='/cancelWinner/<%= gid %>/<%= it.uid %>'>取消資格</a></td>
+
+          </tr>
+        <% }); %>
+      </table>
+      <% } %>
+
+    </div>
+  </div>
+</div>

@@ -25,7 +25,7 @@ var basicAuth = basicAuth({
 });
 
 app.use(express.static(__dirname + '/public'));
-app.use(session({ msg: '', secret: 'sec' }));
+app.use(session({ msg: '', secret: 'sec', resave: '', saveUninitialized: '' }));
 
 // views is directory for all template files
 app.set('views', __dirname + '/views');
@@ -84,23 +84,6 @@ app.post('/registerSubmit', basicAuth, (req, res) => {
   });
 });
 
-//app.post('/registerByNameSubmit', basicAuth, (req, res) => {
-//  var name = req.body['name'];
-//
-//  if (!name | name == '') {
-//    res.redirect('/registration');
-//    return;
-//  }
-//
-//  personDao.registerByName(uid, (err) => {
-//    var msg = 'success';
-//    if (err) {
-//      msg = 'fail';
-//    }
-//    res.redirect('/registration', {message: msg});
-//  });
-//});
-
 app.get('/manageRegistration', basicAuth, (req, res) => {
     personDao.findAllRegistered( (reObj) => {
       reObj.msg = req.session['msg'];
@@ -132,6 +115,7 @@ app.post('/createPerson', basicAuth, (req, res) => {
     res.redirect('/manageRegistration');
   });
 });
+
 //// game //////////////////////////////////////
 app.get('/gameplay', basicAuth, (req, res) => {
     gameDao.findAll( (reObj) => {
@@ -225,7 +209,26 @@ app.get('/execute/:gameId', basicAuth, (req, res) => {
     });
 });
 
+app.get('/listWinner/:gid', basicAuth, (req, res) => {
+    var gid = req.params.gid;
 
+    personDao.findByGid(gid, (gObj) => {
+      gObj.gid = gid;
+      res.render('pages/listWinner', gObj);
+    });
+});
+
+app.get('/cancelWinner/:gid/:uid', basicAuth, (req, res) => {
+    var gid = req.params.gid;
+    var uid = req.params.uid;
+
+    personDao.cancelReward(uid, (re) => {
+        gameDao.cancelOneReward(gid);
+
+        req.session['msg'] = re.msg + ' winner cancel!!';
+        res.redirect('/listWinner/'+gid);
+    });
+});
 
 // check //////////////////////////////////
 app.get('/check', (req, res) => {

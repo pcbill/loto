@@ -228,7 +228,7 @@ app.get('/execute/:gameId', basicAuth, (req, res) => {
       setTimeout(function() {
         req.session['msg'] = it.msg + 'Game Executed!!';
         if (gameType == 0 && reminderCount >= count) {
-          res.redirect('/gameplay');
+          res.redirect('/listWinner/'+gameId);
         } else if (gameType == 1 && reminderCount >= 1) {
           req.session['big_list'] = candidates;
           req.session['reminder_count'] = reminderCount;
@@ -292,7 +292,16 @@ app.get('/playBig', basicAuth, (req, res) => {
 });
 
 
-app.get('/playNormal', basicAuth, (req, res) => {
+app.get('/playNormal/:gid', basicAuth, (req, res) => {
+  var gid = req.params.gid;
+
+  gameDao.find(gid, (reGame) => {
+    var game = reGame.results[0];
+    res.render('pages/startPlayNormal', {
+      reminderCount: game.reminder_count, 
+      gid: game.id
+    });
+  });
 });
 
 // check //////////////////////////////////

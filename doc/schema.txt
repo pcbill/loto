@@ -65,7 +65,6 @@ CREATE TABLE history (
     result VARCHAR(2550) NOT NULL,
     create_time TIMESTAMP default NOW()
 );
-insert into history(game_id, result) values('1', 'u1,u3');
 
 
 delete from history;

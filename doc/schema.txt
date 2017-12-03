@@ -70,8 +70,8 @@ insert into history(game_id, result) values('1', 'u1,u3');
 
 delete from history;
 delete from game;
-insert into game(gid, award_list, participant_count, reminder_count, ordered) values('特講', '電 dphone', 2, 2, 20);
-insert into game(gid, award_list, participant_count, reminder_count, ordered) values('1', '電視機,computer', 5, 5, 10);
+insert into game(gid, award_list, participant_count, reminder_count, ordered, exec_type) values('2', '吹風機 dphone', 5, 5, 20, 1);
+insert into game(gid, award_list, participant_count, reminder_count, ordered, exec_type) values('1', '電視機,computer', 2, 2, 10, 0);
 delete from person;
 insert into person(uid, name, table_num, registration_time) values('u1', 'bill', 1, NOW());
 insert into person(uid, name, table_num, registration_time) values('u2', 'b2ll', 1, NOW());

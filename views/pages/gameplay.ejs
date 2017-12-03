@@ -47,14 +47,20 @@
             <th>數量</th>
             <th>剩餘</th>
             <th></th>
-            <th></th>
           </tr>
         <% results.forEach( (it) => { %>
           <tr>
             <td>
               <a class="btn btn-primary" href='/deleteGame/<%= it.id %>'>del</a>
               <% if (it.reminder_count > 0) { %>
-                 <a class="btn btn-primary" href='/execute/<%= it.id %>'>play</a>
+                <% if (it.exec_type != 0) { %>
+                  <a class="btn btn-primary" href='/execute/<%= it.id %>'>play</a>
+                <% } else { %>
+                  <a class="btn btn-primary" href='/playNormal/<%= it.id %>'>play</a>
+                <% } %>
+              <% } %>
+              <% if (it.exec_type != 0) { %>
+                <a class="btn btn-primary" href='/editWinner/<%= it.id %>'>得獎者列表</a>
               <% } %>
             </td>
             <td><%= it.gid %></td>
@@ -63,11 +69,6 @@
             <td><%= it.reminder_count %></td>
             <td><%= (it.exec_type == 0) ? '快速抽獎' : '大獎' %></td>
 
-            <td>
-              <% if (it.exec_type != 0) { %>
-                <a class="btn btn-primary" href='/listWinner/<%= it.id %>'>得獎者列表</a>
-              <% } %>
-            </td>
           </tr>
         <% }); %>
         </table>

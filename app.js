@@ -25,7 +25,14 @@ var basicAuth = basicAuth({
 });
 
 app.use(express.static(__dirname + '/public'));
-app.use(session({ msg: '', secret: 'sec', resave: '', saveUninitialized: '' }));
+app.use(session({ 
+  msg: '',
+  big_list: [], 
+  reminder_count: 0,
+  gid: '',
+  secret: 'sec', 
+  resave: '', 
+  saveUninitialized: '' }));
 
 // views is directory for all template files
 app.set('views', __dirname + '/views');
@@ -194,6 +201,7 @@ app.get('/execute/:gameId', basicAuth, (req, res) => {
       var gameType = game.exec_type;
       var count = game.participant_count;
       var reminderCount = game.reminder_count;
+      var candidates ;
       personDao.findAllRegisteredWithoutAward((re) => {
         var list = re.results;
         
@@ -201,35 +209,59 @@ app.get('/execute/:gameId', basicAuth, (req, res) => {
           return it.uid 
         });
         
-        var re = uids;
+        candidates = uids;
         for (i = 0; i < 1000; i++) {
-          shuffle(re);
+          shuffle(candidates);
         }
  
         if (gameType == 0 && reminderCount >= count) {
-          historyDao.saveOne(gameId, re);
+          historyDao.saveOne(gameId, candidates);
           gameDao.played(game, count);
-          personDao.updateReward(game.id, re, count, ()=>{});
+          personDao.updateReward(game.id, candidates, count, ()=>{});
         } else if (gameType == 1 && reminderCount >= 1) {
-          historyDao.saveOne(gameId, re);
+          historyDao.saveOne(gameId, candidates);
           gameDao.played(game, 1);
-          personDao.updateReward(game.id, re, 1, ()=>{}); 
+          personDao.updateReward(game.id, candidates, 1, ()=>{}); 
         }
       });
 
       setTimeout(function() {
         req.session['msg'] = it.msg + 'Game Executed!!';
-        res.redirect('/gameplay');
+        if (gameType == 0 && reminderCount >= count) {
+          res.redirect('/gameplay');
+        } else if (gameType == 1 && reminderCount >= 1) {
+          req.session['big_list'] = candidates;
+          req.session['reminder_count'] = reminderCount;
+          req.session['gid'] = game.id;
+          res.redirect('/playBig');
+        }
       }, 1000);
     });
 });
 
-app.get('/listWinner/:gid', basicAuth, (req, res) => {
+app.get('/editWinner/:gid', basicAuth, (req, res) => {
     var gid = req.params.gid;
 
-    personDao.findByGid(gid, (gObj) => {
-      gObj.gid = gid;
-      res.render('pages/listWinner', gObj);
+    gameDao.find(gid, (reGame) => {
+      var games = reGame.results;
+
+      personDao.findByGid(gid, (rePerson) => {
+        rePerson.gid = games[0].gid;
+        res.render('pages/editWinner', rePerson);
+      });
+    });
+});
+
+app.get('/listWinner/:gid', (req, res) => {
+    var gid = req.params.gid;
+
+    gameDao.find(gid, (reGame) => {
+      var games = reGame.results;
+
+      personDao.findByGid(gid, (rePerson) => {
+        rePerson.gid = games[0].gid;
+        res.render('pages/listWinner', rePerson);
+      });
     });
 });
 
@@ -243,6 +275,24 @@ app.get('/cancelWinner/:gid/:uid', basicAuth, (req, res) => {
         req.session['msg'] = re.msg + ' winner cancel!!';
         res.redirect('/listWinner/'+gid);
     });
+});
+
+app.get('/playBig', basicAuth, (req, res) => {
+    var list = req.session['big_list'];
+    req.session['big_list'] = [];
+    var reminderCount = req.session['reminder_count'];
+    req.session['reminder_count'] = 0;
+    var gid = req.session['gid'];
+    req.session['gid'] = 0;
+
+    res.render('pages/startPlayBig', {
+      results: list,
+      gid: gid, 
+      reminderCount: reminderCount});
+});
+
+
+app.get('/playNormal', basicAuth, (req, res) => {
 });
 
 // check //////////////////////////////////

@@ -14,18 +14,22 @@
       <h3>歡迎!!</h3>
 
       <% if (results) { %>
-        共有 <%= results.length %> 次抽獎
+        共有 <%= results.length %> 獎項
         <table class="table table-bordered table-hover">
           <tr>
             <th>獎項</th>
             <th>獎品列表</th>
             <th>數量</th>
+            <th>剩餘</th>
+            <th></th>
           </tr>
         <% results.forEach( (it) => { %>
           <tr>
             <td><%= it.gid %></td>
             <td><%= it.award_list %></td>
             <td><%= it.participant_count%></td>
+            <td><%= it.reminder_count %></td>
+            <td> <a class="btn btn-primary" href='/listWinner/<%= it.id %>'>得獎者列表</a> </td>
           </tr>
         <% }); %>
         </table>

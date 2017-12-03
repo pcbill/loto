@@ -23,6 +23,7 @@
             <th>桌次</th>  
             <th>中獎獎項</th>  
             <th>中獎時間</th>  
+            <th></th>  
           </tr>
         <% results.forEach( (it) => { %>
           <tr>
@@ -32,6 +33,7 @@
             <td><%= gid %></td>
             <td><%= it.award_time %></td>
 
+            <td><a class="btn btn-primary" href='/cancelWinner/<%= it.award_game_id %>/<%= it.uid %>'>取消資格</a></td>
 
           </tr>
         <% }); %>

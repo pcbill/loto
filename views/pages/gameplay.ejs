@@ -52,13 +52,15 @@
           <tr>
             <td>
               <a class="btn btn-primary" href='/deleteGame/<%= it.id %>'>del</a>
+
               <% if (it.reminder_count > 0) { %>
-                <% if (it.exec_type != 0) { %>
-                  <a class="btn btn-primary" href='/execute/<%= it.id %>'>play</a>
-                <% } else { %>
+                <% if (it.exec_type == 0 && count >= it.reminder_count) { %>
                   <a class="btn btn-primary" href='/playNormal/<%= it.id %>'>play</a>
+                <% } else if (count >= 1) { %>
+                  <a class="btn btn-primary" href='/execute/<%= it.id %>'>play</a>
                 <% } %>
               <% } %>
+
               <% if (it.exec_type != 0) { %>
                 <a class="btn btn-primary" href='/editWinner/<%= it.id %>'>修改得獎者</a>
               <% } %>

@@ -140,11 +140,14 @@ app.post('/createPerson', basicAuth, (req, res) => {
 
 //// game //////////////////////////////////////
 app.get('/gameplay', basicAuth, (req, res) => {
+  personDao.countRegisteredWithoutAward( (count) => {
     gameDao.findAll( (reObj) => {
+      reObj.count = count;
       reObj.msg = req.session['msg'];
       req.session['msg'] = '';
       res.render('pages/gameplay', reObj);
     });
+  });
 });
 
 app.post('/createGame', basicAuth, (req, res) => {

@@ -171,9 +171,11 @@ app.post('/createGame', basicAuth, (req, res) => {
 
 app.get('/deleteGame/:id', basicAuth, (req, res) => {
     var id = req.params.id;
-    gameDao.deleteOne(id, (reObj)=>{
-      req.session['msg'] = reObj.msg;
-      res.redirect('/gameplay');
+    gameDao.deleteOne(id, (reObj1)=>{
+      personDao.cancelRewardByGid(id, (reObj2)=>{
+        req.session['msg'] = reObj1.msg;
+        res.redirect('/gameplay');
+      });
     });
 });
 

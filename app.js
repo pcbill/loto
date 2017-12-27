@@ -332,6 +332,9 @@ app.post('/checkSubmit', (req, res) => {
         reObj.results[0] = person;
       } else {
       }
+
+console.log(reObj.results);
+      
       reObj.msg = req.session['msg'];
       req.session['msg'] = '';
       res.render('pages/check', reObj);

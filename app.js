@@ -4,8 +4,6 @@ var app = express();
 var pg = require('pg');
 var basicAuth = require('express-basic-auth');
 
-//var dateFormat = require('dateformat');
-
 var personDao = require('./lib/dao/personDao');
 var gameDao = require('./lib/dao/gameDao');
 var historyDao = require('./lib/dao/historyDao'); 
@@ -64,10 +62,6 @@ app.get('/', (req, res) => {
 //// registration //////////////////////////
 app.get('/registration', basicAuth, (req, res) => {
     personDao.findAllRegistered( (reObj) => {
-      //reObj.results.forEach((it)=>{
-      //  it.registration_time = dateFormat(it.registration_time, 'yyyy/mm/dd hh:MM:ss');
-      //});
-
       reObj.msg = req.session['msg'];
       req.session['msg'] = '';
       res.render('pages/registration', reObj);

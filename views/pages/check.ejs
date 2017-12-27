@@ -55,9 +55,9 @@
             <% if (it.getgift_time) { %>
             <td><%= it.getgift_time %></td>
             <% } else if (it.award_time) { %>
-            <td><a class="btn btn-primary" href='/updateGetgiftTime/<%= it.uid %>'>我要領獎</a></td>
+            <td>尚未領獎</td>
             <% } else { %>
-            <td></td>
+            <td>已經領獎</td>
             <% } %>
 
           </tr>

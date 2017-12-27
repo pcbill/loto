@@ -21,3 +21,6 @@ C,
 D,
 8. ‎兑獎
 - 輸入員編，確認中獎，兑獎拿走獎品，登記已兑獎
+
+
+<a class="btn btn-primary" href='/updateGetgiftTime/<%= it.uid %>'>我要領獎</a>

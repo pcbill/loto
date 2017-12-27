@@ -323,7 +323,9 @@ app.post('/checkSubmit', (req, res) => {
       if (person) {
         var gameid = person.award_game_id;
         if (gameid) {
+console.log(gameid);
           gameDao.find(gameid, (reGame) => {
+
             person.awardList = reGame.results[0].award_list;
           });
         } else {

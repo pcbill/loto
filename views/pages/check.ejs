@@ -53,11 +53,11 @@
             <td><%= it.award_time %></td>
 
             <% if (it.getgift_time) { %>
-            <td><%= it.getgift_time %></td>
+            <td>已於<%= it.getgift_time %>領走獎品</td>
             <% } else if (it.award_time) { %>
             <td>尚未領獎</td>
             <% } else { %>
-            <td>已經領獎</td>
+            <td></td>
             <% } %>
 
           </tr>

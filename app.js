@@ -323,7 +323,6 @@ app.post('/checkSubmit', (req, res) => {
       if (person) {
         var gameid = person.award_game_id;
         if (gameid) {
-console.log(gameid);
           gameDao.find(gameid, (reGame) => {
 
 console.log(reGame);
@@ -333,6 +332,7 @@ console.log(reGame);
             person.awardList = "";
         }
         reObj.results[0] = person;
+console.log('------'+reObj);
       } else {
       }
 

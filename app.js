@@ -257,7 +257,8 @@ app.get('/listWinner/:gid', (req, res) => {
       var games = reGame.results;
 
       personDao.findByGid(gid, (rePerson) => {
-        rePerson.gid = games[0].gid;
+        //rePerson.gid = games[0].gid;
+        rePerson.results[0].awardList = games[0].award_list;
         res.render('pages/listWinner', rePerson);
       });
     });
@@ -319,9 +320,25 @@ app.post('/checkSubmit', (req, res) => {
     }
   
     personDao.findByUid(uid, (reObj) => {
-      reObj.msg = req.session['msg'];
-      req.session['msg'] = '';
-      res.render('pages/check', reObj);
+      var person = reObj.results[0];
+      if (person) {
+        var gameid = person.award_game_id;
+        if (gameid) {
+          gameDao.find(gameid, (reGame) => {
+            person.awardList = reGame.results[0].award_list;
+          });
+        } else {
+            person.awardList = "";
+        }
+        reObj.results[0] = person;
+      } else {
+      }
+
+      setTimeout(function() {
+        reObj.msg = req.session['msg'];
+        req.session['msg'] = '';
+        res.render('pages/check', reObj);
+      }, 1000);
     });
 });
 

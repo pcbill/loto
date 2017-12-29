@@ -258,7 +258,9 @@ app.get('/listWinner/:gid', (req, res) => {
 
       personDao.findByGid(gid, (rePerson) => {
         //rePerson.gid = games[0].gid;
-        rePerson.results[0].awardList = games[0].award_list;
+        for (var i = 0; i < rePerson.results.length; i++) {
+          rePerson.results[i].awardList = games[i].award_list;
+        }
         res.render('pages/listWinner', rePerson);
       });
     });

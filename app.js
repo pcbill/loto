@@ -332,7 +332,11 @@ app.post('/checkSubmit', (req, res) => {
         var gameid = person.award_game_id;
         if (gameid) {
           gameDao.find(gameid, (reGame) => {
-            person.awardList = reGame.results[0].award_list;
+            if (reGame.results.length > 0) {
+              person.awardList = reGame.results[0].award_list;
+            } else {
+              person.awardList = "員生消費合作社500元兌換券";
+            }
           });
         } else {
             person.awardList = "";
@@ -364,7 +368,11 @@ app.post('/searchPersonByName', (req, res) => {
         var gameid = person.award_game_id;
         if (gameid) {
           gameDao.find(gameid, (reGame) => {
-            person.awardList = reGame.results[0].award_list;
+            if (reGame.results.length > 0) {
+              person.awardList = reGame.results[0].award_list;
+            } else {
+              person.awardList = "員生消費合作社500元兌換券";
+            }
           });
         } else {
             person.awardList = "";

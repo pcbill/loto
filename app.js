@@ -354,10 +354,25 @@ app.post('/searchPersonByName', (req, res) => {
     }
   
     personDao.findByName(name, (reObj) => {
-      reObj.msg = req.session['msg'];
-      req.session['msg'] = '';
-      res.render('pages/check', reObj);
-    });
+      var person = reObj.results[0];
+      if (person) {
+        var gameid = person.award_game_id;
+        if (gameid) {
+          gameDao.find(gameid, (reGame) => {
+            person.awardList = reGame.results[0].award_list;
+          });
+        } else {
+            person.awardList = "";
+        }
+        reObj.results[0] = person;
+      } else {
+      }
+
+      setTimeout(function() {
+        reObj.msg = req.session['msg'];
+        req.session['msg'] = '';
+        res.render('pages/check', reObj);
+      }, 1000);
 
 });
 

@@ -203,14 +203,17 @@ app.get('/execute/:gameId', basicAuth, (req, res) => {
       personDao.findAllRegisteredWithoutAward((re) => {
         var list = re.results;
         
-        var uids = list.map((it) => { 
-          return it.uid 
+        var upairs = list.map((it) => { 
+          return [it.uid, it.name];
         });
         
-        candidates = uids;
         for (i = 0; i < 1000; i++) {
-          shuffle(candidates);
+          shuffle(upairs);
         }
+        
+        candidates = upairs.map((it) => {
+          return it[0];
+        });
  
         if (gameType == 0 && reminderCount >= count) {
           historyDao.saveOne(gameId, candidates);
@@ -221,19 +224,21 @@ app.get('/execute/:gameId', basicAuth, (req, res) => {
           gameDao.played(game, 1);
           personDao.updateReward(game.id, candidates, 1, ()=>{}); 
         }
-      });
 
-      setTimeout(function() {
         req.session['msg'] = it.msg + 'Game Executed!!';
         if (gameType == 0 && reminderCount >= count) {
           res.redirect('/listWinner/'+gameId);
         } else if (gameType == 1 && reminderCount >= 1) {
-          req.session['big_list'] = candidates;
+          var listForUI = upairs.map((it) => {
+            return it[0] + " " + it[1];
+          });
+          req.session['big_list'] = listForUI;
           req.session['reminder_count'] = reminderCount;
           req.session['gid'] = game.id;
           res.redirect('/playBig');
         }
-      }, 1000);
+
+      });
     });
 });
 

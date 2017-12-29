@@ -51,13 +51,13 @@
         <% results.forEach( (it) => { %>
           <tr>
             <td>
-              <a class="btn btn-primary" href='/deleteGame/<%= it.id %>'>del</a>
+              <a class="btn btn-primary" href='/deleteGame/<%= it.id %>'>刪除</a>
 
               <% if (it.reminder_count > 0) { %>
                 <% if (it.exec_type == 0 && count >= it.reminder_count) { %>
-                  <a class="btn btn-primary" href='/playNormal/<%= it.id %>'>play</a>
+                  <a class="btn btn-primary" href='/playNormal/<%= it.id %>'>進入抽獎介面</a>
                 <% } else if (count >= 1) { %>
-                  <a class="btn btn-primary" href='/execute/<%= it.id %>'>play</a>
+                  <a class="btn btn-primary" href='/execute/<%= it.id %>'>進入抽獎介面</a>
                 <% } %>
               <% } %>
 

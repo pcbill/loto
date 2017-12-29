@@ -373,7 +373,7 @@ app.post('/searchPersonByName', (req, res) => {
         req.session['msg'] = '';
         res.render('pages/check', reObj);
       }, 1000);
-
+    });
 });
 
 app.get('/updateGetgiftTime/:uid', basicAuth, (req, res) => {

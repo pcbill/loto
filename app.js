@@ -215,20 +215,24 @@ app.get('/execute/:gameId', basicAuth, (req, res) => {
           return it[0];
         });
  
-        if (gameType == 0 && reminderCount >= count) {
+        req.session['msg'] = it.msg + 'Game Executed!!';
+
+        if (gameType == 0 && reminderCount >= count) 
+        {
           historyDao.saveOne(gameId, candidates);
           gameDao.played(game, count);
           personDao.updateReward(game.id, candidates, count, ()=>{});
-        } else if (gameType == 1 && reminderCount >= 1) {
+
+
+          res.redirect('/listWinner/'+gameId);
+        } 
+        else if (gameType == 1 && reminderCount >= 1) 
+        {
           historyDao.saveOne(gameId, candidates);
           gameDao.played(game, 1);
           personDao.updateReward(game.id, candidates, 1, ()=>{}); 
-        }
 
-        req.session['msg'] = it.msg + 'Game Executed!!';
-        if (gameType == 0 && reminderCount >= count) {
-          res.redirect('/listWinner/'+gameId);
-        } else if (gameType == 1 && reminderCount >= 1) {
+
           var listForUI = upairs.map((it) => {
             return it[0] + " " + it[1];
           });
@@ -236,8 +240,8 @@ app.get('/execute/:gameId', basicAuth, (req, res) => {
           req.session['reminder_count'] = reminderCount;
           req.session['gid'] = game.id;
           res.redirect('/playBig');
-        }
 
+        }
       });
     });
 });

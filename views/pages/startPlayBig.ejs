@@ -201,6 +201,7 @@ ul {
             <% }); %>
           <% } %>
         </ul>
+        <input type="button" id="playFancy" value="Play">
     </div>
     
     <% if (reminderCount > 1) { %>
@@ -243,6 +244,8 @@ ul {
             }
         });
         
+        $('#playFancy').hide();
+
         setTimeout(function() {
             $('#playFancy').click();
         }, 1000);

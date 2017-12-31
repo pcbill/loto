@@ -241,7 +241,7 @@ app.get('/execute/:gameId', basicAuth, (req, res) => {
           req.session['gid'] = game.id;
 
 
-          personDao.findByGid(gid, (rePerson) => {
+          personDao.findByGid(game.id, (rePerson) => {
             req.session['winners'] = rePerson.results;
             res.redirect('/playBig');
           });

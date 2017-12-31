@@ -345,7 +345,7 @@ function showSearch(req, res, targetPage) {
     res.render(targetPage, emptyObj);
 }
 
-app.get('/searchForMana', () => {
+app.get('/searchForMana', (req, res) => {
   showSearch(req, res, 'pages/searchForMana');
 });
 

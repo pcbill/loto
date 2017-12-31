@@ -345,7 +345,7 @@ function showSearch(req, res, targetPage) {
     res.render(targetPage, emptyObj);
 }
 
-app.get('/searchForMana', (req, res) => {
+app.get('/searchForMana', basicAuth, (req, res) => {
   showSearch(req, res, 'pages/searchForMana');
 });
 
@@ -358,7 +358,7 @@ app.post('/checkSubmit', (req, res) => {
   searchSubmit(req, res, '/check');
 });
 
-app.post('/searchSubmitForMana', (req, res) => {
+app.post('/searchSubmitForMana', basicAuth, (req, res) => {
   searchSubmit(req, res, '/searchForMana');
 });
 
@@ -401,7 +401,7 @@ function searchSubmit(req, res, target) {
 app.post('/searchPersonByName', (req, res) => {
   searchPersonByNameForMana(req, res, '/check');
 });
-app.post('/searchPersonByNameForMana', (req, res) => {
+app.post('/searchPersonByNameForMana', basicAuth, (req, res) => {
   searchPersonByNameForMana(req, res, '/searchForMana');
 });
 function searchPersonByNameForMana (req, res, target) {

@@ -290,7 +290,7 @@ app.get('/cancelWinner/:gid/:uid', basicAuth, (req, res) => {
 
         req.session['msg'] = re.msg + ' winner cancel!!';
         res.redirect('/listWinner/'+gid);
-    });
+   });
 });
 
 app.get('/playBig', basicAuth, (req, res) => {
@@ -318,6 +318,18 @@ app.get('/playNormal/:gid', basicAuth, (req, res) => {
       gid: game.id
     });
   });
+});
+
+app.get('/beforePlayBig/:gid', basicAuth, (req, res) => {		
+  var gid = req.params.gid;		
+		
+  gameDao.find(gid, (reGame) => {		
+    var game = reGame.results[0];		
+    res.render('pages/beforePlayBig', {		
+      reminderCount: game.reminder_count, 		
+      gid: game.id		
+    });		
+  });		
 });
 
 // check //////////////////////////////////

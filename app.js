@@ -399,11 +399,17 @@ function searchSubmit(req, res, target) {
   }
 
 app.post('/searchPersonByName', (req, res) => {
+  searchPersonByNameForMana(req, res, '/check');
+});
+app.post('/searchPersonByNameForMana', (req, res) => {
+  searchPersonByNameForMana(req, res, '/searchForMana');
+});
+function searchPersonByNameForMana (req, res, target) {
     var name = req.body['name'];
   
     if (!name || name == '') {
       req.session['msg'] = '請輸入姓名';
-      res.redirect('/check');
+      res.redirect(target);
       return;
     }
   
@@ -429,10 +435,10 @@ app.post('/searchPersonByName', (req, res) => {
       setTimeout(function() {
         reObj.msg = req.session['msg'];
         req.session['msg'] = '';
-        res.render('pages/check', reObj);
+        res.render('pages' + target, reObj);
       }, 1000);
     });
-});
+}
 
 app.get('/updateGetgiftTime/:uid', basicAuth, (req, res) => {
     var uid = req.params.uid;

@@ -207,6 +207,36 @@ ul {
       <a href="/execute/<%= gid %>">繼續抽下一個</a>
     <% } %>
     
+
+    <% if (winners) { %>
+        <table class="table table-bordered table-hover">
+            <tr>
+              <th>號碼</th>  
+              <th>姓名</th>  
+              <th>桌次</th>  
+              <th>中獎獎品</th>  
+              <th>中獎時間</th>  
+              <th>領獎時間</th>  
+            </tr>
+          <% results.forEach( (it) => { %>
+            <tr>
+              <td><%= it.uid %></td> 
+              <td><%= it.name %></td> 
+              <td><%= it.table_num %></td> 
+              <td><%= it.awardList %></td>
+              <td><%= it.award_time %></td>
+              <td><%= it.getgift_time %></td>
+  
+  
+            </tr>
+          <% }); %>
+        </table>
+    <% } %>
+
+
+
+
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
     <script src="js/jquery.easing.1.3.js" type="text/javascript" charset="utf-8"></script>
     <script src="js/jquery.jSlots.js" type="text/javascript" charset="utf-8"></script>

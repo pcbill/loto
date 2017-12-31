@@ -125,9 +125,15 @@ app.post('/createPerson', basicAuth, (req, res) => {
     res.redirect('/manageRegistration');
     return;
   }
-
-  personDao.saveOne(uid, name, table_num, () => {
-    res.redirect('/manageRegistration');
+  
+  personDao.findByUid(uid, (rePerson) => {
+    if (rePerson.results.length <= 0) {
+      personDao.saveOne(uid, name, table_num, () => {
+        res.redirect('/manageRegistration');
+      });
+    } else {
+        res.redirect('/manageRegistration');
+    }
   });
 });
 
@@ -454,8 +460,3 @@ app.get('/updateGetgiftTime/:uid', basicAuth, (req, res) => {
       res.redirect('/check');
     });
 });
-
-//app.get('/logout', (req, res) => {
-//  res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
-//  res.sendStatus(401);
-//});

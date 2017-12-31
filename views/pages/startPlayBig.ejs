@@ -192,7 +192,7 @@ ul {
     
     有 <span id='reminderCount'><%= reminderCount %></span> 次機會
             
-    <div class="fancy">
+    <div class="fanc">
         <ul class="slot">
           <% if (results) { %>
               <li><span> ?????? </span></li>
@@ -215,13 +215,13 @@ ul {
         
         
         // fancy example
-        $('.fancy .slot').jSlots({
+        $('.fanc .slot').jSlots({
             number : 1,
             winnerNumber : 2,
             spinner : '#playFancy',
             easing : 'easeOutSine',
             time : 7000,
-            loops : 6,
+            loops : 4,
             onStart : function() {
                 $('.slot').removeClass('winner');
             },

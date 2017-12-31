@@ -102,6 +102,7 @@ app.post('/registerByNameSubmit', basicAuth, (req, res) => {
 app.get('/manageRegistration', basicAuth, (req, res) => {
     personDao.findAllRegistered( (reObj) => {
       reObj.msg = req.session['msg'];
+      console.log(reObj.msg);
       req.session['msg'] = '';
       res.render('pages/manageRegistration', reObj);
     });

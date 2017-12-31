@@ -228,20 +228,20 @@ app.get('/execute/:gameId', basicAuth, (req, res) => {
         } 
         else if (gameType == 1 && reminderCount >= 1) 
         {
-          historyDao.saveOne(gameId, candidates);
-          gameDao.played(game, 1);
-          personDao.updateReward(game.id, candidates, 1, ()=>{}); 
-
-
-          var listForUI = upairs.map((it) => {
-            return it[0] + " " + it[1];
-          });
-          req.session['big_list'] = listForUI;
-          req.session['reminder_count'] = reminderCount;
-          req.session['gid'] = game.id;
-
-
           personDao.findByGid(game.id, (rePerson) => {
+            historyDao.saveOne(gameId, candidates);
+            gameDao.played(game, 1);
+            personDao.updateReward(game.id, candidates, 1, ()=>{}); 
+
+
+            var listForUI = upairs.map((it) => {
+              return it[0] + " " + it[1];
+            });
+            req.session['big_list'] = listForUI;
+            req.session['reminder_count'] = reminderCount;
+            req.session['gid'] = game.id;
+
+
             req.session['winners'] = rePerson.results;
             res.redirect('/playBig');
           });

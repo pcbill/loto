@@ -57,7 +57,7 @@
                 <% if (it.exec_type == 0 && count >= it.reminder_count) { %>
                   <a class="btn btn-primary" href='/playNormal/<%= it.id %>'>進入抽獎介面</a>
                 <% } else if (count >= 1) { %>
-                  <a class="btn btn-primary" href='/execute/<%= it.id %>'>進入抽獎介面</a>
+                  <a class="btn btn-primary" href='/beforePlayBig/<%= it.id %>'>進入抽獎介面</a>
                 <% } %>
               <% } %>
 

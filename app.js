@@ -314,6 +314,18 @@ app.get('/playNormal/:gid', basicAuth, (req, res) => {
   });
 });
 
+app.get('/beforePlayBig/:gid', basicAuth, (req, res) => {
+  var gid = req.params.gid;
+
+  gameDao.find(gid, (reGame) => {
+    var game = reGame.results[0];
+    res.render('pages/beforePlayBig', {
+      reminderCount: game.reminder_count, 
+      gid: game.id
+    });
+  });
+});
+
 // check //////////////////////////////////
 app.get('/check', (req, res) => {
     emptyObj.msg = req.session['msg'];

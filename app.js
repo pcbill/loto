@@ -133,7 +133,7 @@ app.post('/createPerson', basicAuth, (req, res) => {
         res.redirect('/manageRegistration');
       });
     } else {
-        req.session['msp'] = 'id 重複';
+        req.session['msg'] = 'id 重複';
         res.redirect('/manageRegistration');
     }
   });

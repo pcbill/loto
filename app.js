@@ -289,7 +289,7 @@ app.get('/cancelWinner/:gid/:uid', basicAuth, (req, res) => {
         gameDao.cancelOneReward(gid);
 
         req.session['msg'] = re.msg + ' winner cancel!!';
-        res.redirect('/listWinner/'+gid);
+        res.redirect('/editWinner/'+gid);
    });
 });
 

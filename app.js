@@ -296,14 +296,20 @@ app.get('/cancelWinner/:gid/:uid', basicAuth, (req, res) => {
 app.get('/playBig', basicAuth, (req, res) => {
     var list = req.session['big_list'];
     req.session['big_list'] = [];
+    
     var reminderCount = req.session['reminder_count'];
     req.session['reminder_count'] = 0;
+
     var gid = req.session['gid'];
     req.session['gid'] = 0;
+
+    var winners = req.session['winners'];
+    req.session['winners'] = [];
 
     res.render('pages/startPlayBig', {
       results: list,
       gid: gid, 
+      winners: winners,
       reminderCount: reminderCount});
 });
 

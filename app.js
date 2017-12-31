@@ -339,18 +339,35 @@ app.get('/beforePlayBig/:gid', basicAuth, (req, res) => {
 });
 
 // check //////////////////////////////////
-app.get('/check', (req, res) => {
+function showSearch(req, res, targetPage) {
     emptyObj.msg = req.session['msg'];
     req.session['msg'] = '';
-    res.render('pages/check', emptyObj);
+    res.render(targetPage, emptyObj);
+}
+
+app.get('/searchForMana', () => {
+  showSearch(req, res, 'pages/searchForMana');
 });
 
+app.get('/check', (req, res) => {
+  showSearch(req, res, 'pages/check');
+});
+
+
 app.post('/checkSubmit', (req, res) => {
-    var uid = req.body['uid'];
+  searchSubmit(req, res, '/check');
+});
+
+app.post('/searchSubmitForMana', (req, res) => {
+  searchSubmit(req, res, '/searchForMana');
+});
+
+function searchSubmit(req, res, target) {
+  var uid = req.body['uid'];
   
     if (!uid || uid == '') {
       req.session['msg'] = '請輸入號碼';
-      res.redirect('/check');
+      res.redirect(target);
       return;
     }
   
@@ -376,10 +393,10 @@ app.post('/checkSubmit', (req, res) => {
       setTimeout(function() {
         reObj.msg = req.session['msg'];
         req.session['msg'] = '';
-        res.render('pages/check', reObj);
+        res.render('pages' + target, reObj);
       }, 1000);
     });
-});
+  }
 
 app.post('/searchPersonByName', (req, res) => {
     var name = req.body['name'];

@@ -190,8 +190,9 @@ ul {
 <body>
 
     <a href="/beforePlayBig/<%= gid %>">BACK</a>
-    
-    有 <span id='reminderCount'><%= reminderCount %></span> 次機會
+    <br/>
+    <br/>
+    還有 <span id='reminderCount'><%= reminderCount %></span> 次機會
             
     <div class="fancy">
         <ul class="slot">
@@ -206,10 +207,11 @@ ul {
     </div>
     
     <% if (reminderCount > 1) { %>
-      <a href="/execute/<%= gid %>">繼續抽下一個</a>
+      <a href="/execute/<%= gid %>" class="btn btn-primary">繼續抽下一個</a>
     <% } %>
     
 
+    <br/>
     <% if (winners) { %>
         <table class="table table-bordered table-hover">
             <tr>

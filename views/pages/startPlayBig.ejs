@@ -215,7 +215,7 @@ ul {
 
     <br/>
     <% if (winners) { %>
-        <table class="table table-bordered table-hover">
+        <table id="winnerList" class="table table-bordered table-hover">
             <tr>
               <th>號碼</th>  
               <th>姓名</th>  
@@ -260,13 +260,18 @@ ul {
                 });
                 
                 $('#reminderCount').text('<%= reminderCount-1 %>');
+                $('#winnerList tr:first').after('<tr>\n' +
+                    '              <td><%= results[0] %></td> \n' +
+                    '              <td></td> \n' +
+                    '              <td></td> \n' +
+                    '            </tr>');
 
                 // react to the # of winning slots                 
-                if ( winCount === 1 ) {
+                //if ( winCount === 1 ) {
                     //alert('You got ' + winCount + ' 7!!!');
-                } else if ( winCount > 1 ) {
+                //} else if ( winCount > 1 ) {
                     //alert('You got ' + winCount + ' 7’s!!!');
-                }
+                //}
                 
             }
         });

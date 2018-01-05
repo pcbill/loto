@@ -2,6 +2,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <% include ../partials/header.ejs %>
 <title>jSlots Slot Machine - Matthew Lein</title>
 
 
@@ -72,8 +73,7 @@ ul {
 .fancy .slot li:nth-child(2) {
     background-color: #FF3333;
 }
-.fancy .slot li:nth-child(1),
-.fancy .slot li:nth-child(8) {
+.fancy .slot li:nth-child(1) {
     background-color: #FF0000;
 }
 
@@ -188,8 +188,11 @@ ul {
 
 </head>
 <body>
-    
-    有 <span id='reminderCount'><%= reminderCount %></span> 次機會
+
+    <a href="/beforePlayBig/<%= gid %>">BACK</a>
+    <br/>
+    <br/>
+    還有 <span id='reminderCount'><%= reminderCount %></span> 次機會
             
     <div class="fancy">
         <ul class="slot">
@@ -204,30 +207,25 @@ ul {
     </div>
     
     <% if (reminderCount > 1) { %>
-      <a href="/execute/<%= gid %>">繼續抽下一個</a>
+    <div class="text-center">
+      <a href="/execute/<%= gid %>" class="btn btn-primary ">繼續抽下一個</a>
+    </div>
     <% } %>
     
 
+    <br/>
     <% if (winners) { %>
         <table class="table table-bordered table-hover">
             <tr>
               <th>號碼</th>  
               <th>姓名</th>  
               <th>桌次</th>  
-              <th>中獎獎品</th>  
-              <th>中獎時間</th>  
-              <th>領獎時間</th>  
             </tr>
-          <% results.forEach( (it) => { %>
+          <% winners.forEach( (it) => { %>
             <tr>
               <td><%= it.uid %></td> 
               <td><%= it.name %></td> 
               <td><%= it.table_num %></td> 
-              <td><%= it.awardList %></td>
-              <td><%= it.award_time %></td>
-              <td><%= it.getgift_time %></td>
-  
-  
             </tr>
           <% }); %>
         </table>

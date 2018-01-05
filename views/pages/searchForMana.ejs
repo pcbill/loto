@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <% include ../partials/header.ejs %>
+</head>
+
+<body>
+  <% include ../partials/nav.ejs %>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <h3>
+      查詢管理介面
+      </h3>
+
+      <form action="/searchSubmitForMana" method="POST">
+        號碼 <input id="uid" name="uid" type="text" forcus />
+        <button type="submit" value="submit">submit</button>
+      </form>
+      <br/>
+
+      <form action="/searchPersonByNameForMana" method="POST">
+        姓名 <input id="name" name="name" type="text" />
+        <button type="submit" value="submit">submit</button>
+      </form>
+      <br/>
+
+      <% if (results) { %>
+      <table class="table table-bordered table-hover">
+          <tr>
+            <th>號碼</th>  
+            <th>姓名</th>  
+            <th>桌次</th>  
+            <th>報到時間</th>  
+            <th>中獎獎品</th>  
+            <th>中獎時間</th>  
+            <th>領獎時間</th>  
+          </tr>
+        <% results.forEach( (it) => {%>
+          <tr>
+            <td><%= it.uid %></td> 
+            <td><%= it.name %></td> 
+            <td><%= it.table_num %></td> 
+            <td><%= it.registration_time %></td>
+
+            <% if (it.award_game_id ) { %>
+            <td><%= it.awardList %></td>
+            <% } else { %>
+            <td>尚未中獎</td>
+            <% } %>
+
+            <td><%= it.award_time %></td>
+
+            <% if (it.getgift_time) { %>
+            <td>已於<%= it.getgift_time %>領走獎品</td>
+            <% } else if (it.award_time) { %>
+            <td><a class="btn btn-primary" href='/updateGetgiftTime/<%= it.uid %>'>我要領獎</a></td>
+            <% } else { %>		              
+            <td></td>
+            <% } %>
+
+          </tr>
+        <% }); %>
+      </table>
+      <% } %>
+
+    </div>
+  </div>
+</div>
+
+
+</body>
+<script> document.getElementById("uid").focus(); </script>
+</html>

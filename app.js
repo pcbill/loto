@@ -102,6 +102,7 @@ app.post('/registerByNameSubmit', basicAuth, (req, res) => {
 app.get('/manageRegistration', basicAuth, (req, res) => {
     personDao.findAllRegistered( (reObj) => {
       reObj.msg = req.session['msg'];
+      console.log(reObj.msg);
       req.session['msg'] = '';
       res.render('pages/manageRegistration', reObj);
     });
@@ -125,9 +126,16 @@ app.post('/createPerson', basicAuth, (req, res) => {
     res.redirect('/manageRegistration');
     return;
   }
-
-  personDao.saveOne(uid, name, table_num, () => {
-    res.redirect('/manageRegistration');
+  
+  personDao.findByUid(uid, (rePerson) => {
+    if (rePerson.results.length <= 0) {
+      personDao.saveOne(uid, name, table_num, () => {
+        res.redirect('/manageRegistration');
+      });
+    } else {
+        req.session['msg'] = 'id 重複';
+        res.redirect('/manageRegistration');
+    }
   });
 });
 
@@ -228,20 +236,20 @@ app.get('/execute/:gameId', basicAuth, (req, res) => {
         } 
         else if (gameType == 1 && reminderCount >= 1) 
         {
-          historyDao.saveOne(gameId, candidates);
-          gameDao.played(game, 1);
-          personDao.updateReward(game.id, candidates, 1, ()=>{}); 
+          personDao.findByGid(game.id, (rePerson) => {
+            historyDao.saveOne(gameId, candidates);
+            gameDao.played(game, 1);
+            personDao.updateReward(game.id, candidates, 1, ()=>{}); 
 
 
-          var listForUI = upairs.map((it) => {
-            return it[0] + " " + it[1];
-          });
-          req.session['big_list'] = listForUI;
-          req.session['reminder_count'] = reminderCount;
-          req.session['gid'] = game.id;
+            var listForUI = upairs.map((it) => {
+              return it[0] + " " + it[1];
+            });
+            req.session['big_list'] = listForUI;
+            req.session['reminder_count'] = reminderCount;
+            req.session['gid'] = game.id;
 
 
-          personDao.findByGid(gid, (rePerson) => {
             req.session['winners'] = rePerson.results;
             res.redirect('/playBig');
           });
@@ -289,21 +297,27 @@ app.get('/cancelWinner/:gid/:uid', basicAuth, (req, res) => {
         gameDao.cancelOneReward(gid);
 
         req.session['msg'] = re.msg + ' winner cancel!!';
-        res.redirect('/listWinner/'+gid);
-    });
+        res.redirect('/editWinner/'+gid);
+   });
 });
 
 app.get('/playBig', basicAuth, (req, res) => {
     var list = req.session['big_list'];
     req.session['big_list'] = [];
+    
     var reminderCount = req.session['reminder_count'];
     req.session['reminder_count'] = 0;
+
     var gid = req.session['gid'];
     req.session['gid'] = 0;
+
+    var winners = req.session['winners'];
+    req.session['winners'] = [];
 
     res.render('pages/startPlayBig', {
       results: list,
       gid: gid, 
+      winners: winners,
       reminderCount: reminderCount});
 });
 
@@ -320,19 +334,48 @@ app.get('/playNormal/:gid', basicAuth, (req, res) => {
   });
 });
 
-// check //////////////////////////////////
-app.get('/check', (req, res) => {
-    emptyObj.msg = req.session['msg'];
-    req.session['msg'] = '';
-    res.render('pages/check', emptyObj);
+app.get('/beforePlayBig/:gid', basicAuth, (req, res) => {		
+  var gid = req.params.gid;		
+		
+  gameDao.find(gid, (reGame) => {		
+    var game = reGame.results[0];		
+    res.render('pages/beforePlayBig', {		
+      reminderCount: game.reminder_count, 		
+      gid: game.id		
+    });		
+  });		
 });
 
+// check //////////////////////////////////
+function showSearch(req, res, targetPage) {
+    emptyObj.msg = req.session['msg'];
+    req.session['msg'] = '';
+    res.render(targetPage, emptyObj);
+}
+
+app.get('/searchForMana', basicAuth, (req, res) => {
+  showSearch(req, res, 'pages/searchForMana');
+});
+
+app.get('/check', (req, res) => {
+  showSearch(req, res, 'pages/check');
+});
+
+
 app.post('/checkSubmit', (req, res) => {
-    var uid = req.body['uid'];
+  searchSubmit(req, res, '/check');
+});
+
+app.post('/searchSubmitForMana', basicAuth, (req, res) => {
+  searchSubmit(req, res, '/searchForMana');
+});
+
+function searchSubmit(req, res, target) {
+  var uid = req.body['uid'];
   
     if (!uid || uid == '') {
       req.session['msg'] = '請輸入號碼';
-      res.redirect('/check');
+      res.redirect(target);
       return;
     }
   
@@ -358,17 +401,23 @@ app.post('/checkSubmit', (req, res) => {
       setTimeout(function() {
         reObj.msg = req.session['msg'];
         req.session['msg'] = '';
-        res.render('pages/check', reObj);
+        res.render('pages' + target, reObj);
       }, 1000);
     });
-});
+  }
 
 app.post('/searchPersonByName', (req, res) => {
+  searchPersonByNameForMana(req, res, '/check');
+});
+app.post('/searchPersonByNameForMana', basicAuth, (req, res) => {
+  searchPersonByNameForMana(req, res, '/searchForMana');
+});
+function searchPersonByNameForMana (req, res, target) {
     var name = req.body['name'];
   
     if (!name || name == '') {
       req.session['msg'] = '請輸入姓名';
-      res.redirect('/check');
+      res.redirect(target);
       return;
     }
   
@@ -394,10 +443,10 @@ app.post('/searchPersonByName', (req, res) => {
       setTimeout(function() {
         reObj.msg = req.session['msg'];
         req.session['msg'] = '';
-        res.render('pages/check', reObj);
+        res.render('pages' + target, reObj);
       }, 1000);
     });
-});
+}
 
 app.get('/updateGetgiftTime/:uid', basicAuth, (req, res) => {
     var uid = req.params.uid;
@@ -413,8 +462,3 @@ app.get('/updateGetgiftTime/:uid', basicAuth, (req, res) => {
       res.redirect('/check');
     });
 });
-
-//app.get('/logout', (req, res) => {
-//  res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
-//  res.sendStatus(401);
-//});

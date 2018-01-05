@@ -83,7 +83,7 @@
             base.$liHeight = $li.outerHeight();
             base.$liWidth = $li.outerWidth();
 
-            base.liCount = base.$el.children().length / 6;
+            base.liCount = base.$el.children().length / 25;
 
             base.listHeight = base.$liHeight * base.liCount;
 

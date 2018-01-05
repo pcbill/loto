@@ -301,6 +301,15 @@ app.get('/cancelWinner/:gid/:uid', basicAuth, (req, res) => {
    });
 });
 
+app.get('/cancelWinnerQuietly/:gid/:uid', basicAuth, (req, res) => {
+    var gid = req.params.gid;
+    var uid = req.params.uid;
+
+    personDao.cancelReward(uid, (re) => {
+        gameDao.cancelOneReward(gid);
+    });
+});
+
 app.get('/playBig', basicAuth, (req, res) => {
     var list = req.session['big_list'];
     req.session['big_list'] = [];

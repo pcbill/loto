@@ -307,6 +307,7 @@ app.get('/cancelWinnerQuietly/:gid/:uid', basicAuth, (req, res) => {
 
     personDao.cancelReward(uid, (re) => { });
     gameDao.cancelOneReward(gid);
+    res.send('');
 });
 
 app.get('/playBig', basicAuth, (req, res) => {

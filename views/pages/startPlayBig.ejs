@@ -217,11 +217,15 @@ ul {
     <% if (winners) { %>
         <table id="winnerList" class="table table-bordered table-hover">
             <tr>
-              <th>號碼 姓名</th>
+                <th>號碼</th>
+                <th>姓名</th>
+                <th></th>
             </tr>
           <% winners.forEach( (it) => { %>
             <tr>
-              <td><%= it.uid + ' ' + it.name %></td>
+                <td><%= it.uid %></td>
+                <td><%= it.name %></td>
+                <td></td>
             </tr>
           <% }); %>
         </table>
@@ -257,7 +261,9 @@ ul {
                 
                 $('#reminderCount').text('<%= reminderCount-1 %>');
                 $('#winnerList tr:first').after('<tr>\n' +
-                    '              <td><%= results[0] %></td> \n' +
+                    '              <td><%= results[0].split(' ')[0] %></td>' +
+                    '              <td><%= results[0].split(' ')[1] %></td>' +
+                    '<a class="btn btn-primary" href=\'/cancelWinner/<%= gid %>/<%= results[0].split(' ')[1] %>\'>取消資格</a> </td> \n' +
                     '            </tr>');
 
             }

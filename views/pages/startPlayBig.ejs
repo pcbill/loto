@@ -240,6 +240,8 @@ ul {
     <script src="js/jquery.jSlots.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript" charset="utf-8">
         function cancelButtonAction() {
+            $.get( "/cancelWinnerQuietly/<%= gid %>/<%= results[0].split(' ')[0] %>", function( data ) { });
+
             $('#cancelRow').hide();
             $('#reminderCount').text('<%= reminderCount %>');
         }
@@ -266,7 +268,7 @@ ul {
                 $('#winnerList tr:first').after('<tr id="cancelRow" >\n' +
                     '              <td><%= results[0].split(' ')[0] %></td>' +
                     '              <td><%= results[0].split(' ')[1] %></td>' +
-                    '<td><a onclick="cancelButtonAction()" class="btn btn-primary" href=\'/cancelWinnerQuietly/<%= gid %>/<%= results[0].split(' ')[0] %>\'>取消資格</a> </td> \n' +
+                    '<td><button onclick="cancelButtonAction()" class="btn btn-primary" >取消資格</button> </td> \n' +
                     '            </tr>');
 
             }

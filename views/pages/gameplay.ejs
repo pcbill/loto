@@ -53,6 +53,10 @@
             <td>
               <a class="btn btn-primary" href='/deleteGame/<%= it.id %>'>刪除</a>
 
+              <% if (it.exec_type != 0) { %>
+                <a class="btn btn-primary" href='/editWinner/<%= it.id %>'>修改得獎者</a>
+              <% } %>
+
               <% if (it.reminder_count > 0) { %>
                 <% if (it.exec_type == 0 && count >= it.reminder_count) { %>
                   <a class="btn btn-primary" href='/playNormal/<%= it.id %>'>進入抽獎介面</a>
@@ -60,10 +64,7 @@
                   <a class="btn btn-primary" href='/beforePlayBig/<%= it.id %>'>進入抽獎介面</a>
                 <% } %>
               <% } %>
-
-              <% if (it.exec_type != 0) { %>
-                <a class="btn btn-primary" href='/editWinner/<%= it.id %>'>修改得獎者</a>
-              <% } %>
+             
             </td>
             <td><%= it.gid %></td>
             <td><%= it.award_list %></td>

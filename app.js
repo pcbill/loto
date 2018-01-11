@@ -22,7 +22,7 @@ var basicAuth = basicAuth({
 });
 
 app.use(express.static(__dirname + '/public'));
-app.use('/img', express.static(__dirname + '/public/img'));
+
 
 app.use(session({ 
   msg: '',

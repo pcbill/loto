@@ -356,7 +356,8 @@ app.get('/playNormal/:gid', basicAuth, (req, res) => {
     var game = reGame.results[0];
     res.render('pages/startPlayNormal', {
       reminderCount: game.reminder_count, 
-      gid: game.id
+      gid: game.id,
+      gameName: game.award_list
     });
   });
 });

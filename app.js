@@ -228,7 +228,7 @@ app.get('/execute/:gameId', basicAuth, (req, res) => {
  
         req.session['msg'] = it.msg + 'Game Executed!!';
 
-        req.session['gameName'] = game.name;
+        req.session['gameName'] = game.award_list;
         if (gameType == 0 && reminderCount >= count)
         {
           // normal

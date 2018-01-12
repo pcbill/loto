@@ -243,11 +243,13 @@ app.get('/execute/:gameId/:playRightNow', basicAuth, (req, res) => {
         else if (gameType == 1 && reminderCount >= 1) 
         {
           // big game
-          personDao.findByGid(game.id, (rePerson) => {
-            historyDao.saveOne(gameId, candidates);
-            gameDao.played(game, 1);
-            personDao.updateReward(game.id, candidates, 1, ()=>{}); 
 
+          personDao.findByGid(game.id, (rePerson) => {
+            if (playRightNow === 'true') {
+                historyDao.saveOne(gameId, candidates);
+                gameDao.played(game, 1);
+                personDao.updateReward(game.id, candidates, 1, ()=>{});
+            }
 
             var listForUI = upairs.map((it) => {
               return it[0] + " " + it[1];

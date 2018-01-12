@@ -212,7 +212,7 @@ ul {
     </div>
     
     <% if (reminderCount > 1) { %>
-      <a href="/execute/<%= gid %>" style="padding: 0px">
+      <a href="/execute/<%= gid %>/true" style="padding: 0px">
           <img src="/img/play_next_button.png" width="300"/>
       </a>
     <% } %>
@@ -278,9 +278,12 @@ ul {
         
         $('#playFancy').hide();
 
-        setTimeout(function() {
-            $('#playFancy').click();
-        }, 1000);
+
+        <% if (playRightNow) { %>
+            setTimeout(function() {
+                $('#playFancy').click();
+            }, 1000);
+        <% } %>
 
     </script>
     

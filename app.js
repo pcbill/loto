@@ -200,8 +200,9 @@ app.get('/gameComplete', basicAuth, (req, res) => {
     });
 });
 
-app.get('/execute/:gameId', basicAuth, (req, res) => {
+app.get('/execute/:gameId/:playRightNow', basicAuth, (req, res) => {
     var gameId = req.params.gameId;
+    var playRightNow = req.params.playRightNow;
 
     gameDao.find(gameId, (it) => {
       var game = it.results[0];
@@ -254,7 +255,7 @@ app.get('/execute/:gameId', basicAuth, (req, res) => {
             req.session['big_list'] = listForUI;
             req.session['reminder_count'] = reminderCount;
             req.session['gid'] = game.id;
-
+            req.session['playRightNow'] = playRightNow;
 
             req.session['winners'] = rePerson.results;
             res.redirect('/playBig');
@@ -333,11 +334,15 @@ app.get('/playBig', basicAuth, (req, res) => {
     var gameName = req.session['gameName'];
     req.session['gameName'] = '';
 
+    var playRightNow = req.session['playRightNow'];
+    req.session['playRightNow'] = false;
+
     res.render('pages/startPlayBig', {
       results: list,
       gid: gid, 
       winners: winners,
       gameName: gameName,
+      playRigthNow: playRightNow,
       reminderCount: reminderCount});
 });
 

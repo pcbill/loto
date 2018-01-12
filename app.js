@@ -209,6 +209,7 @@ app.get('/execute/:gameId', basicAuth, (req, res) => {
       var gameType = game.exec_type;
       var count = game.participant_count;
       var reminderCount = game.reminder_count;
+
       var candidates ;
       personDao.findAllRegisteredWithoutAward((re) => {
         var list = re.results;
@@ -227,8 +228,10 @@ app.get('/execute/:gameId', basicAuth, (req, res) => {
  
         req.session['msg'] = it.msg + 'Game Executed!!';
 
-        if (gameType == 0 && reminderCount >= count) 
+        req.session['gameName'] = game.name;
+        if (gameType == 0 && reminderCount >= count)
         {
+          // normal
           historyDao.saveOne(gameId, candidates);
           gameDao.played(game, count);
           personDao.updateReward(game.id, candidates, count, ()=>{});
@@ -238,6 +241,7 @@ app.get('/execute/:gameId', basicAuth, (req, res) => {
         } 
         else if (gameType == 1 && reminderCount >= 1) 
         {
+          // big game
           personDao.findByGid(game.id, (rePerson) => {
             historyDao.saveOne(gameId, candidates);
             gameDao.played(game, 1);
@@ -326,10 +330,14 @@ app.get('/playBig', basicAuth, (req, res) => {
     var winners = req.session['winners'];
     req.session['winners'] = [];
 
+    var gameName = req.session['gameName'];
+    req.session['gameName'] = '';
+
     res.render('pages/startPlayBig', {
       results: list,
       gid: gid, 
       winners: winners,
+      gameName: gameName,
       reminderCount: reminderCount});
 });
 

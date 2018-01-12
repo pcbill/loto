@@ -192,8 +192,9 @@ ul {
     <a href="/gameplay">BACK</a>
     <br/>
     <br/>
-    <img src="/img/now_we_will_play.png" /> <%= gameName %>
-    <img src="/img/still.png" /> <span id='reminderCount'><%= reminderCount %></span> <img src="/img/chances.png" />
+    <img src="/img/now_we_will_play.png" width="300"/> <%= gameName %>
+    <br/>
+    <img src="/img/still.png" width="100" /> <span id='reminderCount'><%= reminderCount %></span> <img src="/img/chances.png" width="150" />
 
     <div class="text-center">
     <div class="fancy">
@@ -209,7 +210,7 @@ ul {
     </div>
     
     <% if (reminderCount > 1) { %>
-      <a href="/execute/<%= gid %>" class="btn btn-primary " style="padding: 0px">
+      <a href="/execute/<%= gid %>" style="padding: 0px">
           <img src="/img/play_next_button.png" width="300"/>
       </a>
     <% } %>

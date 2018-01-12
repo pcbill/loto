@@ -342,7 +342,7 @@ app.get('/playBig', basicAuth, (req, res) => {
       gid: gid, 
       winners: winners,
       gameName: gameName,
-      playRigthNow: playRightNow,
+      playRightNow: playRightNow,
       reminderCount: reminderCount});
 });
 

@@ -187,7 +187,7 @@ ul {
 
 
 </head>
-<body>
+<body background="/img/bg.png" width="2048">
 
     <a href="/gameplay">BACK</a>
     <br/>
@@ -208,7 +208,9 @@ ul {
     
     <% if (reminderCount > 1) { %>
     <div class="text-center">
-      <a href="/execute/<%= gid %>" class="btn btn-primary ">繼續抽下一個</a>
+      <a href="/execute/<%= gid %>" class="btn btn-primary ">
+          <img src="/img/play_next_button.png" />
+      </a>
     </div>
     <% } %>
     
@@ -230,8 +232,6 @@ ul {
           <% }); %>
         </table>
     <% } %>
-
-
 
 
 

@@ -198,10 +198,18 @@ ul {
         <tr><td valign="middle" style="font-size: 48px">
             <img src="/img/now_we_will_play.png" width="300"/> <%= gameName %>
         </td></tr>
+    </table>
+    <table>
         <trd><td>
             <img src="/img/top.jpg" width="1024px"/>
         </td></tr>
-        <tr><td>
+    </table>
+    <table>
+        <tr>
+        <td>
+            <img src="/img/front.jpg" />
+        </td>
+        <td>
             <div class="fancy">
                 <ul class="slot">
                 <% if (results) { %>
@@ -213,7 +221,8 @@ ul {
                 </ul>
                 <input type="button" id="playFancy" value="Play">
             </div>
-        </td></tr>
+        </td>
+        </tr>
         <tr><td align="center">
             <% if (reminderCount > 0) { %>
             <a id="playNextButton" href="/execute/<%= gid %>/true" style="padding: 0px">
@@ -221,9 +230,13 @@ ul {
             </a>
             <% } %>
         </td></tr>
+    </table>
+    <table>
         <trd><td>
             <img src="/img/bottom.jpg" width="1024px"/>
         </td></tr>
+    </table>
+    <table>
         <tr><td align="right" valign="middle" style="font-size: 48px">
             <img src="/img/still.png" width="100" /> <span id='reminderCount'><%= reminderCount %></span> <img src="/img/chances.png" width="150" />
         </td></tr>

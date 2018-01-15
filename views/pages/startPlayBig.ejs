@@ -235,9 +235,11 @@ ul {
         </td>
         <td align="center" style="width: 371px">
             <% if (reminderCount > 0) { %>
-            <a id="playNextButton" href="/execute/<%= gid %>/true" style="padding: 0px">
+            <span id="playNextButton">
+            <a href="/execute/<%= gid %>/true" style="padding: 0px">
                 <img src="/img/play.jpg" />
             </a>
+            </span>
             <% } %>
         </td>
         <td>

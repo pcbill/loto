@@ -238,10 +238,6 @@ ul {
             <a id="playNextButton" href="/execute/<%= gid %>/true" style="padding: 0px">
                 <img src="/img/play.jpg" />
             </a>
-            <% } else { %> 
-            <span id="disablePlay">
-                <img src="/img/play.jpg" />
-            </span>
             <% } %>
         </td>
         <td>
@@ -310,8 +306,7 @@ ul {
                 $('#reminderCount').text('<%= reminderCount-1 %>');
 
                 <% if (reminderCount-1 <= 0) {%>
-                    $('#playNextButton').hide();
-                    $('#disablePlay').show();
+                    $('#playNextButton').html('<img src="/img/play.jpg" />');
                 <% } %>
 
                 $('#winnerList tr:first').after('<tr id="cancelRow" >\n' +

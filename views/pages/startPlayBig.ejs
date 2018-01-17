@@ -291,9 +291,10 @@ ul {
                 '            </a>');
         }
 
-        $('.fancy .slot').hide();
         $('#playFancy').hide();
 
+
+        setTimeout(function() {
         // fancy example
         $('.fancy .slot').jSlots({
             number : 1,
@@ -326,6 +327,7 @@ ul {
 
             }
         });
+        }, 1000);
         
         //$('#playFancy').hide();
 

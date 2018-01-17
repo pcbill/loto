@@ -212,7 +212,7 @@ ul {
         </td>
         <td>
             <div class="fancy" style="height:100px">
-                <ul class="slot">
+                <ul class="slot" style="visibility: hidden">
                 <% if (results) { %>
                 <li style="width:779px"><span> ?????? </span></li>
                 <% results.forEach( (it) => {  %>
@@ -294,7 +294,6 @@ ul {
         $('#playFancy').hide();
 
 
-        setTimeout(function() {
         // fancy example
         $('.fancy .slot').jSlots({
             number : 1,
@@ -327,9 +326,8 @@ ul {
 
             }
         });
-        }, 1000);
-        
-        //$('#playFancy').hide();
+
+        $('.slot').show();
 
 
         <% if (playRightNow === 'true') { %>

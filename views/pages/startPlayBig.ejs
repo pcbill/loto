@@ -285,6 +285,10 @@ ul {
 
             $('#cancelRow').hide();
             $('#reminderCount').text('<%= reminderCount %>');
+
+            $('#playNextButton').html('<a href="/execute/<%= gid %>/true" style="padding: 0px">\n' +
+                '                <img src="/img/play.jpg" />\n' +
+                '            </a>');
         }
         
         // fancy example

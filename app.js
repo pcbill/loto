@@ -481,12 +481,12 @@ app.get('/updateGetgiftTime/:uid', basicAuth, (req, res) => {
   
     if (!uid | uid == '') {
       req.session['msg'] = '請輸入姓名';
-      res.redirect('/check');
+      res.redirect('/searchForMana');
       return;
     }
   
     personDao.getGift(uid, (reObj) => {
       req.session['msg'] = reObj.msg + ' ' + uid +' got gift !!';
-      res.redirect('/check');
+      res.redirect('/searchForMana');
     });
 });

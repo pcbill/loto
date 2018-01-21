@@ -212,7 +212,7 @@ ul {
         </td>
         <td>
             <div class="fancy" style="height:100px">
-                <ul class="slot">
+                <ul class="slot" style="visibility: hidden">
                 <% if (results) { %>
                 <li style="width:779px"><span> ?????? </span></li>
                 <% results.forEach( (it) => {  %>
@@ -233,11 +233,13 @@ ul {
         <td>
             <img src="/img/playf.jpg" />
         </td>
-        <td align="center">
+        <td align="center" style="width: 371px">
             <% if (reminderCount > 0) { %>
-            <a id="playNextButton" href="/execute/<%= gid %>/true" style="padding: 0px">
+            <span id="playNextButton">
+            <a href="/execute/<%= gid %>/true" style="padding: 0px">
                 <img src="/img/play.jpg" />
             </a>
+            </span>
             <% } %>
         </td>
         <td>
@@ -283,8 +285,15 @@ ul {
 
             $('#cancelRow').hide();
             $('#reminderCount').text('<%= reminderCount %>');
+
+            $('#playNextButton').html('<a href="/execute/<%= gid %>/true" style="padding: 0px">\n' +
+                '                <img src="/img/play.jpg" />\n' +
+                '            </a>');
         }
-        
+
+        $('#playFancy').hide();
+
+
         // fancy example
         $('.fancy .slot').jSlots({
             number : 1,
@@ -306,7 +315,7 @@ ul {
                 $('#reminderCount').text('<%= reminderCount-1 %>');
 
                 <% if (reminderCount-1 <= 0) {%>
-                    $('#playNextButton').hide();
+                    $('#playNextButton').html('<img src="/img/play.jpg" />');
                 <% } %>
 
                 $('#winnerList tr:first').after('<tr id="cancelRow" >\n' +
@@ -317,8 +326,8 @@ ul {
 
             }
         });
-        
-        $('#playFancy').hide();
+
+        $('.slot').css("visibility", "visible");
 
 
         <% if (playRightNow === 'true') { %>

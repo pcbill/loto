@@ -2,7 +2,19 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <script type="text/javascript">
+  function sleep(ms){
+
+  var starttime= new Date().getTime();
+
+  do{
+
+  }while((new Date().getTime()-starttime)<ms)
+
+  }
+  </script>
   <% include ../partials/header.ejs %>
+
 </head>
 
 <body>
@@ -25,7 +37,7 @@
             <th>中獎時間</th>  
             <th>領獎時間</th>  
           </tr>
-        <% results.forEach( (it) => { %>
+        <% results.forEach( (it) => { sleep(1000);%>
           <tr>
             <td><%= it.uid %></td> 
             <td><%= it.name %></td> 
@@ -33,8 +45,6 @@
             <td><%= it.awardList %></td>
             <td><%= it.award_time %></td>
             <td><%= it.getgift_time %></td>
-
-
           </tr>
         <% }); %>
       </table>

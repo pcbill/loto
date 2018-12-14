@@ -298,6 +298,23 @@ app.get('/listWinner/:gid', (req, res) => {
     });
 });
 
+app.get('/listWinnerDramaly/:gid', (req, res) => {
+    var gid = req.params.gid;
+
+    gameDao.find(gid, (reGame) => {
+        var games = reGame.results;
+
+        personDao.findByGid(gid, (rePerson) => {
+        //rePerson.gid = games[0].gid;
+            for (var i = 0; i < rePerson.results.length; i++) {
+                rePerson.results[i].awardList = games[0].award_list;
+            }
+            res.render('pages/listWinnerDramaly', rePerson);
+        });
+    });
+});
+
+
 app.get('/cancelWinner/:gid/:uid', basicAuth, (req, res) => {
     var gid = req.params.gid;
     var uid = req.params.uid;

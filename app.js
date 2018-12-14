@@ -238,7 +238,7 @@ app.get('/execute/:gameId/:playRightNow', basicAuth, (req, res) => {
           personDao.updateReward(game.id, candidates, count, ()=>{});
 
 
-          res.redirect('/listWinner/'+gameId);
+          res.redirect('/listWinnerDramaly/'+gameId);
         } 
         else if (gameType == 1 && reminderCount >= 1) 
         {

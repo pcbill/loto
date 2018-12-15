@@ -46,10 +46,14 @@
 <script>
       <% if (results) { %>
       var rowLength = <%= results.length %>;
+var count = 1;
 
 function show() {
 
-document.getElementById("p1").style.visibility = "visible";
+document.getElementById("p"+count).style.visibility = "visible";
+if (count != rowLength) {
+  count++;
+}
 }
 var intervalId = setInterval(show,2000)
       <% } else { %>

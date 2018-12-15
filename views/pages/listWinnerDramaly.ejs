@@ -38,8 +38,7 @@ function sleep(seconds)
 
 
           %>
-          <div id="p<%= i+1 %>" style="visible:hidden">
-                   <tr >
+                   <tr id="p<%= i+1 %>" style="visible:hidden">
                       <td><%= results[i].uid %></td>
                       <td><%= results[i].name %></td>
                       <td><%= results[i].table_num %></td>
@@ -47,9 +46,8 @@ function sleep(seconds)
                       <td><%= results[i].award_time %></td>
                       <td><%= results[i].getgift_time %></td>
                     </tr>
-          </div>
           <% } %>
-
+<!--
         <% results.forEach( (it) => {%>
           <tr >
             <td><%= it.uid %></td> 
@@ -60,6 +58,7 @@ function sleep(seconds)
             <td><%= it.getgift_time %></td>
           </tr>
         <% }); %>
+-->
       </table>
       <% } %>
 

@@ -13,15 +13,17 @@
     <div class="col-md-12">
       <h3>
         得獎者列表
+      <% if (results) { %>
+             獎品：<%= results[0].awardList %> 共 <%= results.length %> 個
+      <% } %>
       </h3>
-    
+
       <% if (results) { %>
       <table class="table table-bordered table-hover">
           <tr>
             <th>號碼</th>
             <th>姓名</th>
             <th>桌次</th>
-            <th>中獎獎品</th>
           </tr>
 
           <% for(var i=0; i<results.length; i++) { %>
@@ -29,7 +31,6 @@
                 <td><%= results[i].uid %></td>
                 <td><%= results[i].name %></td>
                 <td><%= results[i].table_num %></td>
-                <td><%= results[i].awardList %></td>
             </tr>
           <% } %>
       </table>

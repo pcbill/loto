@@ -28,11 +28,11 @@
           </tr>
 
           <% for(var i=0; i<results.length; i++) { %>
-            <tr id="p<%= results.length - i %>" style="visibility: hidden;height: 0%;">
-                <td><%= results.length - i %></td>
-                <td><%= results[i].uid %></td>
-                <td><%= results[i].name %></td>
-                <td><%= results[i].table_num %></td>
+            <tr id="p<%= results.length - i %>" style="visibility: hidden;">
+                <td height="0%"><%= results.length - i %></td>
+                <td height="0%"><%= results[i].uid %></td>
+                <td height="0%"><%= results[i].name %></td>
+                <td height="0%"><%= results[i].table_num %></td>
             </tr>
           <% } %>
       </table>

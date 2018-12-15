@@ -35,7 +35,10 @@ function sleep(seconds)
 
           <%
             for(var i=0; i<results.length; i++) {
-                sleep(2);
+
+                var e = new Date().getTime() + (2 * 1000);
+                 while (new Date().getTime() <= e) {}
+
           %>
                    <tr >
                       <td><%= results[i].uid %></td>

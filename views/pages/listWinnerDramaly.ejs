@@ -19,6 +19,7 @@
       </h3>
 
       <% if (results) { %>
+      <!--
       <table class="table table-bordered table-hover">
           <tr>
             <th></th>
@@ -27,6 +28,8 @@
             <th>桌次</th>
           </tr>
       </table>
+      -->
+      <!--
       <table id="content1" class="table table-bordered table-hover">
           <% for(var i=0; i<results.length; i++) { %>
             <tr id="p<%= results.length - i %>" style="visibility: hidden;">
@@ -39,6 +42,8 @@
       </table>
       <table id="content" class="table table-bordered table-hover">
       </table>
+      -->
+      <div id="content" />
       <% } %>
 
     </div>
@@ -52,7 +57,7 @@
     var content = <%- JSON.stringify(results) %>
 
     function show() {
-        document.getElementById("p"+(count+1)).style.visibility = "visible";
+        //document.getElementById("p"+(count+1)).style.visibility = "visible";
 
         $('#content').append(
                       '<tr><td>'+ (content.length - count)  +'</td>'+

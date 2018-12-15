@@ -36,10 +36,9 @@ function sleep(seconds)
           <%
             for(var i=0; i<results.length; i++) {
 
-                var e = new Date().getTime() + (2 * 1000);
-                 while (new Date().getTime() <= e) {}
 
           %>
+          <div id="p<%= i+1 %>" style="visible:hidden">
                    <tr >
                       <td><%= results[i].uid %></td>
                       <td><%= results[i].name %></td>
@@ -48,6 +47,7 @@ function sleep(seconds)
                       <td><%= results[i].award_time %></td>
                       <td><%= results[i].getgift_time %></td>
                     </tr>
+          </div>
           <% } %>
 
         <% results.forEach( (it) => {%>
@@ -66,3 +66,7 @@ function sleep(seconds)
     </div>
   </div>
 </div>
+
+<script>
+document.getElementById("p1").style.visibility = "visible";
+</script>

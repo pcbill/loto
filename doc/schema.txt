@@ -10,6 +10,8 @@
 
 var conString = "postgresql://username:password@lacalhost/postgres";
 
+
+
 schema
 ======
 
@@ -72,6 +74,23 @@ insert into person(uid, name, table_num, registration_time) values('u6', 'b6ll',
 insert into person(uid, name, table_num, registration_time) values('u7', 'b7ll', 2, NOW());
 insert into person(uid, name, table_num, registration_time) values('u8', 'b8ll', 2, NOW());
 insert into person(uid, name, table_num, registration_time) values('u9', 'b9ll', 2, NOW());
+insert into person(uid, name, table_num, registration_time) values('u11', 'bill1', 1, NOW());
+insert into person(uid, name, table_num, registration_time) values('u21', 'b2ll1', 1, NOW());
+insert into person(uid, name, table_num, registration_time) values('u31', 'b3ll1', 1, NOW());
+insert into person(uid, name, table_num, registration_time) values('u41', 'b4ll1', 1, NOW());
+insert into person(uid, name, table_num, registration_time) values('u51', 'b5ll1', 2, NOW());
+insert into person(uid, name, table_num, registration_time) values('u61', 'b6ll1', 2, NOW());
+insert into person(uid, name, table_num, registration_time) values('u71', 'b7ll1', 2, NOW());
+insert into person(uid, name, table_num, registration_time) values('u81', 'b8ll1', 2, NOW());
+insert into person(uid, name, table_num, registration_time) values('u91', 'b9ll1', 2, NOW());
 
 
 insert into person(uid, name) values('u9', 'b9ll');
+
+CREATE TABLE person (
+    id  VARCHAR(255) primary key,
+    person_id VARCHAR(255) NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    registration_time TIMESTAMP ,
+    create_time TIMESTAMP default NOW()
+);

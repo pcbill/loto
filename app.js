@@ -252,7 +252,8 @@ app.get('/execute/:gameId/:playRightNow', basicAuth, (req, res) => {
             }
 
             var listForUI = upairs.map((it) => {
-              return it[0] + " " + it[1];
+              //return it[0] + " " + it[1];
+              return it[1]; //only name
             });
             req.session['big_list'] = listForUI;
             req.session['reminder_count'] = reminderCount;

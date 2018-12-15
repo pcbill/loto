@@ -19,28 +19,6 @@
       </h3>
 
       <% if (results) { %>
-      <!--
-      <table class="table table-bordered table-hover">
-          <tr>
-            <th></th>
-            <th>號碼</th>
-            <th>姓名</th>
-            <th>桌次</th>
-          </tr>
-      </table>
-      -->
-      <!--
-      <table id="content1" class="table table-bordered table-hover">
-          <% for(var i=0; i<results.length; i++) { %>
-            <tr id="p<%= results.length - i %>" style="visibility: hidden;">
-                <td><%= results.length - i %></td>
-                <td><%= results[i].uid %></td>
-                <td><%= results[i].name %></td>
-                <td><%= results[i].table_num %></td>
-            </tr>
-          <% } %>
-      </table>
-      -->
       <table  class="table table-bordered table-hover">
         <thead>
                 <tr>
@@ -65,8 +43,6 @@
     var content = <%- JSON.stringify(results) %>
 
     function show() {
-        //document.getElementById("p"+(count+1)).style.visibility = "visible";
-
         $('#content').prepend(
                       '<tr><td>'+ (count+1)  +'</td>'+
                           '<td>'+ content[count].uid +'</td>'+

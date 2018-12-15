@@ -22,19 +22,15 @@
             <th>姓名</th>
             <th>桌次</th>
             <th>中獎獎品</th>
-            <th>中獎時間</th>
-            <th>領獎時間</th>
           </tr>
 
           <% for(var i=0; i<results.length; i++) { %>
-                   <tr id="p<%= i+1 %>" style="visibility: hidden;">
-                      <td><%= results[i].uid %></td>
-                      <td><%= results[i].name %></td>
-                      <td><%= results[i].table_num %></td>
-                      <td><%= results[i].awardList %></td>
-                      <td><%= results[i].award_time %></td>
-                      <td><%= results[i].getgift_time %></td>
-                    </tr>
+            <tr id="p<%= i+1 %>" style="visibility: hidden;">
+                <td><%= results[i].uid %></td>
+                <td><%= results[i].name %></td>
+                <td><%= results[i].table_num %></td>
+                <td><%= results[i].awardList %></td>
+            </tr>
           <% } %>
       </table>
       <% } %>
@@ -44,21 +40,17 @@
 </div>
 
 <script>
-      <% if (results) { %>
-      var rowLength = <%= results.length %>;
-var count = 1;
+<% if (results) { %>
+    var rowLength = <%= results.length %>;
+    var count = 1;
 
-function show() {
+    function show() {
+        document.getElementById("p"+count).style.visibility = "visible";
+        if (count != rowLength) {
+            count++;
+        }
+    }
 
-document.getElementById("p"+count).style.visibility = "visible";
-if (count != rowLength) {
-  count++;
-}
-}
-var intervalId = setInterval(show,2000)
-      <% } else { %>
-      var rowLength = 0;
-      <% }%>
-
-
+    var intervalId = setInterval(show,2000)
+<% }%>
 </script>

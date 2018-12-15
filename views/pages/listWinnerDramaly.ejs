@@ -49,7 +49,7 @@
 <% if (results) { %>
     var rowLength = <%= results.length %>;
     var count = 0;
-    var content = <%= JSON.stringify(results) %>
+    var content = <%- JSON.stringify(results) %>
 
     function show() {
         document.getElementById("p"+(count+1)).style.visibility = "visible";

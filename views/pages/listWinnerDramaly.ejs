@@ -3,13 +3,6 @@
 <html>
 <head>
   <% include ../partials/header.ejs %>
-<script>
-function sleep(seconds)
-{
-  var e = new Date().getTime() + (seconds * 1000);
-  while (new Date().getTime() <= e) {}
-}
-</script>
 </head>
 
 <body>
@@ -25,19 +18,15 @@ function sleep(seconds)
       <% if (results) { %>
       <table class="table table-bordered table-hover">
           <tr>
-            <th>號碼</th>  
-            <th>姓名</th>  
-            <th>桌次</th>  
-            <th>中獎獎品</th>  
-            <th>中獎時間</th>  
-            <th>領獎時間</th>  
+            <th>號碼</th>
+            <th>姓名</th>
+            <th>桌次</th>
+            <th>中獎獎品</th>
+            <th>中獎時間</th>
+            <th>領獎時間</th>
           </tr>
 
-          <%
-            for(var i=0; i<results.length; i++) {
-
-
-          %>
+          <% for(var i=0; i<results.length; i++) { %>
                    <tr id="p<%= i+1 %>" style="visibility: hidden;">
                       <td><%= results[i].uid %></td>
                       <td><%= results[i].name %></td>
@@ -47,18 +36,6 @@ function sleep(seconds)
                       <td><%= results[i].getgift_time %></td>
                     </tr>
           <% } %>
-<!--
-        <% results.forEach( (it) => {%>
-          <tr >
-            <td><%= it.uid %></td> 
-            <td><%= it.name %></td> 
-            <td><%= it.table_num %></td> 
-            <td><%= it.awardList %></td>
-            <td><%= it.award_time %></td>
-            <td><%= it.getgift_time %></td>
-          </tr>
-        <% }); %>
--->
       </table>
       <% } %>
 
@@ -67,5 +44,17 @@ function sleep(seconds)
 </div>
 
 <script>
+      <% if (results) { %>
+      var rowLength = <%= results.length %>;
+
+function show() {
+
 document.getElementById("p1").style.visibility = "visible";
+}
+var intervalId = setInterval(show,2000)
+      <% } else { %>
+      var rowLength = 0;
+      <% }%>
+
+
 </script>

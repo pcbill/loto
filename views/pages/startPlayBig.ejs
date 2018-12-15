@@ -217,7 +217,7 @@ ul {
                 <% if (results) { %>
                     <li style="width:779px"><span> ?????? </span></li>
                     <% results.forEach( (it) => {  %>
-                        <li style="width:779px"><span><%= it %></span></li>
+                        <li style="width:779px"><span><%= it.split(" ")[1] %></span></li>
                     <% }); %>
                 <% } %>
 

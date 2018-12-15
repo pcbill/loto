@@ -59,8 +59,8 @@
     function show() {
         //document.getElementById("p"+(count+1)).style.visibility = "visible";
 
-        $('#content').append(
-                      '<tr><td>'+ (content.length - count)  +'</td>'+
+        $('#content').prepend(
+                      '<tr><td>'+ (count+1)  +'</td>'+
                           '<td>'+ content[count].uid +'</td>'+
                           '<td>'+ content[count].name +'</td>'+
                           '<td>'+ content[count].table_num +'</td></tr>'

@@ -26,15 +26,18 @@
             <th>姓名</th>
             <th>桌次</th>
           </tr>
-
+      </table>
+      <table id="content1" class="table table-bordered table-hover">
           <% for(var i=0; i<results.length; i++) { %>
             <tr id="p<%= results.length - i %>" style="visibility: hidden;">
-                <td height="0%"><%= results.length - i %></td>
-                <td height="0%"><%= results[i].uid %></td>
-                <td height="0%"><%= results[i].name %></td>
-                <td height="0%"><%= results[i].table_num %></td>
+                <td><%= results.length - i %></td>
+                <td><%= results[i].uid %></td>
+                <td><%= results[i].name %></td>
+                <td><%= results[i].table_num %></td>
             </tr>
           <% } %>
+      </table>
+      <table id="content" class="table table-bordered table-hover">
       </table>
       <% } %>
 
@@ -45,10 +48,18 @@
 <script>
 <% if (results) { %>
     var rowLength = <%= results.length %>;
-    var count = 1;
+    var count = 0;
+    var content = <%= results %>
 
     function show() {
-        document.getElementById("p"+count).style.visibility = "visible";
+        document.getElementById("p"+(count+1)).style.visibility = "visible";
+
+        $('#content').append(
+                      '<tr><td>'+ (content.length - count)  +'</td>'+
+                          '<td>'+ content[count].uid +'</td>'+
+                          '<td>'+ content[count].name +'</td>'+
+                          '<td>'+ content[count].table_num +'</td></tr>'
+        );
         if (count != rowLength) {
             count++;
         }

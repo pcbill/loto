@@ -280,7 +280,7 @@ ul {
             $('#reminderCount').text('<%= reminderCount %>');
 
             $('#playNextButton').html('<a href="/execute/<%= gid %>/true" style="padding: 0px">\n' +
-                '                <img src="/img/play.jpg" />\n' +
+                '                <img src="/img/button_start1.png" />\n' +
                 '            </a>');
         }
 
@@ -308,7 +308,7 @@ ul {
                 $('#reminderCount').text('<%= reminderCount-1 %>');
 
                 <% if (reminderCount-1 <= 0) {%>
-                    $('#playNextButton').html('<img src="/img/play.jpg" />');
+                    $('#playNextButton').html('<img src="/img/button_start1.png" />');
                 <% } %>
 
                 $('#winnerList tr:first').after('<tr id="cancelRow" >\n' +

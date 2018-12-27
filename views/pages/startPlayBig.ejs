@@ -201,29 +201,19 @@ ul {
         </td></tr>
     </table>
 
-<!--
-    <table>
-        <trd><td>
-            <img src="/img/up.jpg"/>
-        </td></tr>
-    </table>
--->
 
     <table>
         <tr>
         <td>
-<!--
-            <img src="/img/bf.jpg" />
--->
         </td>
         <td>
-            <div class="fancy" style="height:100px">
+            <div class="fancy">
                 <ul class="slot" style="visibility: hidden">
 
                 <% if (results) { %>
-                    <li style="width:779px"><span> ?????? </span></li>
+                    <li style="width:1024px; height:300px"><span> ?????? </span></li>
                     <% results.forEach( (it) => {  %>
-                        <li style="width:779px"><span><%= it.split(" ")[1] %></span></li>
+                        <li style="width:1024px; height:300px"><span><%= it.split(" ")[1] %></span></li>
                     <% }); %>
                 <% } %>
 
@@ -232,18 +222,12 @@ ul {
             </div>
         </td>
         <td>
-<!--
-            <img src="/img/bb.jpg" />
--->
         </td>
         </tr>
     </table>
     <table>
         <tr>
         <td>
-<!--
-            <img src="/img/playf.jpg" />
--->
         </td>
         <td align="center" style="width: 371px">
             <% if (reminderCount > 0) { %>
@@ -255,16 +239,8 @@ ul {
             <% } %>
         </td>
         <td>
-<!--
-            <img src="/img/playb.jpg" />
--->
         </td>
         </tr>
-<!--
-        <tr><td colspan="3">
-            <img src="/img/down.jpg" width="1024px"/>
-        </td></tr>
--->
     </table>
     <table>
         <tr><td align="right" valign="middle" style="font-size: 48px; width:1024px">

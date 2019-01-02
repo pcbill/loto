@@ -11,6 +11,8 @@
 var conString = "postgresql://username:password@lacalhost/postgres";
 
 
+heroku pg:psql -a npust-year-party
+
 
 schema
 ======

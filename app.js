@@ -2,7 +2,7 @@ var express = require('express');
 var session = require('express-session');
 var app = express();
 var pg = require('pg');
-var basicAuth = require('express-basic-auth');
+//var basicAuth = require('express-basic-auth');
 
 var personDao = require('./lib/dao/personDao');
 var gameDao = require('./lib/dao/gameDao');
@@ -14,12 +14,22 @@ const connectionString = require('./lib/dao/config').connectionString;
 
 app.set('port', (process.env.PORT || 5000));
 
-var basicAuth = basicAuth({
-  users: {
-      'admin': 'kdorkwj'
-  },
-  challenge: true
-});
+// var basicAuth = basicAuth({
+//   users: {
+//       'admin': 'kdorkwj'
+//   },
+//   challenge: true
+// });
+
+function basicAuth(req, res, next) {
+    const auth = req.headers.authorization;
+    if (auth === 'password') {
+        next();
+    } else {
+        res.status(401);
+        res.send('Access forbidden');
+    }
+}
 
 app.use(express.static(__dirname + '/public'));
 

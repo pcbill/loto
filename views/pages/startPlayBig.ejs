@@ -328,6 +328,10 @@ ul {
             setTimeout(function() {
                 $('#playFancy').click();
             }, 1000);
+
+            setTimeout(function() {
+                $.get( "/updatePlayerGameRelation/<%= gid %>/<%= results[0].split(' ')[0] %>", function( data ) { });
+            }, 1000 * 10);
         <% } %>
 
     </script>

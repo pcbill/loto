@@ -280,10 +280,7 @@ app.get('/execute/:gameId/:playRightNow', basicAuth, (req, res) => {
             if (playRightNow === 'true') {
                 historyDao.saveOne(gameId, candidates);
                 gameDao.played(game, 1);
-
-                setTimeout(function() {
-                    personDao.updateReward(game.id, candidates, 1, ()=>{});
-                }, 30 * 1000);
+                // personDao.updateReward(game.id, candidates, 1, ()=>{});
             }
 
             var listForUI = upairs.map((it) => {
@@ -372,6 +369,15 @@ app.get('/cancelWinnerQuietly/:gid/:uid', basicAuth, (req, res) => {
 
     personDao.cancelReward(uid, (re) => { });
     gameDao.cancelOneReward(gid);
+
+    res.sendStatus(200);
+});
+
+app.get('/updatePlayerGameRelation/:gid/:uid', basicAuth, (req, res) => {
+    var gid = req.params.gid;
+    var uid = req.params.uid;
+
+    personDao.updateReward(gid, [uid], 1, ()=>{});
 
     res.sendStatus(200);
 });

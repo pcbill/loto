@@ -250,8 +250,10 @@ app.get('/execute/:gameId/:playRightNow', basicAuth, (req, res) => {
         var upairs = list.map((it) => { 
           return [it.uid, it.name];
         });
-        
-        for (i = 0; i < 1000; i++) {
+
+        var shuffle_times = 500;
+        console.log("shuffle_times: " + shuffle_times);
+        for (i = 0; i < shuffle_times; i++) {
           shuffle(upairs);
         }
         
@@ -344,6 +346,7 @@ app.get('/listWinnerDramaly/:gid', (req, res) => {
             }
 
             var sec = (rePerson.results.length / 10) + 1;
+            console.log("waiting secs: " + sec);
             setTimeout(function() {
                 res.render('pages/listWinnerDramaly', rePerson);
             }, (sec * 1000));

@@ -342,7 +342,10 @@ app.get('/listWinnerDramaly/:gid', (req, res) => {
             for (var i = 0; i < rePerson.results.length; i++) {
                 rePerson.results[i].awardList = games[0].award_list;
             }
-            res.render('pages/listWinnerDramaly', rePerson);
+
+            setTimeout(function() {
+                res.render('pages/listWinnerDramaly', rePerson);
+            }, (1 * 1000));
         });
     });
 });

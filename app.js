@@ -345,7 +345,7 @@ app.get('/listWinnerDramaly/:gid', (req, res) => {
 
             setTimeout(function() {
                 res.render('pages/listWinnerDramaly', rePerson);
-            }, (1 * 1000));
+            }, (5 * 1000));
         });
     });
 });

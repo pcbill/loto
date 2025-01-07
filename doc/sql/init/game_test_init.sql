@@ -3,7 +3,7 @@ INSERT INTO public.game (id, gid, award_list, participant_count, reminder_count,
 INSERT INTO public.game (id, gid, award_list, participant_count, reminder_count, exec_type) VALUES (148, 'A12', 'A12aiwa1.8L三層防燙保溫電茶壺', 3, 3, 0);
 INSERT INTO public.game (id, gid, award_list, participant_count, reminder_count, exec_type) VALUES (147, 'A11', 'A11Oster Ball果汁機', 3, 3, 0);
 INSERT INTO public.game (id, gid, award_list, participant_count, reminder_count, exec_type) VALUES (166, 'B13', 'B13主任禮券紅包', 1, 1, 0);
-INSERT INTO public.game (id, gid, award_list, participant_count, reminder_count, exec_type) VALUES (167, 'B14', 'B14主任現金紅包', 1, 1, 1);
+INSERT INTO public.game (id, gid, award_list, participant_count, reminder_count, exec_type) VALUES (167, 'B14', 'B14主任現金紅包', 2, 2, 1);
 INSERT INTO public.game (id, gid, award_list, participant_count, reminder_count, exec_type) VALUES (168, 'B15', 'B15館長現金紅包', 1, 1, 0);
 INSERT INTO public.game (id, gid, award_list, participant_count, reminder_count, exec_type) VALUES (169, 'B16', 'B16處長現金紅包', 1, 1, 1);
 INSERT INTO public.game (id, gid, award_list, participant_count, reminder_count, exec_type) VALUES (170, 'B17', 'B17處長禮券紅包', 1, 1, 0);

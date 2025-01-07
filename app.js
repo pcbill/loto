@@ -250,6 +250,7 @@ app.get('/execute/:gameId/:playRightNow', basicAuth, (req, res) => {
         var upairs = list.map((it) => { 
           return [it.uid, it.name];
         });
+        console.log("upairs length: " + upairs.length);
 
         var shuffle_times = 500;
         console.log("shuffle_times: " + shuffle_times);

@@ -280,7 +280,10 @@ app.get('/execute/:gameId/:playRightNow', basicAuth, (req, res) => {
             if (playRightNow === 'true') {
                 historyDao.saveOne(gameId, candidates);
                 gameDao.played(game, 1);
-                personDao.updateReward(game.id, candidates, 1, ()=>{});
+
+                setTimeout(function() {
+                    personDao.updateReward(game.id, candidates, 1, ()=>{});
+                }, 30 * 1000);
             }
 
             var listForUI = upairs.map((it) => {

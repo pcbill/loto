@@ -343,7 +343,7 @@ app.get('/listWinnerDramaly/:gid', (req, res) => {
                 rePerson.results[i].awardList = games[0].award_list;
             }
 
-            let sec = (rePerson.results.length / 10) + 1;
+            var sec = (rePerson.results.length / 10) + 1;
             setTimeout(function() {
                 res.render('pages/listWinnerDramaly', rePerson);
             }, (sec * 1000));

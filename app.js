@@ -131,9 +131,12 @@ app.post('/registerByNameSubmit', basicAuth, (req, res) => {
     return;
   }
 
-  personDao.registerByName(name, (reObj) => {
-    req.session['msg'] = reObj.msg;
-    res.redirect('/registration');
+  var uid = '';
+  registrationHistoryDao.saveOne(uid, name, (reObj) => {
+      personDao.registerByName(name, (reObj) => {
+        req.session['msg'] = reObj.msg;
+        res.redirect('/registration');
+      });
   });
 });
 

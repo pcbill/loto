@@ -5,6 +5,7 @@ var pg = require('pg');
 //var basicAuth = require('express-basic-auth');
 
 var personDao = require('./lib/dao/personDao');
+var registrationHistoryDao = require('./lib/dao/registrationHistoryDao');
 var gameDao = require('./lib/dao/gameDao');
 var historyDao = require('./lib/dao/historyDao'); 
 
@@ -112,9 +113,12 @@ app.post('/registerSubmit', basicAuth, (req, res) => {
     return;
   }
 
-  personDao.register(uid, (reObj) => {
-    req.session['msg'] = reObj.msg;
-    res.redirect('/registration');
+  var name = '';
+  registrationHistoryDao.saveOne(uid, name, (reObj) => {
+      personDao.register(uid, (reObj) => {
+          req.session['msg'] = reObj.msg;
+          res.redirect('/registration');
+      });
   });
 });
 

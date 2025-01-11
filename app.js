@@ -243,11 +243,11 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
     // type 0 = normal game
     gameDao.findByExecType(0, (res) => {
         const uids = [];
-        const games = [];
+        const gameIds = [];
         res.results.forEach((game) => {
             personDao.findByGid(game.id, (rePerson) => {
-                games.push(game);
                 rePerson.results.forEach((person) => {
+                    gameIds.push(person.award_game_id);
                     uids.push(person.uid);
                     gameDao.cancelOneReward(game.id);
                 });
@@ -259,37 +259,40 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                 // res.redirect('/gameplay');
 
                 // replay
-                console.log({type:'replay', count: games.length, games});
-                games.forEach((game) => {
-                    var count = game.participant_count;
-                    var reminderCount = game.reminder_count;
-                    console.log({game: game.id, reminderCount});
-                    // per game
-                    personDao.findAllRegisteredWithoutAward((re) => {
-                        var list = re.results;
+                gameids.forEach((gameId) => {
+                    gameDao.find(gameId, (it) => {
+                        it.results.forEach((game) => {
+                            var count = game.participant_count;
+                            var reminderCount = game.reminder_count;
+                            console.log({game: game.id, reminderCount});
+                            // per game
+                            personDao.findAllRegisteredWithoutAward((re) => {
+                                var list = re.results;
 
-                        var upairs = list.map((it) => {
-                            return [it.uid, it.name];
+                                var upairs = list.map((it) => {
+                                    return [it.uid, it.name];
+                                });
+                                console.log("upairs length: " + upairs.length);
+
+                                var shuffle_times = 500;
+                                console.log("shuffle_times: " + shuffle_times);
+                                for (i = 0; i < shuffle_times; i++) {
+                                    shuffle(upairs);
+                                }
+
+                                candidates = upairs.map((it) => {
+                                    return it[0];
+                                });
+
+                                if (reminderCount >= count)
+                                {
+                                    // normal
+                                    historyDao.saveOne(gameId, candidates);
+                                    gameDao.played(game, count);
+                                    personDao.allRePlayed(game.id, candidates, count, ()=>{});
+                                }
+                            });
                         });
-                        console.log("upairs length: " + upairs.length);
-
-                        var shuffle_times = 500;
-                        console.log("shuffle_times: " + shuffle_times);
-                        for (i = 0; i < shuffle_times; i++) {
-                            shuffle(upairs);
-                        }
-
-                        candidates = upairs.map((it) => {
-                            return it[0];
-                        });
-
-                        if (reminderCount >= count)
-                        {
-                            // normal
-                            historyDao.saveOne(gameId, candidates);
-                            gameDao.played(game, count);
-                            personDao.allRePlayed(game.id, candidates, count, ()=>{});
-                        }
                     });
                 });
             });

@@ -253,6 +253,7 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
         setTimeout(() => {
             personDao.updateNormalGameWinnerFromNullGetGiftimeToVoucher(uids)
         }, 3000);
+
     });
 })
 

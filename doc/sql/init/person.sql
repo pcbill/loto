@@ -8,5 +8,6 @@ CREATE TABLE person (
                         award_game_id integer,
                         award_time TIMESTAMP,
                         getgift_time TIMESTAMP,
-                        create_time TIMESTAMP default NOW()
+                        create_time TIMESTAMP default NOW(),
+                        replay_count integer default 0
 );

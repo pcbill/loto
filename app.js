@@ -240,14 +240,20 @@ app.get('/gameComplete', basicAuth, (req, res) => {
 });
 
 app.get('/normalGameReplay', basicAuth, (req, res) => {
-    gameDao.findByExecType(0, (it) => {
-        // for (let i in it) {
-            console.log(it)
-        // }
+    // type 0 = normal game
+    gameDao.findByExecType(0, (res) => {
+        const uids = [];
+        res.results.forEach((game) => {
+            personDao.findByGid(game.id, (rePerson) => {
+                rePerson.results.forEach((person) => {
+                    uids.push(person.uid);
+                });
+            });
+        });
+        setTimeout(() => {
+            personDao.updateNormalGameWinnerFromNullGetGiftimeToVoucher(uids)
+        }, 3000);
     });
-
-    // const uids = [];
-    // personDao.updateNormalGameWinnerFromNullGetGiftimeToVoucher(uids)
 })
 
 app.get('/execute/:gameId/:playRightNow', basicAuth, (req, res) => {

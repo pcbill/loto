@@ -287,7 +287,7 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                                 if (reminderCount >= count)
                                 {
                                     // normal
-                                    historyDao.saveOne(gameId, candidates);
+                                    historyDao.saveOne(game.id, candidates);
                                     gameDao.played(game, count);
                                     personDao.allRePlayed(game.id, candidates, count, ()=>{});
                                 }

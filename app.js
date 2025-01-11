@@ -239,6 +239,15 @@ app.get('/gameComplete', basicAuth, (req, res) => {
     });
 });
 
+app.get('/normalGameReplay', basicAuth, (req, res) => {
+    gameDao.findByExecType(0, (it) => {
+        console.log(it)
+    });
+
+    // const uids = [];
+    // personDao.updateNormalGameWinnerFromNullGetGiftimeToVoucher(uids)
+})
+
 app.get('/execute/:gameId/:playRightNow', basicAuth, (req, res) => {
     var gameId = req.params.gameId;
     var playRightNow = req.params.playRightNow;

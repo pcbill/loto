@@ -259,7 +259,7 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                 // res.redirect('/gameplay');
 
                 // replay
-                gameids.forEach((gameId) => {
+                gameIds.forEach((gameId) => {
                     gameDao.find(gameId, (it) => {
                         it.results.forEach((game) => {
                             var count = game.participant_count;

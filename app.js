@@ -247,9 +247,9 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
             personDao.findByGid(game.id, (rePerson) => {
                 rePerson.results.forEach((person) => {
                     uids.push(person.uid);
+                    gameDao.cancelOneReward(game.id);
                 });
             });
-            gameDao.cancelOneReward(game.id);
         });
         setTimeout(() => {
             personDao.updateNormalGameWinnerFromNullGetGiftimeToVoucher(uids, () => {

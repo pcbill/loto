@@ -251,7 +251,10 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
             });
         });
         setTimeout(() => {
-            personDao.updateNormalGameWinnerFromNullGetGiftimeToVoucher(uids)
+            personDao.updateNormalGameWinnerFromNullGetGiftimeToVoucher(uids, () => {
+                // req.session['msg'] = 'Normal Game Finished!!';
+                // res.redirect('/gameplay');
+            });
         }, 3000);
 
     });

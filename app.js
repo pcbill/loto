@@ -249,6 +249,7 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                     uids.push(person.uid);
                 });
             });
+            gameDao.cancelOneReward(game.id);
         });
         setTimeout(() => {
             personDao.updateNormalGameWinnerFromNullGetGiftimeToVoucher(uids, () => {

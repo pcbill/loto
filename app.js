@@ -230,7 +230,7 @@ app.get('/gameComplete', basicAuth, (req, res) => {
       });
       
       var gameId = 99999;
-      personDao.updateReward(gameId, uids, uids.length, () => { });
+      personDao.allPlayed(gameId, uids, uids.length, () => { });
 
       setTimeout(function() {
         req.session['msg'] = re.msg + ' Game Finished!!';
@@ -277,7 +277,7 @@ app.get('/execute/:gameId/:playRightNow', basicAuth, (req, res) => {
           // normal
           historyDao.saveOne(gameId, candidates);
           gameDao.played(game, count);
-          personDao.updateReward(game.id, candidates, count, ()=>{});
+          personDao.allPlayed(game.id, candidates, count, ()=>{});
 
 
           res.redirect('/listWinnerDramaly/'+gameId);
@@ -290,7 +290,7 @@ app.get('/execute/:gameId/:playRightNow', basicAuth, (req, res) => {
             if (playRightNow === 'true') {
                 historyDao.saveOne(gameId, candidates);
                 gameDao.played(game, 1);
-                // personDao.updateReward(game.id, candidates, 1, ()=>{});
+                // personDao.allPlayed(game.id, candidates, 1, ()=>{});
             }
 
             var listForUI = upairs.map((it) => {
@@ -389,7 +389,7 @@ app.get('/updatePlayerGameRelation/:gid/:uid', basicAuth, (req, res) => {
     var gid = req.params.gid;
     var uid = req.params.uid;
 
-    personDao.updateReward(gid, [uid], 1, ()=>{});
+    personDao.allPlayed(gid, [uid], 1, ()=>{});
 
     res.sendStatus(200);
 });

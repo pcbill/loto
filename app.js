@@ -284,7 +284,7 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                                     return it[0];
                                 });
 
-                                if (gameType == 0 && reminderCount >= count)
+                                if (reminderCount >= count)
                                 {
                                     // normal
                                     historyDao.saveOne(gameId, candidates);

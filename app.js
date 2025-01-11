@@ -242,7 +242,7 @@ app.get('/gameComplete', basicAuth, (req, res) => {
 app.get('/normalGameReplay', basicAuth, (req, res) => {
     gameDao.findByExecType(0, (it) => {
         // for (let i in it) {
-            console.log(it[i])
+            console.log(it[0])
         // }
     });
 

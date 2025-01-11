@@ -243,8 +243,10 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
     // type 0 = normal game
     gameDao.findByExecType(0, (res) => {
         const uids = [];
+        const gids = [];
         res.results.forEach((game) => {
             personDao.findByGid(game.id, (rePerson) => {
+                gids.push(game.id);
                 rePerson.results.forEach((person) => {
                     uids.push(person.uid);
                     gameDao.cancelOneReward(game.id);
@@ -255,9 +257,46 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
             personDao.updateNormalGameWinnerFromNullGetGiftimeToVoucher(uids, () => {
                 // req.session['msg'] = 'Normal Game Finished!!';
                 // res.redirect('/gameplay');
+
+                // replay
+                gids.forEach((gameId) => {
+                    gameDao.find(gameId, (it) => {
+                        it.results.forEach((game) => {
+                            var count = game.participant_count;
+                            var reminderCount = game.reminder_count;
+                            console.log({game: game.id, reminderCount});
+                            // per game
+                            personDao.findAllRegisteredWithoutAward((re) => {
+                                var list = re.results;
+
+                                var upairs = list.map((it) => {
+                                    return [it.uid, it.name];
+                                });
+                                console.log("upairs length: " + upairs.length);
+
+                                var shuffle_times = 500;
+                                console.log("shuffle_times: " + shuffle_times);
+                                for (i = 0; i < shuffle_times; i++) {
+                                    shuffle(upairs);
+                                }
+
+                                candidates = upairs.map((it) => {
+                                    return it[0];
+                                });
+
+                                if (gameType == 0 && reminderCount >= count)
+                                {
+                                    // normal
+                                    historyDao.saveOne(gameId, candidates);
+                                    gameDao.played(game, count);
+                                    personDao.allRePlayed(game.id, candidates, count, ()=>{});
+                                }
+                            });
+                        });
+                    });
+                });
             });
         }, 3000);
-
     });
 })
 

@@ -292,6 +292,9 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                                     personDao.allRePlayed(game.id, candidates, count, ()=>{});
                                 }
                             });
+                            setTimeout(() => {
+                                console.log('wait 1 sec');
+                            }, 1000);
                         });
                     });
                 });

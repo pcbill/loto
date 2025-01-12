@@ -247,7 +247,7 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
         res.results.forEach((game) => {
             personDao.findByGid(game.id, (rePerson) => {
                 rePerson.results.forEach((person) => {
-                    gameIds.push(person.award_game_id);
+                    gameIds.add(person.award_game_id);
                     uids.push(person.uid);
                     gameDao.cancelOneReward(game.id);
                 });

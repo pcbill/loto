@@ -262,39 +262,36 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                 gameIds.forEach((gameId) => {
                     gameDao.find(gameId, (it) => {
                         it.results.forEach((game) => {
-                            var count = game.participant_count;
-                            var reminderCount = game.reminder_count;
-                            console.log({game: game.id, reminderCount});
-                            // per game
-                            personDao.findAllRegisteredWithoutAward((re) => {
-                                var list = re.results;
-
-                                var upairs = list.map((it) => {
-                                    return [it.uid, it.name];
-                                });
-                                console.log("upairs length: " + upairs.length);
-
-                                var shuffle_times = 500;
-                                console.log("shuffle_times: " + shuffle_times);
-                                for (i = 0; i < shuffle_times; i++) {
-                                    shuffle(upairs);
-                                }
-
-                                candidates = upairs.map((it) => {
-                                    return it[0];
-                                });
-
-                                if (reminderCount >= count)
-                                {
-                                    // normal
-                                    historyDao.saveOne(game.id, candidates);
-                                    gameDao.played(game, count);
-                                    personDao.allRePlayed(game.id, candidates, count, ()=>{});
-                                }
-                            });
-                            setTimeout(() => {
-                                console.log('wait 1 sec');
-                            }, 1000);
+                            console.log({game});
+                            // var count = game.participant_count;
+                            // var reminderCount = game.reminder_count;
+                            // console.log({game: game.id, reminderCount});
+                            // personDao.findAllRegisteredWithoutAward((re) => {
+                            //     var list = re.results;
+                            //
+                            //     var upairs = list.map((it) => {
+                            //         return [it.uid, it.name];
+                            //     });
+                            //     console.log("upairs length: " + upairs.length);
+                            //
+                            //     var shuffle_times = 500;
+                            //     console.log("shuffle_times: " + shuffle_times);
+                            //     for (i = 0; i < shuffle_times; i++) {
+                            //         shuffle(upairs);
+                            //     }
+                            //
+                            //     candidates = upairs.map((it) => {
+                            //         return it[0];
+                            //     });
+                            //
+                            //     if (reminderCount >= count)
+                            //     {
+                                    normal
+                                    // historyDao.saveOne(game.id, candidates);
+                                    // gameDao.played(game, count);
+                                    // personDao.allRePlayed(game.id, candidates, count, ()=>{});
+                                // }
+                            // });
                         });
                     });
                 });

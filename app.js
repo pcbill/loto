@@ -259,7 +259,7 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                 // res.redirect('/gameplay');
 
                 // replay
-                let msg = '';
+                var msg = '';
                 gameIds.forEach((gameId) => {
                     gameDao.find(gameId, (it) => {
                         it.results.forEach((game) => {

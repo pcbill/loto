@@ -245,14 +245,11 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
         const uids = [];
         const gameIds = new Set;
         reGame.results.forEach((game) => {
-            personDao.findByGid(game.id, (rePerson) => {
+            personDao.findNotGetByGid(game.id, (rePerson) => {
                 rePerson.results.forEach((person) => {
                     gameIds.add(person.award_game_id);
                     uids.push(person.uid);
                     gameDao.cancelOneReward(game.id);
-
-                    setTimeout(() => {
-                    }, 1000);
                 });
             });
         });

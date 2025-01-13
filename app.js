@@ -242,7 +242,7 @@ app.get('/gameComplete', basicAuth, (req, res) => {
 app.get('/normalGameReplay', basicAuth, (req, res) => {
     // type 0 = normal game
     gameDao.findByExecType(0, (reGame) => {
-        // const uids = [];
+        const uids = [];
         // const gameIds = new Set;
         const gToUmap = new Map();
         console.log({reGame})

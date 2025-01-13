@@ -241,10 +241,10 @@ app.get('/gameComplete', basicAuth, (req, res) => {
 
 app.get('/normalGameReplay', basicAuth, (req, res) => {
     // type 0 = normal game
-    gameDao.findByExecType(0, (res) => {
+    gameDao.findByExecType(0, (reGame) => {
         const uids = [];
         const gameIds = new Set;
-        res.results.forEach((game) => {
+        reGame.results.forEach((game) => {
             personDao.findByGid(game.id, (rePerson) => {
                 rePerson.results.forEach((person) => {
                     gameIds.add(person.award_game_id);
@@ -293,7 +293,7 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                                     personDao.allRePlayed(game.id, candidates, count, ()=>{});
 
                                     setTimeout(() => {
-                                        req.session['msg'] = 'Game Executed!!';
+                                        // req.session['msg'] = 'Game Executed!!';
                                         msg += game.gid + ' ';
                                         // res.redirect('/listWinnerDramaly/'+game.id);
                                     }, 1000);

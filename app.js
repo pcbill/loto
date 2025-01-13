@@ -244,6 +244,7 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
     gameDao.findByExecType(0, (reGame) => {
         const uids = [];
         const gameIds = new Set;
+        console.log({reGame})
         reGame.results.forEach((game) => {
             personDao.findNotGetByGid(game.id, (rePerson) => {
                 rePerson.results.forEach((person) => {

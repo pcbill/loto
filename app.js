@@ -226,7 +226,7 @@ app.get('/gameComplete', basicAuth, (req, res) => {
       var list = re.results;
       
       var uids = list.map((it) => { 
-        return it.uid 
+        return it.uid;
       });
       
       var gameId = 99999;
@@ -296,7 +296,7 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                                         req.session['msg'] = 'Game Executed!!';
                                         msg += game.gid + ' ';
                                         // res.redirect('/listWinnerDramaly/'+game.id);
-                                    }
+                                    }, 1000);
                                 }
                             });
                         });

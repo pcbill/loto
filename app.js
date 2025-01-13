@@ -242,14 +242,20 @@ app.get('/gameComplete', basicAuth, (req, res) => {
 app.get('/normalGameReplay', basicAuth, (req, res) => {
     // type 0 = normal game
     gameDao.findByExecType(0, (reGame) => {
-        const uids = [];
-        const gameIds = new Set;
+        // const uids = [];
+        // const gameIds = new Set;
+        const gToUmap = new Map();
         console.log({reGame})
         reGame.results.forEach((game) => {
             personDao.findNotGetByGid(game.id, (rePerson) => {
                 rePerson.results.forEach((person) => {
-                    gameIds.add(person.award_game_id);
+                    // gameIds.add(person.award_game_id);
                     uids.push(person.uid);
+
+                    gToUmap.get(person.award_game_id) ?
+                        gToUmap.get(person.award_game_id).push(person.uid) :
+                        gToUmap.set(person.award_game_id, [person.uid]);
+
                     gameDao.cancelOneReward(game.id);
                 });
             });
@@ -261,11 +267,11 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
 
                 // replay
                 var msg = '';
-                gameIds.forEach((gameId) => {
+                gToUmap.keys.forEach((gameId) => {
                     gameDao.find(gameId, (it) => {
                         it.results.forEach((game) => {
                             console.log({game});
-                            var count = game.participant_count;
+                            var count = gToUmap.get(gameId).length;
                             var reminderCount = game.reminder_count;
                             console.log({game: game.id, reminderCount});
                             personDao.findAllRegisteredWithoutAward((re) => {
@@ -294,9 +300,7 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                                     personDao.allRePlayed(game.id, candidates, count, ()=>{});
 
                                     setTimeout(() => {
-                                        // req.session['msg'] = 'Game Executed!!';
                                         msg += game.gid + ' ';
-                                        // res.redirect('/listWinnerDramaly/'+game.id);
                                     }, 1000);
                                 }
                             });

@@ -267,7 +267,8 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
 
                 // replay
                 var msg = '';
-                gToUmap.keys.forEach((gameId) => {
+
+                [...gToUmap.keys].forEach((gameId) => {
                     gameDao.find(gameId, (it) => {
                         it.results.forEach((game) => {
                             console.log({game});

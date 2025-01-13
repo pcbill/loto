@@ -405,7 +405,7 @@ app.get('/listWinner/:gid', (req, res) => {
 app.get('/listReplayWinner', (req, res) => {
 
     personDao.findByReplay((rePerson) => {
-        res.render('pages/listWinner', rePerson);
+        res.render('pages/listReplayWinner', rePerson);
     });
 });
 

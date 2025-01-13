@@ -259,6 +259,7 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                 // res.redirect('/gameplay');
 
                 // replay
+                let msg = '';
                 gameIds.forEach((gameId) => {
                     gameDao.find(gameId, (it) => {
                         it.results.forEach((game) => {
@@ -290,13 +291,21 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                                     historyDao.saveOne(game.id, candidates);
                                     gameDao.played(game, count);
                                     personDao.allRePlayed(game.id, candidates, count, ()=>{});
+
+                                    setTimeout(() => {
+                                        req.session['msg'] = 'Game Executed!!';
+                                        msg += game.gid + ' ';
+                                        // res.redirect('/listWinnerDramaly/'+game.id);
+                                    }
                                 }
                             });
                         });
                     });
                 });
+                req.session['msg'] = msg + ' Game Executed!!';
+                res.redirect('/listReplayWinner/');
             });
-        }, 3000);
+        }, 1000);
     });
 })
 

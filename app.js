@@ -250,6 +250,9 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                     gameIds.add(person.award_game_id);
                     uids.push(person.uid);
                     gameDao.cancelOneReward(game.id);
+
+                    setTimeout(() => {
+                    }, 1000);
                 });
             });
         });

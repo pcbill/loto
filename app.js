@@ -305,18 +305,20 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                                 return it[0];
                             });
 
+                            var index = 0;
                             while (validGameBundles.length > 0) {
                                 const bundle = validGameBundles.pop();
                                 const game = bundle.game;
-                                console.log({game});
+                                console.log({game, index});
                                 console.log({before:game.id, candidateUidsLength:candidateUids.length});
-                                const canUids = candidateUids.splice(0, bundle.count);
+                                const canUids = candidateUids.splice(index, bundle.count);
                                 console.log({after:game.id, canUids, candidateUidsLength:candidateUids.length});
 
                                 gameDao.played(game, bundle.count);
                                 personDao.allRePlayed(game, canUids, bundle.count, (re) => {
                                 });
                                 historyDao.saveOne(game.id, canUids);
+                                index += bundle.count;
                             }
                         });
 

@@ -355,9 +355,12 @@ app.get('/execute/:gameId/:playRightNow', basicAuth, (req, res) => {
           gameDao.played(game, count);
           personDao.allPlayed(game.id, candidates, count, ()=>{});
 
-
-          res.redirect('/listWinnerDramaly/'+gameId);
-        } 
+            var sec = (count / 10) + 1;
+            console.log("waiting secs: " + sec);
+            setTimeout(function() {
+              res.redirect('/listWinnerDramaly/'+gameId);
+            }, (sec * 1000));
+        }
         else if (gameType == 1 && reminderCount >= 1) 
         {
           // big game
@@ -436,12 +439,9 @@ app.get('/listWinnerDramaly/:gid', (req, res) => {
                 rePerson.results[i].awardList = games[0].award_list;
             }
 
-            var sec = (rePerson.results.length / 10) + 1;
-            console.log("waiting secs: " + sec);
-            setTimeout(function() {
-                console.log({length:rePerson.results.length});
-                res.render('pages/listWinnerDramaly', rePerson);
-            }, (sec * 1000));
+            console.log({length:rePerson.results.length});
+            res.render('pages/listWinnerDramaly', rePerson);
+
         });
     });
 });

@@ -277,7 +277,7 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
 
                 [...gToUmap.keys()].forEach((gameId) => {
                     gameDao.find(gameId, (it) => {
-                        it.results.forEach((game) => {
+                        it.results.forEach( async (game) => {
                             // console.log({game});
                             var count = gToUmap.get(gameId).length;
                             var reminderCount = game.reminder_count;
@@ -312,9 +312,7 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                             });
                             var sec = (count / 10+1);
                             console.log("waiting secs: " + sec);
-                            setTimeout(function() {
-                                msg += game.gid + ' ';
-                            }, (sec * 1000));
+                            await sleep(sec * 1000);
                         });
                     });
                 });
@@ -325,6 +323,10 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
         }, 30000);
     });
 })
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 app.get('/execute/:gameId/:playRightNow', basicAuth, (req, res) => {
     var gameId = req.params.gameId;

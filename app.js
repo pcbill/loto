@@ -305,11 +305,15 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                                     historyDao.saveOne(game.id, candidateUids);
 
                                 }
+                                const sec = (count / 10) +1;
+                                console.log("waiting secs: " + sec);
+                                const start = new Date();
+                                while (new Date() - start < sec * 1000) {}
                             });
-                            const sec = (count / 10) +1;
-                            console.log("waiting secs: " + sec);
-                            const start = new Date();
-                            while (new Date() - start < sec * 1000) {}
+                            // const sec = (count / 10) +1;
+                            // console.log("waiting secs: " + sec);
+                            // const start = new Date();
+                            // while (new Date() - start < sec * 1000) {}
                         });
                     });
                 });

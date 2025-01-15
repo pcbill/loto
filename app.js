@@ -271,9 +271,9 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
         });
         setTimeout(() => {
             console.log({uids, gToUmap});
+            var msg = '';
             personDao.updateNormalGameWinnerFromNullGetGiftimeToVoucher(uids, () => {
                 // replay
-                var msg = '';
 
                 [...gToUmap.keys()].forEach((gameId) => {
                     gameDao.find(gameId, (it) => {

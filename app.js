@@ -355,7 +355,7 @@ app.get('/execute/:gameId/:playRightNow', basicAuth, (req, res) => {
           gameDao.played(game, count);
           personDao.allPlayed(game.id, candidates, count, ()=>{});
 
-            var sec = (count / 10) + 1;
+            var sec = (count / 10);
             console.log("waiting secs: " + sec);
             setTimeout(function() {
               res.redirect('/listWinnerDramaly/'+gameId);

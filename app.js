@@ -275,13 +275,14 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                     var games = [];
                     gameDao.find(gameId, (it) => {
                         games = it.results;
+                        console.log({gameId, games});
                     });
 
-                    // const sec = (count / 10) +1;
                     console.log("wait game collection, waiting secs: 3");
                     const start = new Date();
                     while (new Date() - start < 3 * 1000) {}
 
+                    console.log({m:"before for", gameId, games});
                     for (i = 0; i < games.length; i++) {
                             const game = games[i];
                             const count = gToUmap.get(gameId).length;

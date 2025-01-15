@@ -248,6 +248,7 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
         console.log({reGame})
         reGame.results.forEach((game) => {
             personDao.findNotGetByGid(game.id, (rePerson) => {
+                let refillCount = 0;
                 rePerson.results.forEach((person) => {
                     // gameIds.add(person.award_game_id);
                     uids.push(person.uid);
@@ -256,8 +257,16 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                         gToUmap.get(person.award_game_id).push(person.uid) :
                         gToUmap.set(person.award_game_id, [person.uid]);
 
-                    gameDao.cancelOneReward(game.id); // 數量要還回去
+                    gameDao.cancelOneReward(game.id, () => {
+                        refillCount++;
+                        if (refillCount === rePerson.results.length) {
+                            console.log({'arrive refill Count': rePerson.results.length});
+                        }
+                    }); // 數量要還回去
                 });
+                setTimeout(function() {
+                    console.log({'find out user count': rePerson.results.length, 'refill':refillCount});
+                }, 1000);
             });
         });
         setTimeout(() => {
@@ -300,7 +309,6 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                                         var sec = (count / 10);
                                         console.log("waiting secs: " + sec);
                                         setTimeout(function() {
-                                            console.log({msg:'in loop', candidates})
                                             msg += game.gid + ' ';
                                         }, (sec * 1000));
                                     });

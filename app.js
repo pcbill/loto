@@ -241,7 +241,7 @@ app.get('/gameComplete', basicAuth, (req, res) => {
 
 app.get('/normalGameReplay', basicAuth, (req, res) => {
 
-    const fun = (re) => {
+    const fun = (game, reminderCount, re) => {
         const people = re.results;
 
         const uidAndNames = people.map((it) => {
@@ -316,7 +316,7 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                             const reminderCount = game.reminder_count;
                             console.log({game: game.id, reminderCount});
 
-                            personDao.findAllRegisteredWithoutAward(fun);
+                            personDao.findAllRegisteredWithoutAward(game,reminderCount,fun);
 
                             const sec = (count / 10) + 1;
                             console.log("for loop, waiting secs: " + sec);

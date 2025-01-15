@@ -245,7 +245,7 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
         const uids = [];
         // const gameIds = new Set;
         const gToUmap = new Map();
-        console.log({reGame})
+        // console.log({reGame})
         reGame.results.forEach((game) => {
             personDao.findNotGetByGid(game.id, (rePerson) => {
                 var refillCount = 0;
@@ -291,7 +291,7 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                                 // console.log("upairs length: " + upairs.length);
 
                                 var shuffle_times = 500;
-                                console.log("shuffle_times: " + shuffle_times);
+                                // console.log("shuffle_times: " + shuffle_times);
                                 for (i = 0; i < shuffle_times; i++) {
                                     shuffle(upairs);
                                 }
@@ -306,22 +306,22 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                                     historyDao.saveOne(game.id, candidates);
                                     gameDao.played(game, count);
                                     personDao.allRePlayed(game.id, candidates, count, ()=>{
-                                        var sec = (count / 10);
-                                        console.log("waiting secs: " + sec);
-                                        setTimeout(function() {
-                                            msg += game.gid + ' ';
-                                        }, (sec * 1000));
-                                    });
 
+                                    });
                                 }
                             });
+                            var sec = (count / 10);
+                            console.log("waiting secs: " + sec);
+                            setTimeout(function() {
+                                msg += game.gid + ' ';
+                            }, (sec * 1000));
                         });
                     });
                 });
-                console.log(msg + ' Game Executed!!');
-                req.session['msg'] = msg + ' Game Executed!!';
-                res.redirect('/listReplayWinner/');
             });
+            console.log(msg + ' Game Executed!!');
+            req.session['msg'] = msg + ' Game Executed!!';
+            res.redirect('/listReplayWinner/');
         }, 30000);
     });
 })

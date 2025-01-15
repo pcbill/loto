@@ -277,14 +277,14 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                     gameDao.find(gameId, (it) => {
                         games = it.results;
 
-                        const validGames = [];
+                        const validGameBundles = [];
                         for (i = 0; i < games.length; i++) {
                             const game = games[i];
                             const count = gToUmap.get(gameId).length;
                             const reminderCount = game.reminder_count;
                             if (reminderCount >= count) {
-                                console.log({gameId: game.id, count, reminderCount});
-                                validGames.push({gameId: game.id, count, reminderCount});
+                                console.log({game, count, reminderCount});
+                                validGameBundles.push({game, count, reminderCount});
                             }
                         };
 
@@ -304,16 +304,17 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                                 return it[0];
                             });
 
-                            while (validGames.length > 0) {
-                                const game = validGames.pop();
+                            while (validGameBundles.length > 0) {
+                                const bundle = validGameBundles.pop();
+                                const game = bundle.game;
                                 console.log({game});
                                 const canUids = candidateUids.splice(0, game.count);
                                 console.log({canUids});
 
-                                // gameDao.played(game, count);
-                                // personDao.allRePlayed(game, canUids, count, (re) => {
-                                // });
-                                // historyDao.saveOne(game.id, canUids);
+                                gameDao.played(game, count);
+                                personDao.allRePlayed(game, canUids, count, (re) => {
+                                });
+                                historyDao.saveOne(game.id, canUids);
                             }
                         });
 

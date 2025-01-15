@@ -241,40 +241,6 @@ app.get('/gameComplete', basicAuth, (req, res) => {
 
 app.get('/normalGameReplay', basicAuth, (req, res) => {
 
-    const fun = (game, reminderCount, re) => {
-        const people = re.results;
-
-        const uidAndNames = people.map((it) => {
-            return [it.uid, it.name];
-        });
-
-        const shuffle_times = 400;
-        for (i = 0; i < shuffle_times; i++) {
-            shuffle(uidAndNames);
-        }
-
-        const candidateUids = uidAndNames.map((it) => {
-            return it[0];
-        });
-
-        if (reminderCount >= count) {
-            //normal
-            gameDao.played(game, count);
-            personDao.allRePlayed(game, candidateUids, count, (re) => {
-                // console.log({msg: "waiting secs: 1.5", re});
-                // const start = new Date();
-                // while (new Date() - start < 1500) {
-                // }
-            });
-            historyDao.saveOne(game.id, candidateUids);
-
-        }
-        // const sec = (count / 10) +1;
-        // console.log("waiting secs: " + sec);
-        // const start = new Date();
-        // while (new Date() - start < sec * 1000) {}
-    };
-
     // type 0 = normal game
     gameDao.findByExecType(0, (reGame) => {
         const uids = [];
@@ -310,20 +276,49 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                     var games = [];
                     gameDao.find(gameId, (it) => {
                         games = it.results;
+
+                        const validGames = [];
                         for (i = 0; i < games.length; i++) {
                             const game = games[i];
                             const count = gToUmap.get(gameId).length;
                             const reminderCount = game.reminder_count;
-                            console.log({game: game.id, reminderCount});
-
-                            personDao.findAllRegisteredWithoutAward(game,reminderCount,fun);
-
-                            const sec = (count / 10) + 1;
-                            console.log("for loop, waiting secs: " + sec);
-                            const start1 = new Date();
-                            while (new Date() - start1 < sec * 1000) {
+                            if (reminderCount >= count) {
+                                console.log({gameId: game.id, count, reminderCount});
+                                validGames.push({gameId: game.id, count, reminderCount});
                             }
                         };
+
+                        personDao.findAllRegisteredWithoutAward((re) => {
+                            const people = re.results;
+
+                            const uidAndNames = people.map((it) => {
+                                return [it.uid, it.name];
+                            });
+
+                            const shuffle_times = 500;
+                            for (i = 0; i < shuffle_times; i++) {
+                                shuffle(uidAndNames);
+                            }
+
+                            const candidateUids = uidAndNames.map((it) => {
+                                return it[0];
+                            });
+
+                            while (validGames.length > 0) {
+                                const game = validGames.pop();
+                                const canUids = candidateUids.splice(0, game.count);
+
+                                gameDao.played(game, count);
+                                personDao.allRePlayed(game, canUids, count, (re) => {
+                                });
+                                historyDao.saveOne(game.id, canUids);
+                            }
+                        });
+
+                        const sec = (count / 10) + 1;
+                        console.log("for loop, waiting secs: " + sec);
+                        const start1 = new Date();
+                        while (new Date() - start1 < sec * 1000) {}
                     });
                 });
             });

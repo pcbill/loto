@@ -310,7 +310,7 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                                     });
                                 }
                             });
-                            var sec = (count / 10);
+                            var sec = (count / 10+1);
                             console.log("waiting secs: " + sec);
                             setTimeout(function() {
                                 msg += game.gid + ' ';

@@ -240,6 +240,11 @@ app.get('/gameComplete', basicAuth, (req, res) => {
 });
 
 app.get('/normalGameReplay', basicAuth, (req, res) => {
+
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
     // type 0 = normal game
     gameDao.findByExecType(0, (reGame) => {
         const uids = [];
@@ -323,10 +328,6 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
         }, 30000);
     });
 })
-
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
 
 app.get('/execute/:gameId/:playRightNow', basicAuth, (req, res) => {
     var gameId = req.params.gameId;

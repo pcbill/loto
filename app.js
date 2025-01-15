@@ -297,10 +297,10 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                                 {
                                     //normal
                                     gameDao.played(game, count);
-                                    personDao.allRePlayed(game.id, candidateUids, count, ()=>{
-                                        console.log("waiting secs: 2");
+                                    personDao.allRePlayed(game, candidateUids, count, (re)=>{
+                                        console.log({msg:"waiting secs: 1.2", re});
                                         const start = new Date();
-                                        while (new Date() - start < 2 * 1000) {}
+                                        while (new Date() - start < 1500) {}
                                     });
                                     historyDao.saveOne(game.id, candidateUids);
 

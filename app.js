@@ -306,12 +306,14 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
 
                             while (validGames.length > 0) {
                                 const game = validGames.pop();
+                                console.log({game});
                                 const canUids = candidateUids.splice(0, game.count);
+                                console.log({canUids});
 
-                                gameDao.played(game, count);
-                                personDao.allRePlayed(game, canUids, count, (re) => {
-                                });
-                                historyDao.saveOne(game.id, canUids);
+                                // gameDao.played(game, count);
+                                // personDao.allRePlayed(game, canUids, count, (re) => {
+                                // });
+                                // historyDao.saveOne(game.id, canUids);
                             }
                         });
 

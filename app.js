@@ -319,8 +319,8 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                     });
                 });
             });
-            console.log(msg + ' Game Executed!!');
-            req.session['msg'] = msg + ' Game Executed!!';
+            // console.log(msg + ' Game Executed!!');
+            // req.session['msg'] = msg + ' Game Executed!!';
             res.redirect('/listReplayWinner/');
         }, 30000);
     });

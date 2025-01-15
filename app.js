@@ -298,12 +298,12 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                                 return [it.uid, it.name];
                             });
 
-                            const shuffle_times = 500;
-                            for (i = 0; i < shuffle_times; i++) {
-                                shuffle(uidAndNames);
-                            }
-
                             if (candidateUids === null) {
+                                const shuffle_times = 500;
+                                for (i = 0; i < shuffle_times; i++) {
+                                    shuffle(uidAndNames);
+                                }
+
                                 candidateUids = uidAndNames.map((it) => {
                                     return it[0];
                                 });

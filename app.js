@@ -307,11 +307,11 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                                 if (reminderCount >= count)
                                 {
                                     //normal
-                                    historyDao.saveOne(game.id, candidates);
                                     gameDao.played(game, count);
                                     personDao.allRePlayed(game.id, candidates, count, ()=>{
 
                                     });
+                                    historyDao.saveOne(game.id, candidates);
                                     var sec = (count / 10) +1;
                                     console.log("waiting secs: " + sec);
                                     // await sleep(sec * 1000);

@@ -318,9 +318,14 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                             console.log("waiting secs: " + sec);
                             // await sleep(sec * 1000);
                             const start = new Date();
-                            while (new Date() - start < sec * 3000) {}
+                            while (new Date() - start < sec * 1000) {}
                         });
                     });
+                    var sec = (count / 10) +1;
+                    console.log("waiting secs: " + sec);
+                    // await sleep(sec * 1000);
+                    const start = new Date();
+                    while (new Date() - start < sec * 1000) {}
                 });
             });
             // console.log(msg + ' Game Executed!!');

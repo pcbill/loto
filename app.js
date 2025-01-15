@@ -288,7 +288,7 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                             }
                         };
 
-
+                        var index = 0;
                         personDao.findAllRegisteredWithoutAward((re) => {
                             const people = re.results;
 
@@ -305,7 +305,7 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                                 return it[0];
                             });
 
-                            var index = 0;
+                            // var index = 0;
                             while (validGameBundles.length > 0) {
                                 const bundle = validGameBundles.pop();
                                 const game = bundle.game;

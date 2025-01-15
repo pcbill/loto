@@ -277,7 +277,7 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
 
                 [...gToUmap.keys()].forEach((gameId) => {
                     gameDao.find(gameId, (it) => {
-                        it.results.forEach( async (game) => {
+                        it.results.forEach((game) => {
                             // console.log({game});
                             var count = gToUmap.get(gameId).length;
                             var reminderCount = game.reminder_count;

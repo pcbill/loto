@@ -241,6 +241,8 @@ app.get('/gameComplete', basicAuth, (req, res) => {
 
 app.get('/normalGameReplay', basicAuth, (req, res) => {
     var index = 0;
+    var candidateUids = null;
+
     // type 0 = normal game
     gameDao.findByExecType(0, (reGame) => {
         const uids = [];
@@ -301,9 +303,11 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                                 shuffle(uidAndNames);
                             }
 
-                            const candidateUids = uidAndNames.map((it) => {
-                                return it[0];
-                            });
+                            if (candidateUids === null) {
+                                candidateUids = uidAndNames.map((it) => {
+                                    return it[0];
+                                });
+                            }
                             console.log({candidateUids});
 
                             // var index = 0;

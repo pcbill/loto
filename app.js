@@ -315,11 +315,11 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                                     });
                                 }
                             });
-                            var sec = (count / 10+1);
-                            // console.log("waiting secs: " + sec);
+                            var sec = (count / 10) +1;
+                            console.log("waiting secs: " + sec);
                             // await sleep(sec * 1000);
                             const start = new Date();
-                            while (new Date() - start < sec * 1000) {}
+                            while (new Date() - start < sec * 1500) {}
                         });
                     });
                 });

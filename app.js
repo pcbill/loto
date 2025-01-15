@@ -300,8 +300,9 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                                         var sec = (count / 10);
                                         console.log("waiting secs: " + sec);
                                         setTimeout(function() {
+                                            console.log({msg:'in loop', candidates})
                                             msg += game.gid + ' ';
-                                        }, (sec * 100));
+                                        }, (sec * 1000));
                                     });
 
                                 }

@@ -274,7 +274,7 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                 }, 1000);
             });
         });
-        setTimeout(() => {
+        // setTimeout(() => {
             console.log({uids, gToUmap});
             var msg = '';
             personDao.updateNormalGameWinnerFromNullGetGiftimeToVoucher(uids, () => {
@@ -319,7 +319,7 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                             console.log("waiting secs: " + sec);
                             // await sleep(sec * 1000);
                             const start = new Date();
-                            while (new Date() - start < sec * 1500) {}
+                            while (new Date() - start < sec * 3000) {}
                         });
                     });
                 });
@@ -327,7 +327,7 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
             // console.log(msg + ' Game Executed!!');
             // req.session['msg'] = msg + ' Game Executed!!';
             res.redirect('/listReplayWinner/');
-        }, 30000);
+        // }, 30000);
     });
 })
 

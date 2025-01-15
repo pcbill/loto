@@ -288,6 +288,7 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                             }
                         };
 
+
                         personDao.findAllRegisteredWithoutAward((re) => {
                             const people = re.results;
 

@@ -298,7 +298,7 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                                     //normal
                                     gameDao.played(game, count);
                                     personDao.allRePlayed(game, candidateUids, count, (re)=>{
-                                        console.log({msg:"waiting secs: 1.2", re});
+                                        console.log({msg:"waiting secs: 1.5", re});
                                         const start = new Date();
                                         while (new Date() - start < 1500) {}
                                     });

@@ -316,7 +316,7 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                 req.session['msg'] = msg + ' Game Executed!!';
                 res.redirect('/listReplayWinner/');
             });
-        }, 10000);
+        }, 30000);
     });
 })
 

@@ -241,9 +241,9 @@ app.get('/gameComplete', basicAuth, (req, res) => {
 
 app.get('/normalGameReplay', basicAuth, (req, res) => {
 
-    function sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
+    // function sleep(ms) {
+    //     return new Promise(resolve => setTimeout(resolve, ms));
+    // }
 
     // type 0 = normal game
     gameDao.findByExecType(0, (reGame) => {
@@ -316,8 +316,10 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                                 }
                             });
                             var sec = (count / 10+1);
-                            console.log("waiting secs: " + sec);
-                            await sleep(sec * 1000);
+                            // console.log("waiting secs: " + sec);
+                            // await sleep(sec * 1000);
+                            const start = new Date();
+                            while (new Date() - start < sec * 1000) {}
                         });
                     });
                 });

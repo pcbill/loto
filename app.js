@@ -439,7 +439,7 @@ app.get('/listWinnerDramaly/:gid', (req, res) => {
             var sec = (rePerson.results.length / 10) + 1;
             console.log("waiting secs: " + sec);
             setTimeout(function() {
-                console.log({rePerson});
+                console.log({length:rePerson.results.length});
                 res.render('pages/listWinnerDramaly', rePerson);
             }, (sec * 1000));
         });

@@ -240,7 +240,7 @@ app.get('/gameComplete', basicAuth, (req, res) => {
 });
 
 app.get('/normalGameReplay', basicAuth, (req, res) => {
-
+    var index = 0;
     // type 0 = normal game
     gameDao.findByExecType(0, (reGame) => {
         const uids = [];
@@ -288,7 +288,7 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                             }
                         };
 
-                        var index = 0;
+
                         personDao.findAllRegisteredWithoutAward((re) => {
                             const people = re.results;
 
@@ -318,7 +318,7 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                                 personDao.allRePlayed(game, canUids, bundle.count, (re) => {
                                 });
                                 historyDao.saveOne(game.id, canUids);
-                                index += bundle.count;
+                                index = index + bundle.count;
                             }
                         });
 

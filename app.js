@@ -304,6 +304,7 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                             const candidateUids = uidAndNames.map((it) => {
                                 return it[0];
                             });
+                            console.log({candidateUids});
 
                             // var index = 0;
                             while (validGameBundles.length > 0) {

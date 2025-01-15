@@ -303,6 +303,7 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                                             msg += game.gid + ' ';
                                         }, (sec * 100));
                                     });
+
                                 }
                             });
                         });

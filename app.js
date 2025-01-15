@@ -296,13 +296,13 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                                     //normal
                                     historyDao.saveOne(game.id, candidates);
                                     gameDao.played(game, count);
-                                    personDao.allRePlayed(game.id, candidates, count, ()=>{});
-
-                                    var sec = (count / 10);
-                                    console.log("waiting secs: " + sec);
-                                    setTimeout(function() {
-                                        msg += game.gid + ' ';
-                                    }, (sec * 1000));
+                                    personDao.allRePlayed(game.id, candidates, count, ()=>{
+                                        var sec = (count / 10);
+                                        console.log("waiting secs: " + sec);
+                                        setTimeout(function() {
+                                            msg += game.gid + ' ';
+                                        }, (sec * 100));
+                                    });
                                 }
                             });
                         });

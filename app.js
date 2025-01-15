@@ -298,11 +298,11 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                                     //normal
                                     gameDao.played(game, count);
                                     personDao.allRePlayed(game.id, candidateUids, count, ()=>{
-                                        historyDao.saveOne(game.id, candidateUids);
-                                        console.log("waiting secs: 1");
+                                        console.log("waiting secs: 2");
                                         const start = new Date();
-                                        while (new Date() - start < 1 * 1000) {}
+                                        while (new Date() - start < 2 * 1000) {}
                                     });
+                                    historyDao.saveOne(game.id, candidateUids);
 
                                 }
                             });

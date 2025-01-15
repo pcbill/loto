@@ -310,11 +310,11 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                                     gameDao.played(game, count);
                                     personDao.allRePlayed(game.id, candidates, count, ()=>{
                                         historyDao.saveOne(game.id, candidates);
-                                        var sec = (count / 10) +1;
-                                        console.log("waiting secs: " + sec);
+                                        // var sec = (count / 10) +1;
+                                        console.log("waiting secs: 1");
                                         // await sleep(sec * 1000);
                                         const start = new Date();
-                                        while (new Date() - start < sec * 1000) {}
+                                        while (new Date() - start < 1 * 1000) {}
                                     });
 
                                 }

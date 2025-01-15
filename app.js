@@ -248,7 +248,7 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
         console.log({reGame})
         reGame.results.forEach((game) => {
             personDao.findNotGetByGid(game.id, (rePerson) => {
-                let refillCount = 0;
+                var refillCount = 0;
                 rePerson.results.forEach((person) => {
                     // gameIds.add(person.award_game_id);
                     uids.push(person.uid);

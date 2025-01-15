@@ -323,7 +323,6 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                     });
                     // var sec = 2;
                     // console.log("waiting secs: " + sec);
-                    await sleep(sec * 1000);
                     // const start = new Date();
                     // while (new Date() - start < sec * 1000) {}
                 });

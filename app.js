@@ -269,7 +269,7 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                 [...gToUmap.keys()].forEach((gameId) => {
                     gameDao.find(gameId, (it) => {
                         it.results.forEach((game) => {
-                            console.log({game});
+                            // console.log({game});
                             var count = gToUmap.get(gameId).length;
                             var reminderCount = game.reminder_count;
                             console.log({game: game.id, reminderCount});
@@ -279,7 +279,7 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                                 var upairs = list.map((it) => {
                                     return [it.uid, it.name];
                                 });
-                                console.log("upairs length: " + upairs.length);
+                                // console.log("upairs length: " + upairs.length);
 
                                 var shuffle_times = 500;
                                 console.log("shuffle_times: " + shuffle_times);
@@ -316,7 +316,7 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                 req.session['msg'] = msg + ' Game Executed!!';
                 res.redirect('/listReplayWinner/');
             });
-        }, 1000);
+        }, 10000);
     });
 })
 

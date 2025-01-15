@@ -240,11 +240,6 @@ app.get('/gameComplete', basicAuth, (req, res) => {
 });
 
 app.get('/normalGameReplay', basicAuth, (req, res) => {
-
-    // function sleep(ms) {
-    //     return new Promise(resolve => setTimeout(resolve, ms));
-    // }
-
     // type 0 = normal game
     gameDao.findByExecType(0, (reGame) => {
         const uids = [];
@@ -269,9 +264,6 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                         }
                     }); // 數量要還回去
                 });
-                setTimeout(function() {
-                    console.log({'find out user count': rePerson.results.length, 'refill':refillCount});
-                }, 1000);
             });
         });
         setTimeout(() => {
@@ -282,25 +274,22 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                 [...gToUmap.keys()].forEach((gameId) => {
                     gameDao.find(gameId, (it) => {
                         it.results.forEach((game) => {
-                            // console.log({game});
-                            var count = gToUmap.get(gameId).length;
-                            var reminderCount = game.reminder_count;
+                            const count = gToUmap.get(gameId).length;
+                            const reminderCount = game.reminder_count;
                             console.log({game: game.id, reminderCount});
                             personDao.findAllRegisteredWithoutAward((re) => {
-                                var list = re.results;
+                                const people = re.results;
 
-                                var upairs = list.map((it) => {
+                                const uidAndNames = people.map((it) => {
                                     return [it.uid, it.name];
                                 });
-                                // console.log("upairs length: " + upairs.length);
 
-                                var shuffle_times = 500;
-                                // console.log("shuffle_times: " + shuffle_times);
+                                const shuffle_times = 400;
                                 for (i = 0; i < shuffle_times; i++) {
-                                    shuffle(upairs);
+                                    shuffle(uidAndNames);
                                 }
 
-                                candidates = upairs.map((it) => {
+                                const candidateUids = uidAndNames.map((it) => {
                                     return it[0];
                                 });
 
@@ -308,25 +297,22 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                                 {
                                     //normal
                                     gameDao.played(game, count);
-                                    personDao.allRePlayed(game.id, candidates, count, ()=>{
-                                        historyDao.saveOne(game.id, candidates);
-                                        // var sec = (count / 10) +1;
+                                    personDao.allRePlayed(game.id, candidateUids, count, ()=>{
+                                        historyDao.saveOne(game.id, candidateUids);
                                         console.log("waiting secs: 1");
-                                        // await sleep(sec * 1000);
                                         const start = new Date();
                                         while (new Date() - start < 1 * 1000) {}
                                     });
 
                                 }
                             });
-                            var sec = (count / 10) +1;
+                            const sec = (count / 10) +1;
                             console.log("waiting secs: " + sec);
-                            // await sleep(sec * 1000);
                             const start = new Date();
                             while (new Date() - start < sec * 2000) {}
                         });
                     });
-                    // var sec = 2;
+                    // const sec = 2;
                     // console.log("waiting secs: " + sec);
                     // const start = new Date();
                     // while (new Date() - start < sec * 1000) {}

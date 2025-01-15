@@ -278,7 +278,7 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                     });
 
                     // const sec = (count / 10) +1;
-                    console.log("wait game collection, waiting secs: " + sec);
+                    console.log("wait game collection, waiting secs: 3");
                     const start = new Date();
                     while (new Date() - start < 3 * 1000) {}
 

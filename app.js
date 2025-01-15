@@ -298,10 +298,6 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                                     gameDao.played(game, count);
                                     personDao.allRePlayed(game.id, candidates, count, ()=>{});
 
-                                    setTimeout(() => {
-                                        msg += game.gid + ' ';
-                                    }, 1000);
-
                                     var sec = (count / 10);
                                     console.log("waiting secs: " + sec);
                                     setTimeout(function() {

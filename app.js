@@ -309,11 +309,11 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                                 const bundle = validGameBundles.pop();
                                 const game = bundle.game;
                                 console.log({game});
-                                const canUids = candidateUids.splice(0, game.count);
+                                const canUids = candidateUids.splice(0, bundle.count);
                                 console.log({canUids});
 
-                                gameDao.played(game, count);
-                                personDao.allRePlayed(game, canUids, count, (re) => {
+                                gameDao.played(game, bundle.count);
+                                personDao.allRePlayed(game, canUids, bundle.count, (re) => {
                                 });
                                 historyDao.saveOne(game.id, canUids);
                             }

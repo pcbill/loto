@@ -256,15 +256,13 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                         gToUmap.get(person.award_game_id).push(person.uid) :
                         gToUmap.set(person.award_game_id, [person.uid]);
 
-                    gameDao.cancelOneReward(game.id);
+                    gameDao.cancelOneReward(game.id); // 數量要還回去
                 });
             });
         });
         setTimeout(() => {
+            console.log({uids, gToUmap});
             personDao.updateNormalGameWinnerFromNullGetGiftimeToVoucher(uids, () => {
-                // req.session['msg'] = 'Normal Game Finished!!';
-                // res.redirect('/gameplay');
-
                 // replay
                 var msg = '';
 
@@ -303,11 +301,18 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                                     setTimeout(() => {
                                         msg += game.gid + ' ';
                                     }, 1000);
+
+                                    var sec = (count / 10);
+                                    console.log("waiting secs: " + sec);
+                                    setTimeout(function() {
+                                        msg += game.gid + ' ';
+                                    }, (sec * 1000));
                                 }
                             });
                         });
                     });
                 });
+                console.log(msg + ' Game Executed!!');
                 req.session['msg'] = msg + ' Game Executed!!';
                 res.redirect('/listReplayWinner/');
             });

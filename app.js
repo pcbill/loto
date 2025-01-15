@@ -279,8 +279,9 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                     });
 
                     console.log("wait game collection, waiting secs: 3");
-                    const start = new Date();
-                    while (new Date() - start < 3 * 1000) {}
+                    while (games === undefined || games.length === 0) {}
+                    // const start = new Date();
+                    // while (new Date() - start < 3 * 1000) {}
 
                     console.log({m:"before for", gameId, games});
                     for (i = 0; i < games.length; i++) {

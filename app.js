@@ -322,8 +322,8 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                             });
                             const sec = (count / 10) +1;
                             console.log("for loop, waiting secs: " + sec);
-                            const start = new Date();
-                            while (new Date() - start < sec * 1000) {}
+                            const start1 = new Date();
+                            while (new Date() - start1 < sec * 1000) {}
                         };
                 });
             });

@@ -273,7 +273,10 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                 // replay
                 [...gToUmap.keys()].forEach((gameId) => {
                     gameDao.find(gameId, (it) => {
-                        it.results.forEach((game) => {
+                        // it.results.forEach((game) => {
+                        const games = it.results;
+                        for (let i = 0; i < game.participant_count; i++) {
+                            const game = games[i];
                             const count = gToUmap.get(gameId).length;
                             const reminderCount = game.reminder_count;
                             console.log({game: game.id, reminderCount});
@@ -305,21 +308,21 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                                     historyDao.saveOne(game.id, candidateUids);
 
                                 }
-                                const sec = (count / 10) +1;
-                                console.log("waiting secs: " + sec);
-                                const start = new Date();
-                                while (new Date() - start < sec * 1000) {}
+                                // const sec = (count / 10) +1;
+                                // console.log("waiting secs: " + sec);
+                                // const start = new Date();
+                                // while (new Date() - start < sec * 1000) {}
                             });
-                            // const sec = (count / 10) +1;
-                            // console.log("waiting secs: " + sec);
-                            // const start = new Date();
-                            // while (new Date() - start < sec * 1000) {}
-                        });
+                            const sec = (count / 10) +1;
+                            console.log("for loop, waiting secs: " + sec);
+                            const start = new Date();
+                            while (new Date() - start < sec * 1000) {}
+                        };
                     });
                 });
             });
             res.redirect('/listReplayWinner/');
-        }, 10000);
+        }, 5000);
     });
 })
 

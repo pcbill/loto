@@ -272,10 +272,17 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
             personDao.updateNormalGameWinnerFromNullGetGiftimeToVoucher(uids, () => {
                 // replay
                 [...gToUmap.keys()].forEach((gameId) => {
+                    var games = [];
                     gameDao.find(gameId, (it) => {
-                        // it.results.forEach((game) => {
-                        const games = it.results;
-                        for (i = 0; i < games.length; i++) {
+                        games = it.results;
+                    });
+
+                    // const sec = (count / 10) +1;
+                    console.log("wait game collection, waiting secs: " + sec);
+                    const start = new Date();
+                    while (new Date() - start < 3 * 1000) {}
+
+                    for (i = 0; i < games.length; i++) {
                             const game = games[i];
                             const count = gToUmap.get(gameId).length;
                             const reminderCount = game.reminder_count;
@@ -318,7 +325,6 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                             const start = new Date();
                             while (new Date() - start < sec * 1000) {}
                         };
-                    });
                 });
             });
             res.redirect('/listReplayWinner/');

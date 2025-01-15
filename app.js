@@ -318,7 +318,7 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                                 personDao.allRePlayed(game, canUids, bundle.count, (re) => {
                                 });
                                 historyDao.saveOne(game.id, canUids);
-                                index = index + bundle.count;
+                                index = index + bundle.count + 1;
                             }
                         });
 

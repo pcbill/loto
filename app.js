@@ -240,10 +240,8 @@ app.get('/gameComplete', basicAuth, (req, res) => {
 });
 
 app.get('/normalGameReplay', basicAuth, (req, res) => {
-
-    // function sleep(ms) {
-    //     return new Promise(resolve => setTimeout(resolve, ms));
-    // }
+    var index = 0;
+    var candidateUids = null;
 
     // type 0 = normal game
     gameDao.findByExecType(0, (reGame) => {
@@ -269,73 +267,75 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                         }
                     }); // 數量要還回去
                 });
-                setTimeout(function() {
-                    console.log({'find out user count': rePerson.results.length, 'refill':refillCount});
-                }, 1000);
             });
         });
         setTimeout(() => {
-            console.log({uids, gToUmap});
+            // console.log({uids, gToUmap});
             var msg = '';
             personDao.updateNormalGameWinnerFromNullGetGiftimeToVoucher(uids, () => {
                 // replay
                 [...gToUmap.keys()].forEach((gameId) => {
+                    var games = [];
                     gameDao.find(gameId, (it) => {
-                        it.results.forEach((game) => {
-                            // console.log({game});
-                            var count = gToUmap.get(gameId).length;
-                            var reminderCount = game.reminder_count;
-                            console.log({game: game.id, reminderCount});
-                            personDao.findAllRegisteredWithoutAward((re) => {
-                                var list = re.results;
+                        games = it.results;
 
-                                var upairs = list.map((it) => {
-                                    return [it.uid, it.name];
-                                });
-                                // console.log("upairs length: " + upairs.length);
+                        const validGameBundles = [];
+                        for (i = 0; i < games.length; i++) {
+                            const game = games[i];
+                            const count = gToUmap.get(gameId).length;
+                            const reminderCount = game.reminder_count;
+                            if (reminderCount >= count) {
+                                console.log({game, count, reminderCount});
+                                validGameBundles.push({game, count, reminderCount});
+                            }
+                        };
 
-                                var shuffle_times = 500;
-                                // console.log("shuffle_times: " + shuffle_times);
+
+                        personDao.findAllRegisteredWithoutAward((re) => {
+                            const people = re.results;
+
+                            const uidAndNames = people.map((it) => {
+                                return [it.uid, it.name];
+                            });
+
+                            if (candidateUids === null) {
+                                const shuffle_times = 500;
                                 for (i = 0; i < shuffle_times; i++) {
-                                    shuffle(upairs);
+                                    shuffle(uidAndNames);
                                 }
 
-                                candidates = upairs.map((it) => {
+                                candidateUids = uidAndNames.map((it) => {
                                     return it[0];
                                 });
+                            }
+                            console.log({candidateUids});
 
-                                if (reminderCount >= count)
-                                {
-                                    //normal
-                                    gameDao.played(game, count);
-                                    personDao.allRePlayed(game.id, candidates, count, ()=>{
-                                        historyDao.saveOne(game.id, candidates);
-                                        // var sec = (count / 10) +1;
-                                        console.log("waiting secs: 1");
-                                        // await sleep(sec * 1000);
-                                        const start = new Date();
-                                        while (new Date() - start < 1 * 1000) {}
-                                    });
+                            // var index = 0;
+                            while (validGameBundles.length > 0) {
+                                const bundle = validGameBundles.pop();
+                                const game = bundle.game;
+                                console.log({game, index});
+                                console.log({before:game.id, candidateUidsLength:candidateUids.length});
+                                const canUids = candidateUids.splice(index, bundle.count);
+                                console.log({after:game.id, canUids, candidateUidsLength:candidateUids.length});
 
-                                }
-                            });
-                            var sec = (count / 10) +1;
-                            console.log("game.id, waiting secs: " + sec);
-                            // await sleep(sec * 1000);
-                            const start = new Date();
-                            while (new Date() - start < sec * 1500) {}
+                                gameDao.played(game, bundle.count);
+                                personDao.allRePlayed(game, canUids, bundle.count, (re) => {
+                                });
+                                historyDao.saveOne(game.id, canUids);
+                                index = index + bundle.count + 1;
+                            }
                         });
+
+                        const sec = (count / 10) + 1;
+                        console.log("for loop, waiting secs: " + sec);
+                        const start1 = new Date();
+                        while (new Date() - start1 < sec * 1000) {}
                     });
-                    // var sec = 2;
-                    // console.log("waiting secs: " + sec);
-                    // const start = new Date();
-                    // while (new Date() - start < sec * 1000) {}
                 });
             });
-            // console.log(msg + ' Game Executed!!');
-            // req.session['msg'] = msg + ' Game Executed!!';
             res.redirect('/listReplayWinner/');
-        }, 20000);
+        }, 5000);
     });
 })
 

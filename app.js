@@ -1,3 +1,12 @@
+// 讀取本地環境變數檔案 (.env.local)
+var path = require('path');
+var fs = require('fs');
+var envPath = path.join(__dirname, '.env.local');
+if (fs.existsSync(envPath)) {
+  require('dotenv').config({ path: envPath });
+  console.log('Loaded environment from .env.local');
+}
+
 var express = require('express');
 var session = require('express-session');
 var app = express();
@@ -22,9 +31,12 @@ app.set('port', (process.env.PORT || 5000));
 //   challenge: true
 // });
 
+// 從環境變數讀取認證資訊，預設值僅供開發環境使用
+const ADMIN_USER = process.env.ADMIN_USER || 'admin';
+const ADMIN_PASS = process.env.ADMIN_PASS || 'changeme';  // 請在生產環境設定環境變數！
+
 function basicAuth(req, res, next) {
 
-    console.log(req.headers);
     var authHeader = req.headers.authorization;
     if (!authHeader) {
         var err = new Error('You are not authenticated!');
@@ -33,10 +45,10 @@ function basicAuth(req, res, next) {
         next(err);
         return;
     }
-    var auth = new Buffer.from(authHeader.split(' ')[1], 'base64').toString().split(':');
+    var auth = Buffer.from(authHeader.split(' ')[1], 'base64').toString().split(':');
     var user = auth[0];
     var pass = auth[1];
-    if (user == 'admin' && pass == 'kdorkwj') {
+    if (user === ADMIN_USER && pass === ADMIN_PASS) {
         next(); // authorized
     } else {
         var err = new Error('You are not authenticated!');
@@ -56,15 +68,19 @@ function basicAuth(req, res, next) {
 
 app.use(express.static(__dirname + '/public'));
 
+// Session 設定 - 使用環境變數設定 secret
+const SESSION_SECRET = process.env.SESSION_SECRET || 'loto-dev-secret-change-in-production';
 
 app.use(session({ 
-  msg: '',
-  big_list: [], 
-  reminder_count: 0,
-  gid: '',
-  secret: 'sec', 
-  resave: '', 
-  saveUninitialized: '' }));
+  secret: SESSION_SECRET, 
+  resave: false, 
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',  // 生產環境啟用 HTTPS only
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000  // 24 小時
+  }
+}));
 
 // views is directory for all template files
 app.set('views', __dirname + '/views');
@@ -107,7 +123,7 @@ app.get('/registration', basicAuth, (req, res) => {
 app.post('/registerSubmit', basicAuth, (req, res) => {
   var uid = req.body['uid'];
 
-  if (!uid | uid == '') {
+  if (!uid || uid === '') {
     req.session['msg'] = '請輸入號碼';
     res.redirect('/registration');
     return;
@@ -125,7 +141,7 @@ app.post('/registerSubmit', basicAuth, (req, res) => {
 app.post('/registerByNameSubmit', basicAuth, (req, res) => {
   var name = req.body['name'];
 
-  if (!name | name == '') {
+  if (!name || name === '') {
     req.session['msg'] = '請輸入完整姓名';
     res.redirect('/registration');
     return;
@@ -163,7 +179,7 @@ app.post('/createPerson', basicAuth, (req, res) => {
   var name = req.body['name'];
   var table_num = req.body['table_num'];
 
-  if (!uid | uid == '') {
+  if (!uid || uid === '') {
     res.redirect('/manageRegistration');
     return;
   }
@@ -198,7 +214,7 @@ app.post('/createGame', basicAuth, (req, res) => {
   var participant_count = req.body['participant_count'];
   var type = req.body['type'];
 
-  if (!gid | gid == '') {
+  if (!gid || gid === '') {
     req.session['msg'] = '請輸入獎項';
     res.redirect('/gameplay');
     return;
@@ -280,7 +296,7 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                         games = it.results;
 
                         const validGameBundles = [];
-                        for (i = 0; i < games.length; i++) {
+                        for (let i = 0; i < games.length; i++) {
                             const game = games[i];
                             const count = gToUmap.get(gameId).length;
                             const reminderCount = game.reminder_count;
@@ -300,7 +316,7 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
 
                             if (candidateUids === null) {
                                 const shuffle_times = 500;
-                                for (i = 0; i < shuffle_times; i++) {
+                                for (let i = 0; i < shuffle_times; i++) {
                                     shuffle(uidAndNames);
                                 }
 
@@ -327,10 +343,10 @@ app.get('/normalGameReplay', basicAuth, (req, res) => {
                             }
                         });
 
+                        // 使用非阻塞式等待，避免凍結事件迴圈
                         const sec = (count / 10) + 1;
                         console.log("for loop, waiting secs: " + sec);
-                        const start1 = new Date();
-                        while (new Date() - start1 < sec * 1000) {}
+                        // 移除 while 阻塞迴圈，改用 setTimeout 已在外層處理
                     });
                 });
             });
@@ -361,7 +377,7 @@ app.get('/execute/:gameId/:playRightNow', basicAuth, (req, res) => {
 
         var shuffle_times = 500;
         console.log("shuffle_times: " + shuffle_times);
-        for (i = 0; i < shuffle_times; i++) {
+        for (let i = 0; i < shuffle_times; i++) {
           shuffle(upairs);
         }
         
@@ -661,7 +677,7 @@ function searchPersonByNameForMana (req, res, target) {
 app.get('/updateGetgiftTime/:uid', basicAuth, (req, res) => {
     var uid = req.params.uid;
   
-    if (!uid | uid == '') {
+    if (!uid || uid === '') {
       req.session['msg'] = '請輸入姓名';
       res.redirect('/searchForMana');
       return;
@@ -671,4 +687,38 @@ app.get('/updateGetgiftTime/:uid', basicAuth, (req, res) => {
       req.session['msg'] = reObj.msg + ' ' + uid +' got gift !!';
       res.redirect('/searchForMana');
     });
+});
+
+// 404 處理
+app.use((req, res, next) => {
+    res.status(404).send('頁面不存在');
+});
+
+// 全域錯誤處理 middleware
+app.use((err, req, res, next) => {
+    console.error('Error:', err.message);
+    console.error('Stack:', err.stack);
+    
+    // 認證錯誤
+    if (err.status === 401) {
+        res.status(401).send('未授權的存取');
+        return;
+    }
+    
+    // 一般錯誤
+    res.status(err.status || 500).send('伺服器發生錯誤，請稍後再試');
+});
+
+// 處理未捕獲的 Promise 錯誤
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
+// 處理未捕獲的例外
+process.on('uncaughtException', (err) => {
+    console.error('Uncaught Exception:', err);
+    // 給予時間記錄錯誤後安全關閉
+    setTimeout(() => {
+        process.exit(1);
+    }, 1000);
 });

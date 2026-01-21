@@ -88,6 +88,7 @@ app.set('view engine', 'ejs');
 
 app.listen(app.get('port'), function() {
     console.log('Node app is running on port', app.get('port'));
+    console.log('Open http://localhost:' + app.get('port') + ' in your browser');
 });
 
 var bodyParser = require('body-parser');
@@ -95,6 +96,20 @@ app.use(bodyParser.json());
 //app.use(bodyParser.urlencoded());
 // in latest body-parser use like below.
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// 請求追蹤 middleware - 記錄每個請求
+app.use((req, res, next) => {
+    var startTime = Date.now();
+    console.log('[REQ] ' + new Date().toISOString() + ' ' + req.method + ' ' + req.url);
+    
+    // 當回應結束時記錄
+    res.on('finish', () => {
+        var duration = Date.now() - startTime;
+        console.log('[RES] ' + new Date().toISOString() + ' ' + req.method + ' ' + req.url + ' ' + res.statusCode + ' (' + duration + 'ms)');
+    });
+    
+    next();
+});
 
 var emptyObj = { msg: '', results: [] };
 

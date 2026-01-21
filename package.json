@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "The lottery system of year party for NPUST, using Express 4",
   "engines": {
-    "node": "5.10.0"
+    "node": "18.x"
   },
   "main": "app.js",
   "scripts": {

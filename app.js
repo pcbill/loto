@@ -1,3 +1,5 @@
+'use strict';
+
 // 讀取本地環境變數檔案 (.env.local)
 var path = require('path');
 var fs = require('fs');
@@ -11,7 +13,6 @@ var express = require('express');
 var session = require('express-session');
 var app = express();
 var pg = require('pg');
-//var basicAuth = require('express-basic-auth');
 
 var personDao = require('./lib/dao/personDao');
 var registrationHistoryDao = require('./lib/dao/registrationHistoryDao');
@@ -24,16 +25,9 @@ const connectionString = require('./lib/dao/config').connectionString;
 
 app.set('port', (process.env.PORT || 5000));
 
-// var basicAuth = basicAuth({
-//   users: {
-//       'admin': 'kdorkwj'
-//   },
-//   challenge: true
-// });
-
-// 從環境變數讀取認證資訊，預設值僅供開發環境使用
+// 從環境變數讀取認證資訊
 const ADMIN_USER = process.env.ADMIN_USER || 'admin';
-const ADMIN_PASS = process.env.ADMIN_PASS || 'changeme';  // 請在生產環境設定環境變數！
+const ADMIN_PASS = process.env.ADMIN_PASS || 'changeme';
 
 function basicAuth(req, res, next) {
 
@@ -56,14 +50,6 @@ function basicAuth(req, res, next) {
         err.status = 401;
         next(err);
     }
-
-    // const auth = req.headers.authorization;
-    // if (auth === 'password') {
-    //     next();
-    // } else {
-    //     res.status(401);
-    //     res.send('Access forbidden');
-    // }
 }
 
 app.use(express.static(__dirname + '/public'));
@@ -93,8 +79,6 @@ app.listen(app.get('port'), function() {
 
 var bodyParser = require('body-parser');
 app.use(bodyParser.json());
-//app.use(bodyParser.urlencoded());
-// in latest body-parser use like below.
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // 請求追蹤 middleware - 記錄每個請求

@@ -389,26 +389,30 @@ app.get('/execute/:gameId/:playRightNow', basicAuth, (req, res) => {
         req.session['gameName'] = game.award_list;
         if (gameType == 0 && reminderCount >= count)
         {
-          // normal
-          historyDao.saveOne(gameId, candidates);
-          gameDao.played(game, count);
-          personDao.allPlayed(game.id, candidates, count, ()=>{});
-
-            var sec = (count / 10);
-            console.log("waiting secs: " + sec);
-            setTimeout(function() {
-              res.redirect('/listWinnerDramaly/'+gameId);
-            }, (sec * 1000));
+          // normal game - 先設定為開獎中，動畫結束後才寫入結果
+          gameDao.startDrawing(gameId, () => {
+            // 將候選人存入 session，等動畫結束後再寫入資料庫
+            req.session['pending_candidates'] = candidates;
+            req.session['pending_count'] = count;
+            req.session['pending_gameId'] = gameId;
+            req.session['pending_game'] = game;
+            
+            res.redirect('/listWinnerDramaly/'+gameId);
+          });
         }
         else if (gameType == 1 && reminderCount >= 1) 
         {
-          // big game
+          // big game - 先設定為開獎中，動畫結束後才寫入結果
 
           personDao.findByGid(game.id, (rePerson) => {
             if (playRightNow === 'true') {
-                historyDao.saveOne(gameId, candidates);
-                gameDao.played(game, 1);
-                // personDao.allPlayed(game.id, candidates, 1, ()=>{});
+                // 設定狀態為開獎中，但不立即寫入中獎結果
+                gameDao.startDrawing(gameId, () => {});
+                
+                // 將候選人資訊存入 session，等動畫結束後再寫入
+                req.session['pending_candidates'] = candidates;
+                req.session['pending_gameId'] = gameId;
+                req.session['pending_game'] = game;
             }
 
             var listForUI = upairs.map((it) => {
@@ -448,12 +452,29 @@ app.get('/listWinner/:gid', (req, res) => {
 
     gameDao.find(gid, (reGame) => {
       var games = reGame.results;
+      var game = games[0];
+      
+      // 檢查是否正在開獎中
+      var drawingStatus = game.drawing_status || 0;
+      
+      if (drawingStatus === 1) {
+        // 開獎中，顯示等待頁面
+        res.render('pages/listWinner', {
+          results: [],
+          isDrawing: true,
+          gameName: game.award_list,
+          gid: gid
+        });
+        return;
+      }
 
       personDao.findByGid(gid, (rePerson) => {
         //rePerson.gid = games[0].gid;
         for (var i = 0; i < rePerson.results.length; i++) {
           rePerson.results[i].awardList = games[0].award_list;
         }
+        rePerson.isDrawing = false;
+        rePerson.gid = gid;
         res.render('pages/listWinner', rePerson);
       });
     });
@@ -468,20 +489,63 @@ app.get('/listReplayWinner', (req, res) => {
 
 app.get('/listWinnerDramaly/:gid', (req, res) => {
     var gid = req.params.gid;
-
+    
+    // 檢查是否有待開獎的資料（開獎中狀態）
+    var pendingCandidates = req.session['pending_candidates'];
+    var pendingCount = req.session['pending_count'];
+    var pendingGame = req.session['pending_game'];
+    
     gameDao.find(gid, (reGame) => {
         var games = reGame.results;
-
-        personDao.findByGid(gid, (rePerson) => {
-        //rePerson.gid = games[0].gid;
-            for (var i = 0; i < rePerson.results.length; i++) {
-                rePerson.results[i].awardList = games[0].award_list;
+        var game = games[0];
+        
+        // 如果是開獎中狀態（有 pending 資料），使用 session 中的候選人
+        if (pendingCandidates && pendingGame && pendingGame.id == gid) {
+            // 從候選人 uid 取得完整資料用於顯示
+            var winnersToShow = [];
+            var processedCount = 0;
+            var totalCount = Math.min(pendingCount, pendingCandidates.length);
+            
+            for (var i = 0; i < totalCount; i++) {
+                (function(index) {
+                    var uid = pendingCandidates[index];
+                    personDao.findByUid(uid, (rePerson) => {
+                        var person = rePerson.results.find(p => p.uid === uid);
+                        if (person) {
+                            winnersToShow[index] = {
+                                uid: person.uid,
+                                name: person.name,
+                                table_num: person.table_num,
+                                awardList: game.award_list
+                            };
+                        }
+                        processedCount++;
+                        
+                        if (processedCount === totalCount) {
+                            // 過濾掉 undefined
+                            winnersToShow = winnersToShow.filter(w => w);
+                            res.render('pages/listWinnerDramaly', {
+                                results: winnersToShow,
+                                gid: gid,
+                                isDrawing: true  // 標記為開獎中
+                            });
+                        }
+                    });
+                })(i);
             }
+        } else {
+            // 已經開獎完成，從資料庫取得中獎者
+            personDao.findByGid(gid, (rePerson) => {
+                for (var i = 0; i < rePerson.results.length; i++) {
+                    rePerson.results[i].awardList = game.award_list;
+                }
 
-            console.log({length:rePerson.results.length});
-            res.render('pages/listWinnerDramaly', rePerson);
-
-        });
+                console.log({length:rePerson.results.length});
+                rePerson.gid = gid;
+                rePerson.isDrawing = false;
+                res.render('pages/listWinnerDramaly', rePerson);
+            });
+        }
     });
 });
 
@@ -515,6 +579,82 @@ app.get('/updatePlayerGameRelation/:gid/:uid', basicAuth, (req, res) => {
     personDao.allPlayed(gid, [uid], 1, ()=>{});
 
     res.sendStatus(200);
+});
+
+// 完成普通獎開獎 - 動畫結束後呼叫此 API 寫入中獎結果
+app.post('/completeNormalDrawing/:gid', basicAuth, (req, res) => {
+    var gid = req.params.gid;
+    var candidates = req.session['pending_candidates'];
+    var count = req.session['pending_count'];
+    var game = req.session['pending_game'];
+    
+    if (!candidates || !game) {
+        res.status(400).json({ error: '開獎資料遺失，請重新開獎' });
+        return;
+    }
+    
+    // 現在才真正寫入中獎結果
+    historyDao.saveOne(gid, candidates);
+    gameDao.played(game, count);
+    personDao.allPlayed(game.id, candidates, count, () => {});
+    
+    // 設定狀態為已完成
+    gameDao.completeDrawing(gid, () => {
+        // 清除 session 中的暫存資料
+        req.session['pending_candidates'] = null;
+        req.session['pending_count'] = null;
+        req.session['pending_gameId'] = null;
+        req.session['pending_game'] = null;
+        
+        res.json({ success: true });
+    });
+});
+
+// 完成大獎開獎 - 動畫結束後呼叫此 API 寫入中獎結果
+app.post('/completeBigDrawing/:gid/:uid', basicAuth, (req, res) => {
+    var gid = req.params.gid;
+    var uid = req.params.uid;
+    var candidates = req.session['pending_candidates'];
+    var game = req.session['pending_game'];
+    
+    if (!candidates || !game) {
+        res.status(400).json({ error: '開獎資料遺失，請重新開獎' });
+        return;
+    }
+    
+    // 現在才真正寫入中獎結果
+    historyDao.saveOne(gid, candidates);
+    gameDao.played(game, 1);
+    personDao.allPlayed(game.id, [uid], 1, () => {});
+    
+    // 設定狀態為已完成
+    gameDao.completeDrawing(gid, () => {
+        // 清除 session 中的暫存資料
+        req.session['pending_candidates'] = null;
+        req.session['pending_gameId'] = null;
+        req.session['pending_game'] = null;
+        
+        res.json({ success: true });
+    });
+});
+
+// 檢查開獎狀態 API
+app.get('/checkDrawingStatus/:gid', (req, res) => {
+    var gid = req.params.gid;
+    
+    gameDao.find(gid, (result) => {
+        if (result.results && result.results.length > 0) {
+            var game = result.results[0];
+            var status = game.drawing_status || 0;
+            res.json({ 
+                gid: gid,
+                drawing_status: status,
+                is_drawing: status === 1  // 1 = 開獎中
+            });
+        } else {
+            res.status(404).json({ error: '找不到此獎項' });
+        }
+    });
 });
 
 app.get('/playBig', basicAuth, (req, res) => {

@@ -268,19 +268,25 @@ ul {
         </table>
     <% } %>
 
+
 </center>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
     <script src="js/jquery.easing.1.3.js" type="text/javascript" charset="utf-8"></script>
     <script src="js/jquery.jSlots.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript" charset="utf-8">
+        var winnerUid = '<%= results && results.length > 0 ? results[0].split(" ")[0] : "" %>';
+        var winnerName = '<%= results && results.length > 0 ? results[0].split(" ")[1] : "" %>';
+        var gid = '<%= gid %>';
+        var playRightNow = '<%= playRightNow %>';
+        
         function cancelButtonAction() {
-            $.get( "/cancelWinnerQuietly/<%= gid %>/<%= results[0].split(' ')[0] %>", function( data ) { });
+            $.get( "/cancelWinnerQuietly/" + gid + "/" + winnerUid, function( data ) { });
 
             $('#cancelRow').hide();
             $('#reminderCount').text('<%= reminderCount %>');
 
-            $('#playNextButton').html('<a href="/execute/<%= gid %>/true" style="padding: 0px">\n' +
+            $('#playNextButton').html('<a href="/execute/' + gid + '/true" style="padding: 0px">\n' +
                 '                <img style="width:100px; height:100px" src="/img/button_start1.png" />\n' +
                 '            </a>');
         }
@@ -313,12 +319,25 @@ ul {
                 <% } %>
 
                 $('#winnerList tr:first').after('<tr id="cancelRow" >\n' +
-                    '              <td><%= results[0].split(' ')[0] %></td>' +
-                    '              <td><%= results[0].split(' ')[1] %></td>' +
+                    '              <td>' + winnerUid + '</td>' +
+                    '              <td>' + winnerName + '</td>' +
                     '<td><button onclick="cancelButtonAction()" class="btn btn-primary" >取消資格</button> </td> \n' +
                     '            </tr>');
 
-                $.get( "/updatePlayerGameRelation/<%= gid %>/<%= results[0].split(' ')[0] %>", function( data ) { });
+                // 動畫結束後才真正寫入中獎結果
+                if (playRightNow === 'true') {
+                    $.post('/completeBigDrawing/' + gid + '/' + winnerUid, function(data) {
+                        if (data.success) {
+                            console.log('大獎開獎結果已儲存');
+                        }
+                    }).fail(function(err) {
+                        console.error('儲存開獎結果失敗', err);
+                        alert('儲存開獎結果失敗，請聯繫管理員');
+                    });
+                } else {
+                    // 非 playRightNow 模式，只更新 player-game 關係
+                    $.get( "/updatePlayerGameRelation/" + gid + "/" + winnerUid, function( data ) { });
+                }
             }
         });
 

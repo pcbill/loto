@@ -13,12 +13,12 @@
     <div class="col-md-12">
       <h3>
 
-      <% if (results) { %>
+      <% if (results && results.length > 0) { %>
              <%= results[0].awardList %> 共 <%= results.length %> 個
       <% } %>
       </h3>
 
-      <% if (results) { %>
+      <% if (results && results.length > 0) { %>
       <table  class="table table-bordered table-hover">
         <thead>
                 <tr>
@@ -32,15 +32,21 @@
       </table>
       <% } %>
 
+      <div id="drawingStatus" style="display:none; font-size:24px; color:green; margin-top:20px;">
+        ✓ 開獎結果已儲存
+      </div>
+
     </div>
   </div>
 </div>
 
 <script>
-<% if (results) { %>
+<% if (results && results.length > 0) { %>
     var rowLength = <%= results.length %>;
     var count = 0;
-    var content = <%- JSON.stringify(results) %>
+    var content = <%- JSON.stringify(results) %>;
+    var isDrawing = <%= isDrawing ? 'true' : 'false' %>;
+    var gid = '<%= gid %>';
 
     function show() {
         $('#content').prepend(
@@ -49,11 +55,27 @@
                           '<td>'+ content[count].name +'</td>'+
                           '<td>'+ content[count].table_num +'</td></tr>'
         );
-        if (count != rowLength) {
-            count++;
+        count++;
+        
+        // 當所有中獎者都顯示完畢
+        if (count >= rowLength) {
+            clearInterval(intervalId);
+            
+            // 如果是開獎中狀態，呼叫 API 完成開獎
+            if (isDrawing) {
+                $.post('/completeNormalDrawing/' + gid, function(data) {
+                    if (data.success) {
+                        $('#drawingStatus').show();
+                        console.log('開獎結果已儲存');
+                    }
+                }).fail(function(err) {
+                    console.error('儲存開獎結果失敗', err);
+                    alert('儲存開獎結果失敗，請聯繫管理員');
+                });
+            }
         }
     }
 
-    var intervalId = setInterval(show,2000)
-<% }%>
+    var intervalId = setInterval(show, 2000);
+<% } %>
 </script>

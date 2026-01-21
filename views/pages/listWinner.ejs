@@ -16,7 +16,15 @@
         得獎者列表
       </h3>
     
-      <% if (results) { %>
+      <% if (isDrawing) { %>
+      <div class="alert alert-warning" style="font-size: 24px; text-align: center; padding: 50px;">
+        <h2>🎰 開獎進行中...</h2>
+        <p>請稍候，獎項正在揭曉中！</p>
+        <p>請勿重新整理此頁面</p>
+        <br/>
+        <button class="btn btn-primary" onclick="location.reload()">重新整理查看結果</button>
+      </div>
+      <% } else if (results && results.length > 0) { %>
       <table class="table table-bordered table-hover">
           <tr>
             <th>姓名</th>
@@ -35,6 +43,8 @@
           </tr>
         <% }); %>
       </table>
+      <% } else { %>
+      <p>尚無中獎者</p>
       <% } %>
 
     </div>

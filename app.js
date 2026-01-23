@@ -374,6 +374,21 @@ app.get('/execute/:gameId/:playRightNow', basicAuth, (req, res) => {
         });
         console.log("upairs length: " + upairs.length);
 
+        // 檢查候選人數量
+        if (upairs.length === 0) {
+          req.session['msg'] = '錯誤：沒有可抽獎的候選人！所有人都已中獎或尚未註冊。';
+          res.redirect('/gameplay');
+          return;
+        }
+
+        // 檢查候選人數是否足夠
+        var requiredCount = (gameType == 1) ? 1 : count; // 大獎每次抽1人，普通獎抽 count 人
+        if (upairs.length < requiredCount) {
+          req.session['msg'] = '錯誤：候選人數不足！目前只有 ' + upairs.length + ' 人，但需要抽出 ' + requiredCount + ' 人。';
+          res.redirect('/gameplay');
+          return;
+        }
+
         var shuffle_times = 500;
         console.log("shuffle_times: " + shuffle_times);
         for (let i = 0; i < shuffle_times; i++) {

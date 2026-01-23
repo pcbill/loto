@@ -83,7 +83,9 @@
             base.$liHeight = $li.outerHeight();
             base.$liWidth = $li.outerWidth();
 
-            base.liCount = base.$el.children().length / 25;
+            // 計算 liCount，並設定最小值確保動畫順暢
+            var rawLiCount = base.$el.children().length / 25;
+            base.liCount = Math.max(rawLiCount, 20); // 最小值 20，確保動畫不會跳格
 
             base.listHeight = base.$liHeight * base.liCount;
 

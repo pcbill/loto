@@ -456,28 +456,6 @@ body::before {
     50% { transform: rotate(5deg); }
 }
 
-/* 煙火效果 */
-.firework {
-    position: fixed;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    animation: firework 1.5s ease-out forwards;
-    pointer-events: none;
-    z-index: 100;
-}
-
-@keyframes firework {
-    0% {
-        transform: scale(1);
-        opacity: 1;
-    }
-    100% {
-        transform: scale(20);
-        opacity: 0;
-    }
-}
-
 /* 響應式設計 */
 @media (max-width: 768px) {
     .top-nav {
@@ -676,22 +654,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// 煙火效果
-function createFirework(x, y) {
-    const colors = ['#FFD700', '#FF0000', '#FFA500', '#FF69B4', '#00FF00'];
-    for (let i = 0; i < 12; i++) {
-        const firework = document.createElement('div');
-        firework.className = 'firework';
-        firework.style.left = x + 'px';
-        firework.style.top = y + 'px';
-        firework.style.background = colors[Math.floor(Math.random() * colors.length)];
-        firework.style.boxShadow = '0 0 20px ' + firework.style.background;
-        document.body.appendChild(firework);
-        
-        setTimeout(() => firework.remove(), 1500);
-    }
-}
-
 // 開始抽獎
 function startDraw() {
     if (isDrawing) return;
@@ -739,13 +701,6 @@ function showWinnersWithAnimation(winners, gameId) {
             // 所有人都顯示完畢
             clearInterval(intervalId);
             
-            // 慶祝煙火
-            for (let i = 0; i < 5; i++) {
-                setTimeout(() => {
-                    createFirework(Math.random() * window.innerWidth, Math.random() * window.innerHeight * 0.5);
-                }, i * 300);
-            }
-            
             // 呼叫 API 完成抽獎
             $.post('/completeNormalDrawing/' + gameId, function(res) {
                 if (res.success) {
@@ -767,11 +722,6 @@ function showWinnersWithAnimation(winners, gameId) {
                   '<td class="table-num">'+ winner.table_num +'</td>' +
                   '</tr>';
         $('#winnersBody').prepend(row);
-        
-        // 隨機煙火
-        if (Math.random() > 0.5) {
-            createFirework(Math.random() * window.innerWidth, Math.random() * window.innerHeight * 0.5);
-        }
         
         count++;
     }

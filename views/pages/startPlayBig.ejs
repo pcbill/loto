@@ -320,22 +320,32 @@ ul {
 
 .slot {
     float: left;
+    width: 100%;
 }
 
 /* 老虎機樣式 */
+.fancy {
+    width: 100%;
+}
+
 .fancy .jSlots-wrapper {
     overflow: hidden;
     line-height: 200px;
     height: 200px;
-    display: inline-block;
+    display: block;
     border: none;
     border-radius: 15px;
     box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.8);
     width: 100%;
 }
 
-.fancy .slot li {
+.fancy .slot {
     width: 100%;
+    float: none;
+}
+
+.fancy .slot li {
+    width: 100% !important;
     line-height: 200px;
     height: 200px;
     text-align: center;

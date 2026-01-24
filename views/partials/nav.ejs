@@ -23,7 +23,7 @@
   </div>
 </nav>
  
-<% if (msg) { %>
+<% if (typeof msg !== 'undefined' && msg) { %>
   <div> <%= msg %> </div>
 <% } %>
   

@@ -126,28 +126,32 @@ ul {
     letter-spacing: 4px;
 }
 
-/* 獎項標題區 */
-.prize-header {
-    text-align: center;
-    margin: 30px 0;
-    position: relative;
+/* 獎項標題 + 剩餘次數 + 開始按鈕 一行排列 */
+.prize-control-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    margin: 30px auto;
+    padding: 20px;
+    flex-wrap: wrap;
 }
 
 .prize-title {
-    display: inline-block;
-    padding: 20px 60px;
+    display: inline-flex;
+    align-items: center;
+    padding: 15px 40px;
     background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%);
     border-radius: 15px;
-    position: relative;
     box-shadow: 0 10px 40px rgba(255, 215, 0, 0.4), inset 0 2px 0 rgba(255, 255, 255, 0.3);
 }
 
 .prize-title::before,
 .prize-title::after {
     content: '🏆';
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
+    font-size: 30px;
+    margin: 0 10px;
+}
     font-size: 40px;
 }
 
@@ -533,10 +537,33 @@ ul {
         <div class="event-year">尾牙抽獎</div>
     </div>
 
-    <!-- 獎項標題 -->
-    <div class="prize-header">
+    <!-- 獎項標題 + 剩餘次數 + 開始按鈕 排成一行 -->
+    <div class="prize-control-row">
+        <!-- 獎項標題 -->
         <div class="prize-title">
             <h2><%= gameName %></h2>
+        </div>
+
+        <!-- 剩餘次數 -->
+        <div class="remaining-count">
+            <img src="/img/still.png" alt="" />
+            <span class="count-number" id="reminderCount"><%= reminderCount %></span>
+            <span class="count-label">次機會</span>
+        </div>
+
+        <!-- 開始按鈕 -->
+        <div class="control-area">
+            <% if (reminderCount > 0) { %>
+            <span id="playNextButton">
+                <a href="/execute/<%= gid %>/true" class="play-button">
+                    <img src="/img/button_start1.png" alt="開始抽獎" />
+                </a>
+            </span>
+            <% } else { %>
+            <span id="playNextButton">
+                <img src="/img/button_start1.png" alt="" style="width:100px; height:100px; opacity:0.3; filter: grayscale(100%);" />
+            </span>
+            <% } %>
         </div>
     </div>
 
@@ -554,26 +581,6 @@ ul {
                 </ul>
                 <input type="button" id="playFancy" value="Play">
             </div>
-        </div>
-    </div>
-
-    <!-- 控制區 -->
-    <div class="control-area">
-        <% if (reminderCount > 0) { %>
-        <span id="playNextButton">
-            <a href="/execute/<%= gid %>/true" class="play-button">
-                <img src="/img/button_start1.png" alt="開始抽獎" />
-            </a>
-        </span>
-        <% } %>
-    </div>
-
-    <!-- 剩餘次數 -->
-    <div style="text-align: center;">
-        <div class="remaining-count">
-            <img src="/img/still.png" alt="" />
-            <span class="count-number" id="reminderCount"><%= reminderCount %></span>
-            <span class="count-label">次機會</span>
         </div>
     </div>
 

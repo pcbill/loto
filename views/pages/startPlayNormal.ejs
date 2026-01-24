@@ -1,29 +1,392 @@
-
+<!DOCTYPE HTML>
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <%- include('../partials/header.ejs') %>
+<title>屏東科技大學 尾牙抽獎 - 一般抽獎</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+
+<style type="text/css">
+
+* {
+    font-family: 'Noto Sans TC', sans-serif;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a0a0a 0%, #4a1515 30%, #8B0000 60%, #4a1515 100%);
+    background-attachment: fixed;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* 背景裝飾 - 金色光暈 */
+body::before {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(ellipse at center, rgba(255, 215, 0, 0.1) 0%, transparent 50%);
+    animation: shimmer 8s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes shimmer {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); opacity: 0.3; }
+    50% { transform: translate(5%, 5%) rotate(5deg); opacity: 0.6; }
+}
+
+/* 飄落的金幣/紅包動畫 */
+.falling-item {
+    position: fixed;
+    font-size: 30px;
+    animation: fall linear infinite;
+    pointer-events: none;
+    z-index: 1;
+}
+
+@keyframes fall {
+    0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0.3; }
+}
+
+/* 主容器 */
+.lottery-container {
+    position: relative;
+    z-index: 10;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 頂部導航 */
+.top-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background: rgba(0, 0, 0, 0.3);
+    border-bottom: 2px solid #FFD700;
+}
+
+.back-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: #8B0000;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 25px;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+}
+
+.back-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
+    text-decoration: none;
+    color: #8B0000;
+}
+
+.back-btn::before {
+    content: '←';
+    margin-right: 8px;
+    font-size: 18px;
+}
+
+.school-name {
+    font-size: 28px;
+    font-weight: 900;
+    color: #FFD700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5), 0 0 30px rgba(255, 215, 0, 0.3);
+    letter-spacing: 8px;
+}
+
+.event-year {
+    font-size: 18px;
+    color: #FFA500;
+    letter-spacing: 4px;
+}
+
+/* 主內容區 */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+/* 獎項標題 + 剩餘次數 + 開始按鈕 一行排列 */
+.prize-control-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    margin: 30px auto;
+    padding: 20px;
+    flex-wrap: wrap;
+}
+
+.prize-title {
+    display: inline-flex;
+    align-items: center;
+    padding: 15px 40px;
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%);
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(255, 215, 0, 0.4), inset 0 2px 0 rgba(255, 255, 255, 0.3);
+}
+
+.prize-title::before,
+.prize-title::after {
+    content: '🎁';
+    font-size: 30px;
+    margin: 0 10px;
+}
+
+.prize-title h2 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 900;
+    color: #8B0000;
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+}
+
+/* 剩餘次數 - 行內樣式 */
+.remaining-count {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 25px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 50px;
+    border: 2px solid #FFD700;
+}
+
+.remaining-count img {
+    height: 40px;
+}
+
+.remaining-count .count-number {
+    font-size: 36px;
+    font-weight: 900;
+    color: #FFD700;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+    min-width: 40px;
+    text-align: center;
+}
+
+.remaining-count .count-label {
+    font-size: 16px;
+    color: #FFA500;
+}
+
+/* 控制區 - 行內樣式 */
+.control-area {
+    display: inline-flex;
+    align-items: center;
+}
+
+.play-button {
+    display: inline-block;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.play-button:hover {
+    transform: scale(1.15);
+}
+
+.play-button img {
+    width: 100px;
+    height: 100px;
+    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8));
+}
+
+.play-button.disabled img {
+    opacity: 0.3;
+    filter: grayscale(100%);
+}
+
+/* 說明文字 */
+.description {
+    text-align: center;
+    margin-top: 30px;
+    padding: 20px 40px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.description p {
+    margin: 0;
+    font-size: 18px;
+    color: #FFA500;
+}
+
+.description .highlight {
+    color: #FFD700;
+    font-weight: bold;
+    font-size: 24px;
+}
+
+/* 燈籠裝飾 */
+.lantern {
+    position: fixed;
+    font-size: 60px;
+    animation: sway 3s ease-in-out infinite;
+    z-index: 5;
+}
+
+.lantern-left {
+    top: 100px;
+    left: 30px;
+}
+
+.lantern-right {
+    top: 100px;
+    right: 30px;
+    animation-delay: -1.5s;
+}
+
+@keyframes sway {
+    0%, 100% { transform: rotate(-5deg); }
+    50% { transform: rotate(5deg); }
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+    .top-nav {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+    
+    .school-name {
+        font-size: 20px;
+        letter-spacing: 4px;
+    }
+    
+    .prize-control-row {
+        gap: 20px;
+    }
+    
+    .prize-title {
+        padding: 10px 20px;
+    }
+    
+    .prize-title h2 {
+        font-size: 20px;
+    }
+    
+    .prize-title::before,
+    .prize-title::after {
+        font-size: 20px;
+        margin: 0 5px;
+    }
+    
+    .remaining-count .count-number {
+        font-size: 28px;
+    }
+    
+    .lantern {
+        font-size: 40px;
+    }
+    
+    .lantern-left {
+        left: 10px;
+    }
+    
+    .lantern-right {
+        right: 10px;
+    }
+}
+
+</style>
 </head>
+
 <body>
 
-<br/>
-<br/>
-<table>
-    <tr><td valign="middle" style="font-size: 48px">
-        <img src="/img/now_we_will_play.png" width="300"/> <%= gameName %>
-    </td></tr>
-    <tr><td>
-        快速抽出 <span id='reminderCount'><%= reminderCount %></span> 位得獎者
-    </td></tr>
-</table>
-<br/>
-<br/>
-<center>
+<!-- 飄落裝飾 -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const items = ['🧧', '💰', '🎊', '✨', '🎉', '💫'];
+    const container = document.body;
+    
+    for (let i = 0; i < 20; i++) {
+        setTimeout(() => {
+            const item = document.createElement('div');
+            item.className = 'falling-item';
+            item.textContent = items[Math.floor(Math.random() * items.length)];
+            item.style.left = Math.random() * 100 + 'vw';
+            item.style.animationDuration = (Math.random() * 5 + 5) + 's';
+            item.style.animationDelay = (Math.random() * 5) + 's';
+            item.style.fontSize = (Math.random() * 20 + 20) + 'px';
+            container.appendChild(item);
+        }, i * 300);
+    }
+});
+</script>
 
-<a class="btn btn-primary" href='/execute/<%= gid %>/false'>
-    <img style="width:100px; height:100px" src="/img/button_start1.png" />
-</a>
-</center>
+<!-- 燈籠裝飾 -->
+<div class="lantern lantern-left">🏮</div>
+<div class="lantern lantern-right">🏮</div>
 
+<div class="lottery-container">
+    <!-- 頂部導航 -->
+    <div class="top-nav">
+        <a href="/gameplay" class="back-btn">返回管理</a>
+        <div class="school-name">國立屏東科技大學</div>
+        <div class="event-year">尾牙抽獎</div>
+    </div>
+
+    <!-- 主內容區 -->
+    <div class="main-content">
+        <!-- 獎項標題 + 剩餘次數 + 開始按鈕 排成一行 -->
+        <div class="prize-control-row">
+            <!-- 獎項標題 -->
+            <div class="prize-title">
+                <h2><%= gameName %></h2>
+            </div>
+
+            <!-- 剩餘次數 -->
+            <div class="remaining-count">
+                <img src="/img/still.png" alt="" />
+                <span class="count-number" id="reminderCount"><%= reminderCount %></span>
+                <span class="count-label">位得獎者</span>
+            </div>
+
+            <!-- 開始按鈕 -->
+            <div class="control-area">
+                <% if (reminderCount > 0) { %>
+                <a href="/execute/<%= gid %>/false" class="play-button">
+                    <img src="/img/button_start1.png" alt="開始抽獎" />
+                </a>
+                <% } else { %>
+                <span class="play-button disabled">
+                    <img src="/img/button_start1.png" alt="" />
+                </span>
+                <% } %>
+            </div>
+        </div>
+
+        <!-- 說明文字 -->
+        <div class="description">
+            <p>快速抽出 <span class="highlight"><%= reminderCount %></span> 位幸運得獎者</p>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>

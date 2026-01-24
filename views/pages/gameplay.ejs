@@ -224,6 +224,150 @@
 .admin-btn .glyphicon {
   margin-right: 8px;
 }
+
+/* 表格樣式 */
+.data-table {
+  width: 100%;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.data-table thead th {
+  background: linear-gradient(135deg, #495057 0%, #343a40 100%);
+  color: white;
+  padding: 15px 12px;
+  font-weight: 600;
+  font-size: 14px;
+  text-align: left;
+  border: none;
+}
+
+.data-table tbody tr {
+  transition: background-color 0.2s;
+}
+
+.data-table tbody tr:nth-child(even) {
+  background-color: #f8f9fa;
+}
+
+.data-table tbody tr:hover {
+  background-color: #e3f2fd;
+}
+
+.data-table tbody td {
+  padding: 12px;
+  border-bottom: 1px solid #e9ecef;
+  font-size: 14px;
+  color: #495057;
+  vertical-align: middle;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.table-header h4 {
+  margin: 0;
+  color: #495057;
+  font-weight: 600;
+}
+
+.table-count {
+  background: #e9ecef;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  color: #495057;
+}
+
+/* 操作按鈕 */
+.btn-action {
+  padding: 6px 12px;
+  font-size: 12px;
+  border-radius: 4px;
+  margin-right: 5px;
+  margin-bottom: 5px;
+  display: inline-block;
+}
+
+.btn-delete {
+  background: #dc3545;
+  border-color: #dc3545;
+  color: white;
+}
+
+.btn-delete:hover {
+  background: #c82333;
+  border-color: #bd2130;
+  color: white;
+}
+
+.btn-enter {
+  background: #28a745;
+  border-color: #28a745;
+  color: white;
+}
+
+.btn-enter:hover {
+  background: #218838;
+  border-color: #1e7e34;
+  color: white;
+}
+
+.btn-edit {
+  background: #17a2b8;
+  border-color: #17a2b8;
+  color: white;
+}
+
+.btn-edit:hover {
+  background: #138496;
+  border-color: #117a8b;
+  color: white;
+}
+
+/* 類型標籤 */
+.type-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.type-badge.normal {
+  background: #e9ecef;
+  color: #495057;
+}
+
+.type-badge.big {
+  background: #fff3cd;
+  color: #856404;
+}
+
+/* 空狀態 */
+.empty-state {
+  text-align: center;
+  padding: 60px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.empty-state .glyphicon {
+  font-size: 48px;
+  color: #adb5bd;
+}
+
+.empty-state p {
+  color: #6c757d;
+  margin-top: 15px;
+}
 </style>
 </head>
 
@@ -281,44 +425,61 @@
     </div>
 
     <div class="col-md-9">
-      <% if (results) { %>
-        共有 <%= results.length %> 個獎項
-        <table class="table table-bordered table-hover">
+      <% if (results && results.length > 0) { %>
+      <div class="table-header">
+        <h4><span class="glyphicon glyphicon-gift"></span> 獎項列表</h4>
+        <span class="table-count">共 <%= results.length %> 個獎項</span>
+      </div>
+      <table class="data-table">
+        <thead>
           <tr>
             <th>操作</th>
             <th>獎項</th>
             <th>獎品列表</th>
             <th>數量</th>
             <th>剩餘</th>
-            <th></th>
+            <th>類型</th>
           </tr>
+        </thead>
+        <tbody>
         <% results.forEach( (it) => { %>
           <tr>
             <td>
-              <a class="btn btn-primary" href='/deleteGame/<%= it.id %>'>刪除</a>
+              <a class="btn btn-action btn-delete" href='/deleteGame/<%= it.id %>'>刪除</a>
 
               <% if (it.reminder_count > 0) { %>
                 <% if (it.exec_type == 0 && count >= it.reminder_count) { %>
-                  <a class="btn btn-primary" href='/playNormal/<%= it.id %>'>進入抽獎介面</a>
+                  <a class="btn btn-action btn-enter" href='/playNormal/<%= it.id %>'>進入抽獎</a>
                 <% } else if (count >= 1) { %>
-                  <a class="btn btn-primary" href='/execute/<%= it.id %>/false'>進入抽獎介面</a>
+                  <a class="btn btn-action btn-enter" href='/execute/<%= it.id %>/false'>進入抽獎</a>
                 <% } %>
               <% } %>
 
               <% if (it.exec_type != 0) { %>
-                <a class="btn btn-primary" href='/editWinner/<%= it.id %>'>修改得獎者</a>
+                <a class="btn btn-action btn-edit" href='/editWinner/<%= it.id %>'>修改得獎者</a>
               <% } %>
              
             </td>
-            <td><%= it.gid %></td>
+            <td><strong><%= it.gid %></strong></td>
             <td><%= it.award_list %></td>
             <td><%= it.participant_count %></td>
             <td><%= it.reminder_count %></td>
-            <td><%= (it.exec_type == 0) ? '快速抽獎' : '大獎' %></td>
-
+            <td>
+              <% if (it.exec_type == 0) { %>
+                <span class="type-badge normal">快速抽獎</span>
+              <% } else { %>
+                <span class="type-badge big">大獎</span>
+              <% } %>
+            </td>
           </tr>
         <% }); %>
-        </table>
+        </tbody>
+      </table>
+      <% } else { %>
+      <div class="empty-state">
+        <span class="glyphicon glyphicon-inbox"></span>
+        <p>尚無獎項，請在左側新增獎項</p>
+      </div>
       <% } %>
        
     </div>

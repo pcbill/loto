@@ -2,6 +2,229 @@
 <html>
 <head>
   <%- include('../partials/header.ejs') %>
+<style>
+/* Modal 樣式 */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modal-overlay.show {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-dialog {
+  background: white;
+  border-radius: 12px;
+  max-width: 450px;
+  width: 90%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #e9ecef;
+  display: flex;
+  align-items: center;
+}
+
+.modal-header .icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  font-size: 20px;
+}
+
+.modal-header .icon.warning {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.modal-header .icon.danger {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.modal-header h4 {
+  margin: 0;
+  font-weight: 600;
+  color: #333;
+}
+
+.modal-body {
+  padding: 24px;
+}
+
+.modal-body .description {
+  color: #495057;
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
+
+.modal-body .warning-box {
+  background: linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%);
+  border-left: 4px solid #ffc107;
+  border-radius: 6px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: flex-start;
+}
+
+.modal-body .warning-box .warning-icon {
+  font-size: 18px;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+.modal-body .warning-box p {
+  margin: 0;
+  color: #856404;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid #e9ecef;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.modal-footer .btn-cancel {
+  padding: 10px 20px;
+  border: 1px solid #ced4da;
+  background: white;
+  border-radius: 6px;
+  color: #495057;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.modal-footer .btn-cancel:hover {
+  background: #f8f9fa;
+  border-color: #adb5bd;
+}
+
+.modal-footer .btn-confirm {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.modal-footer .btn-confirm.warning {
+  background: linear-gradient(135deg, #ffc107 0%, #ffb300 100%);
+  color: #333;
+}
+
+.modal-footer .btn-confirm.warning:hover {
+  background: linear-gradient(135deg, #ffb300 0%, #ffa000 100%);
+}
+
+.modal-footer .btn-confirm.danger {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: white;
+}
+
+.modal-footer .btn-confirm.danger:hover {
+  background: linear-gradient(135deg, #c82333 0%, #bd2130 100%);
+}
+
+/* 管理操作區塊 */
+.admin-actions {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 2px solid #dee2e6;
+}
+
+.admin-actions h4 {
+  color: #495057;
+  font-weight: 600;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.admin-actions h4 .glyphicon {
+  margin-right: 8px;
+  color: #6c757d;
+}
+
+.admin-btn {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 10px;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  background: white;
+  color: #495057;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.admin-btn:hover {
+  background: #f8f9fa;
+  border-color: #adb5bd;
+}
+
+.admin-btn.btn-warning-outline {
+  border-color: #ffc107;
+  color: #856404;
+}
+
+.admin-btn.btn-warning-outline:hover {
+  background: #fff3cd;
+}
+
+.admin-btn.btn-danger-outline {
+  border-color: #dc3545;
+  color: #dc3545;
+}
+
+.admin-btn.btn-danger-outline:hover {
+  background: #f8d7da;
+}
+
+.admin-btn .glyphicon {
+  margin-right: 8px;
+}
+</style>
 </head>
 
 <body>
@@ -44,6 +267,17 @@
           <button type="submit" class="btn btn-primary btn-block">新增獎項</button>
         </form>
       </div>
+
+      <!-- 管理操作區塊 -->
+      <div class="admin-actions">
+        <h4><span class="glyphicon glyphicon-cog"></span> 管理操作</h4>
+        <button type="button" class="admin-btn btn-warning-outline" onclick="showReplayModal()">
+          <span class="glyphicon glyphicon-repeat"></span> 一般獎項重抽獎
+        </button>
+        <button type="button" class="admin-btn btn-danger-outline" onclick="showCompleteModal()">
+          <span class="glyphicon glyphicon-ok-circle"></span> 完成抽獎
+        </button>
+      </div>
     </div>
 
     <div class="col-md-9">
@@ -85,20 +319,57 @@
           </tr>
         <% }); %>
         </table>
-
-      <form action="/normalGameReplay" method="GET">
-        <button type="submit" value="submit">一般獎項重抽獎</button>
-      </form>
-
-      <form action="/gameComplete" method="GET">
-        <button type="submit" value="submit">完成抽獎</button>
-      </form>
       <% } %>
        
     </div>
   </div>
 </div>
 
+<!-- 一般獎項重抽獎 Modal -->
+<div class="modal-overlay" id="replayModal">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <div class="icon warning">🔄</div>
+      <h4>一般獎項重抽獎</h4>
+    </div>
+    <div class="modal-body">
+      <p class="description">
+        此功能會將所有「<strong>快速抽獎</strong>」類型的獎項得獎者清空，讓這些獎項可以重新抽獎。
+      </p>
+      <div class="warning-box">
+        <span class="warning-icon">⚠️</span>
+        <p>確認後無法反悔！所有一般獎項的得獎紀錄將被清除。</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="hideReplayModal()">取消</button>
+      <button class="btn-confirm warning" onclick="confirmReplay()">確認重抽</button>
+    </div>
+  </div>
+</div>
+
+<!-- 完成抽獎 Modal -->
+<div class="modal-overlay" id="completeModal">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <div class="icon danger">✓</div>
+      <h4>完成抽獎</h4>
+    </div>
+    <div class="modal-body">
+      <p class="description">
+        此功能會將本次抽獎活動標記為「<strong>已完成</strong>」，並鎖定所有獎項，防止進一步修改。
+      </p>
+      <div class="warning-box">
+        <span class="warning-icon">⚠️</span>
+        <p>確認後無法反悔！抽獎活動將被鎖定，無法再進行任何抽獎或修改。</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="hideCompleteModal()">取消</button>
+      <button class="btn-confirm danger" onclick="confirmComplete()">確認完成</button>
+    </div>
+  </div>
+</div>
 
 </body>
 
@@ -111,5 +382,43 @@ function terms(el) {
         document.getElementById('type').value = 1;
     }
 }
+
+// Modal 控制函數
+function showReplayModal() {
+    document.getElementById('replayModal').classList.add('show');
+}
+
+function hideReplayModal() {
+    document.getElementById('replayModal').classList.remove('show');
+}
+
+function confirmReplay() {
+    window.location.href = '/normalGameReplay';
+}
+
+function showCompleteModal() {
+    document.getElementById('completeModal').classList.add('show');
+}
+
+function hideCompleteModal() {
+    document.getElementById('completeModal').classList.remove('show');
+}
+
+function confirmComplete() {
+    window.location.href = '/gameComplete';
+}
+
+// 點擊背景關閉 Modal
+document.getElementById('replayModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        hideReplayModal();
+    }
+});
+
+document.getElementById('completeModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        hideCompleteModal();
+    }
+});
 </script>
 </html>

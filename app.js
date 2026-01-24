@@ -412,7 +412,15 @@ app.get('/execute/:gameId/:playRightNow', basicAuth, (req, res) => {
             req.session['pending_gameId'] = gameId;
             req.session['pending_game'] = game;
             
-            res.redirect('/listWinnerDramaly/'+gameId);
+            console.log('[execute] Normal game, 設定 pending_candidates=' + candidates.length + ', pending_count=' + count);
+            
+            // 確保 session 保存後再 redirect
+            req.session.save(function(err) {
+              if (err) {
+                console.error('[execute] Session save error:', err);
+              }
+              res.redirect('/listWinnerDramaly/'+gameId);
+            });
           });
         }
         else if (gameType == 1 && reminderCount >= 1) 
@@ -510,22 +518,39 @@ app.get('/listWinnerDramaly/:gid', (req, res) => {
     var pendingCount = req.session['pending_count'];
     var pendingGame = req.session['pending_game'];
     
+    console.log('[listWinnerDramaly] gid=' + gid + ', pendingCandidates=' + (pendingCandidates ? pendingCandidates.length : 'null') + ', pendingCount=' + pendingCount + ', pendingGame=' + (pendingGame ? pendingGame.id : 'null'));
+    
     gameDao.find(gid, (reGame) => {
         var games = reGame.results;
         var game = games[0];
         
         // 如果是開獎中狀態（有 pending 資料），使用 session 中的候選人
-        if (pendingCandidates && pendingGame && pendingGame.id == gid) {
+        if (pendingCandidates && pendingCandidates.length > 0 && pendingGame && pendingGame.id == gid) {
             // 從候選人 uid 取得完整資料用於顯示
             var winnersToShow = [];
             var processedCount = 0;
-            var totalCount = Math.min(pendingCount, pendingCandidates.length);
+            var totalCount = Math.min(pendingCount || pendingCandidates.length, pendingCandidates.length);
+            
+            console.log('[listWinnerDramaly] 開獎中狀態，totalCount=' + totalCount);
+            
+            // 當 totalCount 為 0 時，直接渲染空結果
+            if (totalCount === 0) {
+                console.log('[listWinnerDramaly] totalCount 為 0，渲染空結果');
+                res.render('pages/listWinnerDramaly', {
+                    results: [],
+                    gid: gid,
+                    isDrawing: true
+                });
+                return;
+            }
             
             for (var i = 0; i < totalCount; i++) {
                 (function(index) {
                     var uid = pendingCandidates[index];
                     personDao.findByUid(uid, (rePerson) => {
-                        var person = rePerson.results.find(p => p.uid === uid);
+                        // 使用 == 比較，避免類型不匹配問題
+                        var person = rePerson.results.find(p => p.uid == uid);
+                        console.log('[listWinnerDramaly] 查詢 uid=' + uid + ', 找到=' + (person ? 'yes' : 'no') + ', 結果數=' + rePerson.results.length);
                         if (person) {
                             winnersToShow[index] = {
                                 uid: person.uid,
@@ -539,6 +564,7 @@ app.get('/listWinnerDramaly/:gid', (req, res) => {
                         if (processedCount === totalCount) {
                             // 過濾掉 undefined
                             winnersToShow = winnersToShow.filter(w => w);
+                            console.log('[listWinnerDramaly] 渲染結果，winnersToShow.length=' + winnersToShow.length);
                             res.render('pages/listWinnerDramaly', {
                                 results: winnersToShow,
                                 gid: gid,

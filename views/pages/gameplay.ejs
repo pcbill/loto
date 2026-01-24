@@ -15,27 +15,35 @@
 
   <div class="row">
     <div class="col-md-3">
-      <h4>新增獎項表單</h4>
-      <form action="/createGame" method="POST">
-        <div class="form-group">
-        
-        <label>獎項</label>
-        <input class="form-control" name="gid" type="text" placeholder="獎項代號，如 A15、B14"/><br/>
+      <div class="form-panel">
+        <h4><span class="glyphicon glyphicon-plus-sign"></span> 新增獎項</h4>
+        <form action="/createGame" method="POST">
+          <div class="form-group">
+            <label>獎項</label>
+            <input class="form-control" name="gid" type="text" placeholder="獎項代號，如 A15、B14"/>
+          </div>
 
-        <label>獎品列表</label>
-        <input class="form-control" name="award_list" type="text" placeholder="獎品名稱描述"/><br/>
-        
-        <label>數量</label>
-        <input class="form-control" name="participant_count" type="text" placeholder="此獎項要抽出幾個人"/><br/>
+          <div class="form-group">
+            <label>獎品列表</label>
+            <input class="form-control" name="award_list" type="text" placeholder="獎品名稱描述"/>
+          </div>
+          
+          <div class="form-group">
+            <label>數量</label>
+            <input class="form-control" name="participant_count" type="text" placeholder="此獎項要抽出幾個人"/>
+          </div>
 
-        <input type="checkbox" onchange="terms(this);"> 快速抽獎
-        <small class="text-muted">（勾選 = 一次抽出所有名額，不勾選 = 大獎老虎機效果）</small>
-        <input type="hidden" id="type" name="type" value="1"/>
-        <br/>
-        <br/>
-        <button type="submit" value="submit">submit</button>
-        </div>
-      </form>
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input type="checkbox" onchange="terms(this);"> 快速抽獎
+            </label>
+            <small class="help-text">勾選 = 一次抽出所有名額<br/>不勾選 = 大獎老虎機效果</small>
+            <input type="hidden" id="type" name="type" value="1"/>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block">新增獎項</button>
+        </form>
+      </div>
     </div>
 
     <div class="col-md-9">

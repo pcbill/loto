@@ -57,14 +57,20 @@ app.use(express.static(__dirname + '/public'));
 // Session 設定 - 使用環境變數設定 secret
 const SESSION_SECRET = process.env.SESSION_SECRET || 'loto-dev-secret-change-in-production';
 
+// 信任反向代理（Render, Heroku 等 PaaS 平台需要）
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1);
+}
+
 app.use(session({ 
   secret: SESSION_SECRET, 
-  resave: false, 
+  resave: true,  // 改為 true，確保 session 被保存
   saveUninitialized: false,
   cookie: {
     secure: process.env.NODE_ENV === 'production',  // 生產環境啟用 HTTPS only
     httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000  // 24 小時
+    maxAge: 24 * 60 * 60 * 1000,  // 24 小時
+    sameSite: 'lax'  // 允許同站點 redirect 攜帶 cookie
   }
 }));
 

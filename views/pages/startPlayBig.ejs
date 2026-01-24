@@ -190,164 +190,97 @@ ul {
     color: #FFA500;
 }
 
-/* 老虎機 + 拉桿容器 */
+/* 老虎機 + 按鈕容器 */
 .slot-machine-wrapper {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 0;
+    gap: 30px;
     margin: 40px 0;
 }
 
-/* 拉桿區域 */
-.lever-section {
+/* 抽獎按鈕區域 */
+.draw-button-section {
     display: flex;
     align-items: center;
-    margin-left: -10px;
+    justify-content: center;
 }
 
-/* 吃角子老虎拉桿 */
-.lever-container {
+/* 抽獎按鈕 */
+.draw-button {
     position: relative;
-    width: 100px;
-    height: 320px;
+    padding: 25px 60px;
+    font-size: 32px;
+    font-weight: 900;
+    color: #8B0000;
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%);
+    border: none;
+    border-radius: 60px;
     cursor: pointer;
+    box-shadow: 0 8px 30px rgba(255, 215, 0, 0.5),
+                0 4px 15px rgba(0, 0, 0, 0.3),
+                inset 0 2px 0 rgba(255, 255, 255, 0.4);
+    transition: all 0.3s ease;
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+    letter-spacing: 4px;
 }
 
-.lever-base {
-    width: 80px;
-    height: 60px;
-    background: linear-gradient(180deg, #5a5a5a 0%, #3a3a3a 30%, #2a2a2a 70%, #1a1a1a 100%);
-    border-radius: 15px;
-    position: absolute;
-    bottom: 20px;
-    left: 10px;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.6), inset 0 2px 0 rgba(255, 255, 255, 0.1);
-    border: 3px solid #FFD700;
+.draw-button::before {
+    content: '🎊';
+    margin-right: 15px;
+    font-size: 36px;
 }
 
-/* 拉桿臂 - 包含桿子和球，一起旋轉 */
-.lever-arm {
-    position: absolute;
-    bottom: 75px;
-    left: 42px;
-    transform-origin: bottom center;
-    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+.draw-button::after {
+    content: '🎊';
+    margin-left: 15px;
+    font-size: 36px;
 }
 
-.lever-stick {
-    width: 18px;
-    height: 180px;
-    background: linear-gradient(90deg, #b0b0b0 0%, #e8e8e8 25%, #d0d0d0 50%, #a0a0a0 75%, #909090 100%);
-    border-radius: 9px;
-    box-shadow: 3px 0 8px rgba(0, 0, 0, 0.4), -1px 0 3px rgba(255, 255, 255, 0.2);
+.draw-button:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 15px 40px rgba(255, 215, 0, 0.6),
+                0 8px 20px rgba(0, 0, 0, 0.3),
+                inset 0 2px 0 rgba(255, 255, 255, 0.5);
+    background: linear-gradient(135deg, #FFE44D 0%, #FFB732 50%, #FFE44D 100%);
 }
 
-.lever-ball {
-    width: 60px;
-    height: 60px;
-    background: linear-gradient(135deg, #FF2020 0%, #DD0000 40%, #AA0000 70%, #880000 100%);
-    border-radius: 50%;
-    position: absolute;
-    top: -50px;
-    left: -21px;
-    box-shadow: 0 6px 20px rgba(255, 0, 0, 0.5), 
-                inset -8px -8px 20px rgba(0, 0, 0, 0.4), 
-                inset 8px 8px 20px rgba(255, 255, 255, 0.2),
-                0 0 30px rgba(255, 0, 0, 0.3);
+.draw-button:active {
+    transform: translateY(2px) scale(0.98);
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4),
+                0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-.lever-ball::after {
-    content: '';
-    position: absolute;
-    top: 10px;
-    left: 15px;
-    width: 15px;
-    height: 10px;
-    background: rgba(255, 255, 255, 0.5);
-    border-radius: 50%;
+.draw-button.clicked {
+    animation: buttonPulse 0.5s ease;
 }
 
-/* hover 效果 */
-.lever-container:hover .lever-ball {
-    box-shadow: 0 8px 30px rgba(255, 0, 0, 0.7), 
-                inset -8px -8px 20px rgba(0, 0, 0, 0.4), 
-                inset 8px 8px 20px rgba(255, 255, 255, 0.3),
-                0 0 50px rgba(255, 0, 0, 0.5);
-}
-
-.lever-container:hover .lever-arm {
-    transform: rotate(-5deg);
-}
-
-/* 拉下動畫 - 整個 arm 一起旋轉 */
-.lever-container.pulled .lever-arm {
-    transform: rotate(50deg);
-}
-
-/* 拉桿文字提示 */
-.lever-label {
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 16px;
-    color: #FFD700;
-    font-weight: bold;
-    white-space: nowrap;
-    text-shadow: 0 0 15px rgba(255, 215, 0, 0.8), 2px 2px 4px rgba(0, 0, 0, 0.5);
+@keyframes buttonPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.95); }
+    100% { transform: scale(1); }
 }
 
 /* 禁用狀態 */
-.lever-container.disabled {
+.draw-button.disabled {
     cursor: not-allowed;
+    background: linear-gradient(135deg, #888 0%, #666 50%, #888 100%);
+    color: #444;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-.lever-container.disabled .lever-ball {
-    background: linear-gradient(135deg, #666 0%, #555 40%, #444 70%, #333 100%);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
-
-.lever-container.disabled:hover .lever-ball {
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
-
-.lever-container.disabled:hover .lever-arm {
+.draw-button.disabled:hover {
     transform: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-/* 老虎機滾動顯示區 */
-.slot-display-wrapper {
-    display: flex;
-    justify-content: center;
-    margin: 20px 0;
+.draw-button.disabled::before,
+.draw-button.disabled::after {
+    opacity: 0.5;
 }
 
-.slot-display {
-    background: linear-gradient(180deg, #2a0a0a 0%, #1a0505 100%);
-    border: 8px solid #FFD700;
-    border-radius: 20px;
-    padding: 30px;
-    box-shadow: 0 0 50px rgba(255, 215, 0, 0.3), inset 0 0 50px rgba(0, 0, 0, 0.5);
-    position: relative;
-}
-
-.slot-display::before {
-    content: '🎰 幸運抽獎機 🎰';
-    position: absolute;
-    top: -25px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: linear-gradient(135deg, #FFD700, #FFA500);
-    padding: 8px 30px;
-    border-radius: 20px;
-    font-weight: bold;
-    color: #8B0000;
-    font-size: 16px;
-    white-space: nowrap;
-}
-
-/* 老虎機外殼（包含拉桿的容器） */
+/* 老虎機外殼 */
 .slot-machine {
     background: linear-gradient(180deg, #3a1515 0%, #2a0a0a 50%, #1a0505 100%);
     border: 10px solid #FFD700;
@@ -648,7 +581,7 @@ ul {
                     <% if (results) { %>
                         <li style="width:1024px; height:300px"><span>❓❓❓</span></li>
                         <% results.forEach((it) => { %>
-                            <li style="width:1024px; height:300px"><span><%= it.split(" ")[1] %></span></li>
+                            <li style="width:1024px; height:300px"><span><%= it.split(" ")[0] %> <%= it.split(" ")[1] %></span></li>
                         <% }); %>
                     <% } %>
                 </ul>
@@ -656,32 +589,23 @@ ul {
             </div>
         </div>
         
-        <!-- 右側拉桿 -->
-        <div class="lever-section">
-            <% if (reminderCount > 0) { %>
-            <span id="playNextButton">
-                <div class="lever-container" onclick="pullLever('/execute/<%= gid %>/true')">
-                    <div class="lever-base"></div>
-                    <div class="lever-arm">
-                        <div class="lever-stick"></div>
-                        <div class="lever-ball"></div>
-                    </div>
-                    <div class="lever-label">拉下抽獎</div>
-                </div>
-            </span>
-            <% } else { %>
-            <span id="playNextButton">
-                <div class="lever-container disabled">
-                    <div class="lever-base"></div>
-                    <div class="lever-arm">
-                        <div class="lever-stick"></div>
-                        <div class="lever-ball"></div>
-                    </div>
-                    <div class="lever-label">已抽完</div>
-                </div>
-            </span>
-            <% } %>
-        </div>
+    </div>
+    
+    <!-- 抽獎按鈕 -->
+    <div class="draw-button-section">
+        <% if (reminderCount > 0) { %>
+        <span id="playNextButton">
+            <button class="draw-button" onclick="startDraw('/execute/<%= gid %>/true')">
+                開始抽獎
+            </button>
+        </span>
+        <% } else { %>
+        <span id="playNextButton">
+            <button class="draw-button disabled" disabled>
+                已抽完
+            </button>
+        </span>
+        <% } %>
     </div>
 
     <!-- 得獎者列表 -->
@@ -730,12 +654,12 @@ ul {
 <script src="js/jquery.easing.1.3.js" type="text/javascript" charset="utf-8"></script>
 <script src="js/jquery.jSlots.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript" charset="utf-8">
-    // 拉桿動畫函數
-    function pullLever(url) {
-        var lever = document.querySelector('.lever-container');
-        if (lever.classList.contains('disabled')) return;
+    // 抽獎按鈕動畫函數
+    function startDraw(url) {
+        var btn = document.querySelector('.draw-button');
+        if (btn.classList.contains('disabled')) return;
         
-        lever.classList.add('pulled');
+        btn.classList.add('clicked');
         
         // 動畫結束後跳轉
         setTimeout(function() {
@@ -753,14 +677,9 @@ ul {
         $('#cancelRow').hide();
         $('#reminderCount').text('<%= reminderCount %>');
 
-        $('#playNextButton').html('<div class="lever-container" onclick="pullLever(\'/execute/' + gid + '/true\')">' +
-            '<div class="lever-base"></div>' +
-            '<div class="lever-arm">' +
-            '<div class="lever-stick"></div>' +
-            '<div class="lever-ball"></div>' +
-            '</div>' +
-            '<div class="lever-label">拉下抽獎</div>' +
-            '</div>');
+        $('#playNextButton').html('<button class="draw-button" onclick="startDraw(\'/execute/' + gid + '/true\')">' +
+            '開始抽獎' +
+            '</button>');
     }
 
     // 老虎機設定
@@ -778,14 +697,9 @@ ul {
             $('#reminderCount').text('<%= reminderCount - 1 %>');
 
             <% if (reminderCount - 1 <= 0) { %>
-                $('#playNextButton').html('<div class="lever-container disabled">' +
-                    '<div class="lever-base"></div>' +
-                    '<div class="lever-arm">' +
-                    '<div class="lever-stick"></div>' +
-                    '<div class="lever-ball"></div>' +
-                    '</div>' +
-                    '<div class="lever-label">已抽完</div>' +
-                    '</div>');
+                $('#playNextButton').html('<button class="draw-button disabled" disabled>' +
+                    '已抽完' +
+                    '</button>');
             <% } %>
 
             $('#winnerList tbody').prepend('<tr id="cancelRow">\n' +

@@ -1,17 +1,20 @@
 delete from game;
-INSERT INTO public.game (id, gid, award_list, participant_count, reminder_count, exec_type) VALUES (151, 'A15', 'A15全聯禮券', 10, 10, 0);
-INSERT INTO public.game (id, gid, award_list, participant_count, reminder_count, exec_type) VALUES (148, 'A12', 'A12aiwa1.8L三層防燙保溫電茶壺', 3, 3, 0);
-INSERT INTO public.game (id, gid, award_list, participant_count, reminder_count, exec_type) VALUES (147, 'A11', 'A11Oster Ball果汁機', 3, 3, 0);
-INSERT INTO public.game (id, gid, award_list, participant_count, reminder_count, exec_type) VALUES (166, 'B13', 'B13主任禮券紅包', 1, 1, 0);
-INSERT INTO public.game (id, gid, award_list, participant_count, reminder_count, exec_type) VALUES (167, 'B14', 'B14主任現金紅包', 2, 2, 1);
-INSERT INTO public.game (id, gid, award_list, participant_count, reminder_count, exec_type) VALUES (168, 'B15', 'B15館長現金紅包', 1, 1, 0);
-INSERT INTO public.game (id, gid, award_list, participant_count, reminder_count, exec_type) VALUES (169, 'B16', 'B16處長現金紅包', 1, 1, 1);
-INSERT INTO public.game (id, gid, award_list, participant_count, reminder_count, exec_type) VALUES (170, 'B17', 'B17處長禮券紅包', 1, 1, 0);
-INSERT INTO public.game (id, gid, award_list, participant_count, reminder_count, exec_type) VALUES (165, 'B12', 'B12國際長現金紅包', 1, 1, 0);
-INSERT INTO public.game (id, gid, award_list, participant_count, reminder_count, exec_type) VALUES (182, 'B25', 'B25人文學院院長現金紅包', 1, 1, 0);
-INSERT INTO public.game (id, gid, award_list, participant_count, reminder_count, exec_type) VALUES (164, 'B11', 'B11研發長現金紅包', 1, 1, 0);
-INSERT INTO public.game (id, gid, award_list, participant_count, reminder_count, exec_type) VALUES (145, 'A9', 'A9aiwa黑晶電陶爐', 2, 2, 0);
-INSERT INTO public.game (id, gid, award_list, participant_count, reminder_count, exec_type) VALUES (146, 'A10', 'A10THOMSON多功能雙電壓美食鍋', 3, 3, 0);
-INSERT INTO public.game (id, gid, award_list, participant_count, reminder_count, exec_type) VALUES (160, 'B7', 'B7主任秘書現金紅包', 1, 1, 0);
-INSERT INTO public.game (id, gid, award_list, participant_count, reminder_count, exec_type) VALUES (161, 'B8', 'B8教務長現金紅包', 1, 1, 0);
-INSERT INTO public.game (id, gid, award_list, participant_count, reminder_count, exec_type) VALUES (162, 'B9', 'B9學務長現金紅包', 1, 1, 0);
+
+INSERT INTO public.game (id, gid, award_list, participant_count, reminder_count, exec_type) 
+VALUES 
+(151, 'A15', 'A15全聯禮券', 10, 10, 0),
+(148, 'A12', 'A12aiwa1.8L三層防燙保溫電茶壺', 3, 3, 0),
+(147, 'A11', 'A11Oster Ball果汁機', 3, 3, 0),
+(166, 'B13', 'B13主任禮券紅包', 1, 1, 0),
+(167, 'B14', 'B14主任現金紅包', 2, 2, 1),
+(168, 'B15', 'B15館長現金紅包', 1, 1, 0),
+(169, 'B16', 'B16處長現金紅包', 1, 1, 1),
+(170, 'B17', 'B17處長禮券紅包', 1, 1, 0),
+(165, 'B12', 'B12國際長現金紅包', 1, 1, 0),
+(182, 'B25', 'B25人文學院院長現金紅包', 1, 1, 0),
+(164, 'B11', 'B11研發長現金紅包', 1, 1, 0),
+(145, 'A9', 'A9aiwa黑晶電陶爐', 2, 2, 0),
+(146, 'A10', 'A10THOMSON多功能雙電壓美食鍋', 3, 3, 0),
+(160, 'B7', 'B7主任秘書現金紅包', 1, 1, 0),
+(161, 'B8', 'B8教務長現金紅包', 1, 1, 0),
+(162, 'B9', 'B9學務長現金紅包', 1, 1, 0);

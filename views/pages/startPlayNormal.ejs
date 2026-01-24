@@ -184,28 +184,82 @@ body::before {
     align-items: center;
 }
 
-.play-button {
-    display: inline-block;
-    padding: 0;
+/* 抽獎按鈕 */
+.draw-button {
+    position: relative;
+    padding: 25px 60px;
+    font-size: 32px;
+    font-weight: 900;
+    color: #8B0000;
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%);
     border: none;
-    background: none;
+    border-radius: 60px;
     cursor: pointer;
-    transition: all 0.3s;
+    box-shadow: 0 8px 30px rgba(255, 215, 0, 0.5),
+                0 4px 15px rgba(0, 0, 0, 0.3),
+                inset 0 2px 0 rgba(255, 255, 255, 0.4);
+    transition: all 0.3s ease;
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+    letter-spacing: 4px;
+    text-decoration: none;
+    display: inline-block;
 }
 
-.play-button:hover {
-    transform: scale(1.15);
+.draw-button::before {
+    content: '🎊';
+    margin-right: 15px;
+    font-size: 36px;
 }
 
-.play-button img {
-    width: 100px;
-    height: 100px;
-    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8));
+.draw-button::after {
+    content: '🎊';
+    margin-left: 15px;
+    font-size: 36px;
 }
 
-.play-button.disabled img {
-    opacity: 0.3;
-    filter: grayscale(100%);
+.draw-button:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 15px 40px rgba(255, 215, 0, 0.6),
+                0 8px 20px rgba(0, 0, 0, 0.3),
+                inset 0 2px 0 rgba(255, 255, 255, 0.5);
+    background: linear-gradient(135deg, #FFE44D 0%, #FFB732 50%, #FFE44D 100%);
+    text-decoration: none;
+    color: #8B0000;
+}
+
+.draw-button:active {
+    transform: translateY(2px) scale(0.98);
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4),
+                0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.draw-button.clicked {
+    animation: buttonPulse 0.5s ease;
+}
+
+@keyframes buttonPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.95); }
+    100% { transform: scale(1); }
+}
+
+/* 禁用狀態 */
+.draw-button.disabled {
+    cursor: not-allowed;
+    background: linear-gradient(135deg, #888 0%, #666 50%, #888 100%);
+    color: #444;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    pointer-events: none;
+}
+
+.draw-button.disabled:hover {
+    transform: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.draw-button.disabled::before,
+.draw-button.disabled::after {
+    opacity: 0.5;
 }
 
 /* 說明文字 */
@@ -459,6 +513,16 @@ body::before {
         font-size: 28px;
     }
     
+    .draw-button {
+        padding: 18px 40px;
+        font-size: 24px;
+    }
+    
+    .draw-button::before,
+    .draw-button::after {
+        font-size: 28px;
+    }
+    
     .winners-table tbody td {
         padding: 12px 8px;
         font-size: 18px;
@@ -482,6 +546,20 @@ body::before {
     
     .lantern-right {
         right: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .draw-button {
+        padding: 15px 30px;
+        font-size: 20px;
+        letter-spacing: 2px;
+    }
+    
+    .draw-button::before,
+    .draw-button::after {
+        font-size: 24px;
+        margin: 0 8px;
     }
 }
 
@@ -519,12 +597,12 @@ body::before {
         <!-- 開始按鈕 -->
         <div class="control-area">
             <% if (reminderCount > 0) { %>
-            <a href="javascript:void(0)" class="play-button" id="startButton" onclick="startDraw()">
-                <img src="/img/button_start1.png" alt="開始抽獎" />
+            <a href="javascript:void(0)" class="draw-button" id="startButton" onclick="startDraw()">
+                開始抽獎
             </a>
             <% } else { %>
-            <span class="play-button disabled">
-                <img src="/img/button_start1.png" alt="" />
+            <span class="draw-button disabled" id="startButton">
+                已抽完
             </span>
             <% } %>
         </div>

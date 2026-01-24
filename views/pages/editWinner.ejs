@@ -1,43 +1,281 @@
-
 <!DOCTYPE html>
 <html>
 <head>
   <%- include('../partials/header.ejs') %>
+<style>
+/* 頁面標題 */
+.page-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  padding: 30px 40px;
+  color: white;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+}
+
+.page-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+}
+
+.page-header p {
+  font-size: 14px;
+  opacity: 0.9;
+  margin: 0;
+}
+
+.page-header .header-icon {
+  font-size: 36px;
+  margin-right: 15px;
+}
+
+.page-header-content {
+  display: flex;
+  align-items: center;
+}
+
+/* 表格樣式 */
+.data-table {
+  width: 100%;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.data-table thead th {
+  background: linear-gradient(135deg, #495057 0%, #343a40 100%);
+  color: white;
+  padding: 15px 12px;
+  font-weight: 600;
+  font-size: 14px;
+  text-align: left;
+  border: none;
+}
+
+.data-table tbody tr {
+  transition: background-color 0.2s;
+}
+
+.data-table tbody tr:nth-child(even) {
+  background-color: #f8f9fa;
+}
+
+.data-table tbody tr:hover {
+  background-color: #fff3cd;
+}
+
+.data-table tbody td {
+  padding: 12px;
+  border-bottom: 1px solid #e9ecef;
+  font-size: 14px;
+  color: #495057;
+  vertical-align: middle;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.table-header h4 {
+  margin: 0;
+  color: #495057;
+  font-weight: 600;
+}
+
+.table-count {
+  background: #e9ecef;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  color: #495057;
+}
+
+/* 操作按鈕 */
+.btn-cancel {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-cancel:hover {
+  background: linear-gradient(135deg, #c82333 0%, #bd2130 100%);
+  color: white;
+  text-decoration: none;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(220, 53, 69, 0.4);
+}
+
+/* 空狀態 */
+.empty-state {
+  text-align: center;
+  padding: 60px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.empty-state .glyphicon {
+  font-size: 48px;
+  color: #adb5bd;
+}
+
+.empty-state p {
+  color: #6c757d;
+  margin-top: 15px;
+}
+
+/* 確認對話框 */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 9999;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-dialog-box {
+  background: white;
+  border-radius: 16px;
+  padding: 30px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.modal-dialog-box h3 {
+  margin: 0 0 15px 0;
+  color: #dc3545;
+}
+
+.modal-dialog-box p {
+  color: #666;
+  margin-bottom: 25px;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.modal-buttons .btn {
+  padding: 10px 30px;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+.btn-modal-cancel {
+  background: #6c757d;
+  color: white;
+  border: none;
+}
+
+.btn-modal-confirm {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: white;
+  border: none;
+}
+</style>
 </head>
 
 <body>
   <%- include('../partials/nav.ejs') %>
 
 <div class="container">
-  <div class="row">
-    <div class="col-md-12">
-      <h3>
-        得獎者列表
-      </h3>
-    
-      <% if (results) { %>
-      <table class="table table-bordered table-hover">
-          <tr>
-            <th>姓名</th>
-            <th>桌次</th>  
-            <th>中獎獎項</th>  
-            <th>中獎時間</th>  
-            <th></th>  
-          </tr>
-        <% results.forEach( (it) => { %>
-          <tr>
-            <td><%= it.name %></td>
-            <td><%= it.table_num %></td> 
-            <td><%= gid %></td>
-            <td><%= it.award_time %></td>
+  <!-- 頁面標題 -->
+  <div class="page-header">
+    <div class="page-header-content">
+      <span class="header-icon">✏️</span>
+      <div>
+        <h1>編輯得獎者</h1>
+        <p>管理獎項「<%= gid %>」的得獎名單</p>
+      </div>
+    </div>
+  </div>
 
-            <td><a class="btn btn-primary" href='/cancelWinner/<%= it.award_game_id %>/<%= it.uid %>'>取消資格</a></td>
+  <% if (results && results.length > 0) { %>
+  <div class="table-header">
+    <h4><span class="glyphicon glyphicon-list"></span> 得獎者列表</h4>
+    <span class="table-count">共 <%= results.length %> 位得獎者</span>
+  </div>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>姓名</th>
+        <th>桌次</th>  
+        <th>中獎獎項</th>  
+        <th>中獎時間</th>  
+        <th>操作</th>  
+      </tr>
+    </thead>
+    <tbody>
+    <% results.forEach( (it) => { %>
+      <tr>
+        <td><strong><%= it.name %></strong></td>
+        <td><%= it.table_num %></td> 
+        <td><%= gid %></td>
+        <td><%= it.award_time %></td>
+        <td>
+          <a class="btn-cancel" href="javascript:void(0)" onclick="confirmCancel('<%= it.name %>', '/cancelWinner/<%= it.award_game_id %>/<%= it.uid %>')">
+            <span class="glyphicon glyphicon-remove"></span> 取消資格
+          </a>
+        </td>
+      </tr>
+    <% }); %>
+    </tbody>
+  </table>
+  <% } else { %>
+  <div class="empty-state">
+    <span class="glyphicon glyphicon-info-sign"></span>
+    <p>此獎項目前沒有得獎者</p>
+  </div>
+  <% } %>
+</div>
 
-          </tr>
-        <% }); %>
-      </table>
-      <% } %>
-
+<!-- 確認對話框 -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal-dialog-box">
+    <h3>⚠️ 確認取消資格</h3>
+    <p>確定要取消「<span id="cancelName"></span>」的得獎資格嗎？<br/>此操作無法復原。</p>
+    <div class="modal-buttons">
+      <button class="btn btn-modal-cancel" onclick="closeModal()">取消</button>
+      <a id="confirmLink" href="#" class="btn btn-modal-confirm">確認取消</a>
     </div>
   </div>
 </div>
+
+<script>
+function confirmCancel(name, url) {
+  document.getElementById('cancelName').textContent = name;
+  document.getElementById('confirmLink').href = url;
+  document.getElementById('confirmModal').style.display = 'flex';
+}
+
+function closeModal() {
+  document.getElementById('confirmModal').style.display = 'none';
+}
+
+document.getElementById('confirmModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+</script>
+</body>
+</html>

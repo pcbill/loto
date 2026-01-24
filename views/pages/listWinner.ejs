@@ -1,52 +1,241 @@
-
 <!DOCTYPE html>
 <html>
 <head>
   <%- include('../partials/header.ejs') %>
+<style>
+/* 頁面標題 */
+.page-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  padding: 30px 40px;
+  color: white;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+}
 
+.page-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+}
+
+.page-header p {
+  font-size: 14px;
+  opacity: 0.9;
+  margin: 0;
+}
+
+.page-header .header-icon {
+  font-size: 36px;
+  margin-right: 15px;
+}
+
+.page-header-content {
+  display: flex;
+  align-items: center;
+}
+
+/* 表格樣式 */
+.data-table {
+  width: 100%;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.data-table thead th {
+  background: linear-gradient(135deg, #495057 0%, #343a40 100%);
+  color: white;
+  padding: 15px 12px;
+  font-weight: 600;
+  font-size: 14px;
+  text-align: left;
+  border: none;
+}
+
+.data-table tbody tr {
+  transition: background-color 0.2s;
+}
+
+.data-table tbody tr:nth-child(even) {
+  background-color: #f8f9fa;
+}
+
+.data-table tbody tr:hover {
+  background-color: #e3f2fd;
+}
+
+.data-table tbody td {
+  padding: 12px;
+  border-bottom: 1px solid #e9ecef;
+  font-size: 14px;
+  color: #495057;
+  vertical-align: middle;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.table-header h4 {
+  margin: 0;
+  color: #495057;
+  font-weight: 600;
+}
+
+.table-count {
+  background: #e9ecef;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  color: #495057;
+}
+
+/* 狀態標籤 */
+.status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status-badge.claimed {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status-badge.pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+/* 開獎中狀態 */
+.drawing-state {
+  text-align: center;
+  padding: 80px 40px;
+  background: linear-gradient(135deg, #fff9e6 0%, #fff3cd 100%);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(255, 193, 7, 0.3);
+  border: 2px solid #ffc107;
+}
+
+.drawing-state h2 {
+  color: #856404;
+  margin-bottom: 15px;
+  font-size: 32px;
+}
+
+.drawing-state p {
+  color: #856404;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.drawing-state .btn-refresh {
+  margin-top: 20px;
+  background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+  color: #212529;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.drawing-state .btn-refresh:hover {
+  background: linear-gradient(135deg, #e0a800 0%, #d39e00 100%);
+}
+
+/* 空狀態 */
+.empty-state {
+  text-align: center;
+  padding: 60px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.empty-state .glyphicon {
+  font-size: 48px;
+  color: #adb5bd;
+}
+
+.empty-state p {
+  color: #6c757d;
+  margin-top: 15px;
+}
+</style>
 </head>
 
 <body>
   <%- include('../partials/nav.ejs') %>
 
 <div class="container">
-  <div class="row">
-    <div class="col-md-12">
-      <h3>
-        得獎者列表
-      </h3>
-    
-      <% if (isDrawing) { %>
-      <div class="alert alert-warning" style="font-size: 24px; text-align: center; padding: 50px;">
-        <h2>🎰 開獎進行中...</h2>
-        <p>請稍候，獎項正在揭曉中！</p>
-        <p>請勿重新整理此頁面</p>
-        <br/>
-        <button class="btn btn-primary" onclick="location.reload()">重新整理查看結果</button>
+  <!-- 頁面標題 -->
+  <div class="page-header">
+    <div class="page-header-content">
+      <span class="header-icon">🏆</span>
+      <div>
+        <h1>得獎者列表</h1>
+        <p>查看所有中獎者名單及領獎狀態</p>
       </div>
-      <% } else if (results && results.length > 0) { %>
-      <table class="table table-bordered table-hover">
-          <tr>
-            <th>姓名</th>
-            <th>桌次</th>  
-            <th>中獎獎品</th>
-            <th>中獎時間</th>
-            <th>領獎時間</th>
-          </tr>
-        <% results.forEach( (it) => { %>
-          <tr>
-            <td><%= it.name %></td>
-            <td><%= it.table_num %></td> 
-            <td><%= it.awardList %></td>
-            <td><%= it.award_time %></td>
-            <td><%= it.getgift_time %></td>
-          </tr>
-        <% }); %>
-      </table>
-      <% } else { %>
-      <p>尚無中獎者</p>
-      <% } %>
-
     </div>
   </div>
+
+  <% if (isDrawing) { %>
+  <div class="drawing-state">
+    <h2>🎰 開獎進行中...</h2>
+    <p>請稍候，獎項正在揭曉中！</p>
+    <p>請勿重新整理此頁面</p>
+    <button class="btn btn-refresh" onclick="location.reload()">
+      <span class="glyphicon glyphicon-refresh"></span> 重新整理查看結果
+    </button>
+  </div>
+  <% } else if (results && results.length > 0) { %>
+  <div class="table-header">
+    <h4><span class="glyphicon glyphicon-list"></span> 中獎名單</h4>
+    <span class="table-count">共 <%= results.length %> 位得獎者</span>
+  </div>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>姓名</th>
+        <th>桌次</th>  
+        <th>中獎獎品</th>
+        <th>中獎時間</th>
+        <th>領獎狀態</th>
+      </tr>
+    </thead>
+    <tbody>
+    <% results.forEach( (it) => { %>
+      <tr>
+        <td><strong><%= it.name %></strong></td>
+        <td><%= it.table_num %></td> 
+        <td><%= it.awardList %></td>
+        <td><%= it.award_time %></td>
+        <td>
+          <% if (it.getgift_time) { %>
+          <span class="status-badge claimed">已於 <%= it.getgift_time %> 領獎</span>
+          <% } else { %>
+          <span class="status-badge pending">尚未領獎</span>
+          <% } %>
+        </td>
+      </tr>
+    <% }); %>
+    </tbody>
+  </table>
+  <% } else { %>
+  <div class="empty-state">
+    <span class="glyphicon glyphicon-info-sign"></span>
+    <p>尚無中獎者</p>
+  </div>
+  <% } %>
 </div>
+
+</body>
+</html>

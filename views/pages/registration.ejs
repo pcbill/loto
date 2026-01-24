@@ -2,6 +2,145 @@
 <html>
 <head>
   <%- include('../partials/header.ejs') %>
+<style>
+/* 統計卡片 */
+.stats-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  padding: 20px;
+  color: white;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.stats-card .stats-number {
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.stats-card .stats-label {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+/* 搜尋表單區塊 */
+.search-section {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid #dee2e6;
+  margin-bottom: 20px;
+}
+
+.search-section h4 {
+  color: #495057;
+  font-weight: 600;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.search-section h4 .glyphicon {
+  margin-right: 8px;
+  color: #6c757d;
+}
+
+.search-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.search-form .form-control {
+  flex: 1;
+  border-radius: 6px;
+  border: 1px solid #ced4da;
+  padding: 12px 15px;
+  font-size: 16px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-form .form-control:focus {
+  border-color: #80bdff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+  outline: none;
+}
+
+.search-form .btn {
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.search-form-label {
+  display: block;
+  font-weight: 500;
+  color: #495057;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+/* 表格樣式 */
+.data-table {
+  width: 100%;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.data-table thead th {
+  background: linear-gradient(135deg, #495057 0%, #343a40 100%);
+  color: white;
+  padding: 15px 12px;
+  font-weight: 600;
+  font-size: 14px;
+  text-align: left;
+  border: none;
+}
+
+.data-table tbody tr {
+  transition: background-color 0.2s;
+}
+
+.data-table tbody tr:nth-child(even) {
+  background-color: #f8f9fa;
+}
+
+.data-table tbody tr:hover {
+  background-color: #e3f2fd;
+}
+
+.data-table tbody td {
+  padding: 12px;
+  border-bottom: 1px solid #e9ecef;
+  font-size: 14px;
+  color: #495057;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.table-header h4 {
+  margin: 0;
+  color: #495057;
+  font-weight: 600;
+}
+
+.table-count {
+  background: #e9ecef;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  color: #495057;
+}
+</style>
 </head>
 
 <body>
@@ -9,47 +148,78 @@
   <%- include('../partials/nav.ejs') %>
 
 <div class="container">
+  <h3>
+    <span class="glyphicon glyphicon-check"></span> 報到
+  </h3>
+
   <div class="row">
-    <div class="col-md-6">
-      <h3>
-        報到
-      </h3>
+    <div class="col-md-4">
+      <!-- 統計卡片 -->
+      <div class="stats-card">
+        <div class="stats-number"><%= results ? results.length : 0 %></div>
+        <div class="stats-label">人已完成報到</div>
+      </div>
 
-      <form action="/registerSubmit" method="POST">
-      號碼 <input id="uid" name="uid" type="text" forcus />
-        <button type="submit" value="submit">submit</button>
-      </form>
+      <!-- 號碼報到 -->
+      <div class="search-section">
+        <h4><span class="glyphicon glyphicon-barcode"></span> 號碼報到</h4>
+        <form action="/registerSubmit" method="POST">
+          <label class="search-form-label">輸入號碼</label>
+          <div class="search-form">
+            <input class="form-control" id="uid" name="uid" type="text" placeholder="請輸入號碼" autofocus />
+            <button type="submit" class="btn btn-primary">報到</button>
+          </div>
+        </form>
+      </div>
 
-      <form action="/registerByNameSubmit" method="POST">
-      姓名 <input id="name" name="name" type="text"/>
-        <button type="submit" value="submit">submit</button>
-      </form>
-      
-      <br/>
-      <% if (results) { %>
-        <br/>
-        共有 <%= results.length %> 人已經完成報到
-        <table class="table table-bordered table-hover">
+      <!-- 姓名報到 -->
+      <div class="search-section">
+        <h4><span class="glyphicon glyphicon-user"></span> 姓名報到</h4>
+        <form action="/registerByNameSubmit" method="POST">
+          <label class="search-form-label">輸入姓名</label>
+          <div class="search-form">
+            <input class="form-control" id="name" name="name" type="text" placeholder="請輸入姓名" />
+            <button type="submit" class="btn btn-primary">報到</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="col-md-8">
+      <% if (results && results.length > 0) { %>
+      <div class="table-header">
+        <h4><span class="glyphicon glyphicon-list"></span> 已報到名單</h4>
+        <span class="table-count">共 <%= results.length %> 人</span>
+      </div>
+      <table class="data-table">
+        <thead>
           <tr>
             <th>號碼</th>  
             <th>姓名</th>  
             <th>桌次</th>  
             <th>報到時間</th>  
           </tr>
+        </thead>
+        <tbody>
         <% results.forEach( (it) => { %>
           <tr>
-            <td><%= it.uid %></td> 
+            <td><strong><%= it.uid %></strong></td> 
             <td><%= it.name %></td> 
             <td><%= it.table_num %></td> 
             <td><%= it.registration_time %></td>
           </tr>
         <% }); %>
-        </table>
+        </tbody>
+      </table>
+      <% } else { %>
+      <div class="search-section" style="text-align: center; padding: 60px;">
+        <span class="glyphicon glyphicon-inbox" style="font-size: 48px; color: #adb5bd;"></span>
+        <p style="color: #6c757d; margin-top: 15px;">尚無報到紀錄</p>
+      </div>
       <% } %>
     </div>
   </div>
 </div>
-
 
 </body>
 

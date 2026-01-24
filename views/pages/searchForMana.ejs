@@ -2,32 +2,228 @@
 <html>
 <head>
   <%- include('../partials/header.ejs') %>
+<style>
+/* 搜尋表單區塊 */
+.search-section {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid #dee2e6;
+  margin-bottom: 20px;
+}
+
+.search-section h4 {
+  color: #495057;
+  font-weight: 600;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.search-section h4 .glyphicon {
+  margin-right: 8px;
+  color: #6c757d;
+}
+
+.search-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.search-form .form-control {
+  flex: 1;
+  border-radius: 6px;
+  border: 1px solid #ced4da;
+  padding: 12px 15px;
+  font-size: 16px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-form .form-control:focus {
+  border-color: #80bdff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+  outline: none;
+}
+
+.search-form .btn {
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.search-form-label {
+  display: block;
+  font-weight: 500;
+  color: #495057;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+/* 表格樣式 */
+.data-table {
+  width: 100%;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.data-table thead th {
+  background: linear-gradient(135deg, #495057 0%, #343a40 100%);
+  color: white;
+  padding: 15px 12px;
+  font-weight: 600;
+  font-size: 14px;
+  text-align: left;
+  border: none;
+}
+
+.data-table tbody tr {
+  transition: background-color 0.2s;
+}
+
+.data-table tbody tr:nth-child(even) {
+  background-color: #f8f9fa;
+}
+
+.data-table tbody tr:hover {
+  background-color: #e3f2fd;
+}
+
+.data-table tbody td {
+  padding: 12px;
+  border-bottom: 1px solid #e9ecef;
+  font-size: 14px;
+  color: #495057;
+  vertical-align: middle;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.table-header h4 {
+  margin: 0;
+  color: #495057;
+  font-weight: 600;
+}
+
+.table-count {
+  background: #e9ecef;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  color: #495057;
+}
+
+/* 狀態標籤 */
+.status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status-badge.not-won {
+  background: #e9ecef;
+  color: #6c757d;
+}
+
+.status-badge.won {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status-badge.claimed {
+  background: #cce5ff;
+  color: #004085;
+}
+
+/* 領獎按鈕 */
+.btn-claim {
+  padding: 6px 12px;
+  font-size: 12px;
+  border-radius: 4px;
+  background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+  border: none;
+  color: white;
+}
+
+.btn-claim:hover {
+  background: linear-gradient(135deg, #218838 0%, #1e7e34 100%);
+  color: white;
+}
+
+/* 空狀態 */
+.empty-state {
+  text-align: center;
+  padding: 60px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.empty-state .glyphicon {
+  font-size: 48px;
+  color: #adb5bd;
+}
+
+.empty-state p {
+  color: #6c757d;
+  margin-top: 15px;
+}
+</style>
 </head>
 
 <body>
   <%- include('../partials/nav.ejs') %>
 
 <div class="container">
+  <h3>
+    <span class="glyphicon glyphicon-search"></span> 查詢管理介面
+  </h3>
+
   <div class="row">
-    <div class="col-md-12">
-      <h3>
-      查詢管理介面
-      </h3>
+    <div class="col-md-4">
+      <!-- 號碼查詢 -->
+      <div class="search-section">
+        <h4><span class="glyphicon glyphicon-barcode"></span> 號碼查詢</h4>
+        <form action="/searchSubmitForMana" method="POST">
+          <label class="search-form-label">輸入號碼</label>
+          <div class="search-form">
+            <input class="form-control" id="uid" name="uid" type="text" placeholder="請輸入號碼" autofocus />
+            <button type="submit" class="btn btn-primary">查詢</button>
+          </div>
+        </form>
+      </div>
 
-      <form action="/searchSubmitForMana" method="POST">
-        號碼 <input id="uid" name="uid" type="text" forcus />
-        <button type="submit" value="submit">submit</button>
-      </form>
-      <br/>
+      <!-- 姓名查詢 -->
+      <div class="search-section">
+        <h4><span class="glyphicon glyphicon-user"></span> 姓名查詢</h4>
+        <form action="/searchPersonByNameForMana" method="POST">
+          <label class="search-form-label">輸入姓名</label>
+          <div class="search-form">
+            <input class="form-control" id="name" name="name" type="text" placeholder="請輸入姓名" />
+            <button type="submit" class="btn btn-primary">查詢</button>
+          </div>
+        </form>
+      </div>
+    </div>
 
-      <form action="/searchPersonByNameForMana" method="POST">
-        姓名 <input id="name" name="name" type="text" />
-        <button type="submit" value="submit">submit</button>
-      </form>
-      <br/>
-
-      <% if (results) { %>
-      <table class="table table-bordered table-hover">
+    <div class="col-md-8">
+      <% if (results && results.length > 0) { %>
+      <div class="table-header">
+        <h4><span class="glyphicon glyphicon-list"></span> 查詢結果</h4>
+        <span class="table-count">共 <%= results.length %> 筆</span>
+      </div>
+      <table class="data-table">
+        <thead>
           <tr>
             <th>號碼</th>  
             <th>姓名</th>  
@@ -35,40 +231,51 @@
             <th>報到時間</th>  
             <th>中獎獎品</th>  
             <th>中獎時間</th>  
-            <th>領獎時間</th>  
+            <th>領獎狀態</th>  
           </tr>
+        </thead>
+        <tbody>
         <% results.forEach( (it) => {%>
           <tr>
-            <td><%= it.uid %></td> 
+            <td><strong><%= it.uid %></strong></td> 
             <td><%= it.name %></td> 
             <td><%= it.table_num %></td> 
             <td><%= it.registration_time %></td>
 
             <% if (it.award_game_id ) { %>
-            <td><%= it.awardList %></td>
+            <td><span class="status-badge won"><%= it.awardList %></span></td>
             <% } else { %>
-            <td>尚未中獎</td>
+            <td><span class="status-badge not-won">尚未中獎</span></td>
             <% } %>
 
-            <td><%= it.award_time %></td>
+            <td><%= it.award_time || '-' %></td>
 
             <% if (it.getgift_time) { %>
-            <td>已於<%= it.getgift_time %>領走獎品</td>
+            <td><span class="status-badge claimed">已於 <%= it.getgift_time %> 領走</span></td>
             <% } else if (it.award_time) { %>
-            <td><a class="btn btn-primary" href='/updateGetgiftTime/<%= it.uid %>'>我要領獎</a></td>
+            <td><a class="btn btn-claim" href='/updateGetgiftTime/<%= it.uid %>'>我要領獎</a></td>
             <% } else { %>		              
-            <td></td>
+            <td>-</td>
             <% } %>
 
           </tr>
         <% }); %>
+        </tbody>
       </table>
+      <% } else if (typeof results !== 'undefined') { %>
+      <div class="empty-state">
+        <span class="glyphicon glyphicon-search"></span>
+        <p>查無資料，請重新輸入查詢條件</p>
+      </div>
+      <% } else { %>
+      <div class="empty-state">
+        <span class="glyphicon glyphicon-hand-left"></span>
+        <p>請在左側輸入號碼或姓名進行查詢</p>
+      </div>
       <% } %>
-
     </div>
   </div>
 </div>
-
 
 </body>
 <script> document.getElementById("uid").focus(); </script>

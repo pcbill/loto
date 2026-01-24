@@ -2,6 +2,121 @@
 <html>
 <head>
   <%- include('../partials/header.ejs') %>
+<style>
+/* 統計卡片 */
+.stats-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  padding: 20px;
+  color: white;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.stats-card .stats-number {
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.stats-card .stats-label {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+/* 表格樣式 */
+.data-table {
+  width: 100%;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.data-table thead th {
+  background: linear-gradient(135deg, #495057 0%, #343a40 100%);
+  color: white;
+  padding: 15px 12px;
+  font-weight: 600;
+  font-size: 14px;
+  text-align: left;
+  border: none;
+}
+
+.data-table tbody tr {
+  transition: background-color 0.2s;
+}
+
+.data-table tbody tr:nth-child(even) {
+  background-color: #f8f9fa;
+}
+
+.data-table tbody tr:hover {
+  background-color: #e3f2fd;
+}
+
+.data-table tbody td {
+  padding: 12px;
+  border-bottom: 1px solid #e9ecef;
+  font-size: 14px;
+  color: #495057;
+  vertical-align: middle;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.table-header h4 {
+  margin: 0;
+  color: #495057;
+  font-weight: 600;
+}
+
+.table-count {
+  background: #e9ecef;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  color: #495057;
+}
+
+/* 刪除按鈕 */
+.btn-delete {
+  padding: 6px 12px;
+  font-size: 12px;
+  border-radius: 4px;
+  background: #dc3545;
+  border-color: #dc3545;
+}
+
+.btn-delete:hover {
+  background: #c82333;
+  border-color: #bd2130;
+}
+
+/* 空狀態 */
+.empty-state {
+  text-align: center;
+  padding: 60px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.empty-state .glyphicon {
+  font-size: 48px;
+  color: #adb5bd;
+}
+
+.empty-state p {
+  color: #6c757d;
+  margin-top: 15px;
+}
+</style>
 </head>
 
 <body>
@@ -9,57 +124,79 @@
   <%- include('../partials/nav.ejs') %>
 
 <div class="container">
+  <h3>
+    <span class="glyphicon glyphicon-cog"></span> 報到管理
+  </h3>
+
   <div class="row">
     <div class="col-md-3">
-      <h3>
-        報到管理
-      </h3>
+      <!-- 統計卡片 -->
+      <div class="stats-card">
+        <div class="stats-number"><%= results ? results.length : 0 %></div>
+        <div class="stats-label">人已完成報到</div>
+      </div>
 
-      手動報到
-      <form action="/createPerson" method="POST">
-        <div class="form-group">
+      <!-- 手動報到表單 -->
+      <div class="form-panel">
+        <h4><span class="glyphicon glyphicon-plus-sign"></span> 手動報到</h4>
+        <form action="/createPerson" method="POST">
+          <div class="form-group">
+            <label>桌次</label>
+            <input class="form-control" name="table_num" type="text" placeholder="請輸入桌次"/>
+          </div>
 
-        <label>桌次</label>
-        <input class="form-control" name="table_num" type="text" /><br/>
+          <div class="form-group">
+            <label>姓名</label>
+            <input class="form-control" name="name" type="text" placeholder="請輸入姓名"/>
+          </div>
 
-        <label>姓名</label>
-        <input class="form-control" name="name" type="text" /><br/>
+          <div class="form-group">
+            <label>號碼</label>
+            <input class="form-control" name="uid" type="text" placeholder="請輸入號碼"/>
+          </div>
 
-        <label>號碼</label>
-        <input class="form-control" name="uid" type="text" /><br/>
-
-        <button type="submit" value="submit">submit</button>
-        </div>
-      </form>
+          <button type="submit" class="btn btn-primary btn-block">新增報到</button>
+        </form>
+      </div>
     </div>
 
-    <div class="col-md-6">
-      <% if (results) { %>
-        <br/>
-        共有 <%= results.length %> 人已經完成報到
-        <table class="table table-bordered table-hover">
+    <div class="col-md-9">
+      <% if (results && results.length > 0) { %>
+      <div class="table-header">
+        <h4><span class="glyphicon glyphicon-list"></span> 已報到名單</h4>
+        <span class="table-count">共 <%= results.length %> 人</span>
+      </div>
+      <table class="data-table">
+        <thead>
           <tr>
-            <th>操作</th>
+            <th width="80">操作</th>
             <th>號碼</th>  
             <th>姓名</th>  
             <th>桌次</th>  
             <th>報到時間</th>  
           </tr>
+        </thead>
+        <tbody>
         <% results.forEach( (it) => { %>
           <tr>
-            <td><a class="btn btn-primary" href='/deleteRegistration/<%= it.id %>'>刪除</a></td>
-            <td><%= it.uid %></td> 
+            <td><a class="btn btn-danger btn-delete" href='/deleteRegistration/<%= it.id %>'>刪除</a></td>
+            <td><strong><%= it.uid %></strong></td> 
             <td><%= it.name %></td> 
             <td><%= it.table_num %></td> 
             <td><%= it.registration_time %></td>
           </tr>
         <% }); %>
-        </table>
+        </tbody>
+      </table>
+      <% } else { %>
+      <div class="empty-state">
+        <span class="glyphicon glyphicon-inbox"></span>
+        <p>尚無報到紀錄</p>
+      </div>
       <% } %>
     </div>
   </div>
 </div>
-
 
 </body>
 </html>

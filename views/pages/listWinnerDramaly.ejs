@@ -1,45 +1,461 @@
-
 <!DOCTYPE html>
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <%- include('../partials/header.ejs') %>
+<title>屏東科技大學 尾牙抽獎 - 中獎名單</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+
+<style type="text/css">
+
+* {
+    font-family: 'Noto Sans TC', sans-serif;
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a0a0a 0%, #4a1515 30%, #8B0000 60%, #4a1515 100%);
+    background-attachment: fixed;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* 背景裝飾 - 金色光暈 */
+body::before {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(ellipse at center, rgba(255, 215, 0, 0.1) 0%, transparent 50%);
+    animation: shimmer 8s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes shimmer {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); opacity: 0.3; }
+    50% { transform: translate(5%, 5%) rotate(5deg); opacity: 0.6; }
+}
+
+/* 飄落的金幣/紅包動畫 */
+.falling-item {
+    position: fixed;
+    font-size: 30px;
+    animation: fall linear infinite;
+    pointer-events: none;
+    z-index: 1;
+}
+
+@keyframes fall {
+    0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0.3; }
+}
+
+/* 主容器 */
+.lottery-container {
+    position: relative;
+    z-index: 10;
+    padding: 20px;
+    min-height: 100vh;
+}
+
+/* 頂部導航 */
+.top-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background: rgba(0, 0, 0, 0.3);
+    border-bottom: 2px solid #FFD700;
+}
+
+.back-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: #8B0000;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 25px;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+}
+
+.back-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
+    text-decoration: none;
+    color: #8B0000;
+}
+
+.back-btn::before {
+    content: '←';
+    margin-right: 8px;
+    font-size: 18px;
+}
+
+.school-name {
+    font-size: 28px;
+    font-weight: 900;
+    color: #FFD700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5), 0 0 30px rgba(255, 215, 0, 0.3);
+    letter-spacing: 8px;
+}
+
+.event-year {
+    font-size: 18px;
+    color: #FFA500;
+    letter-spacing: 4px;
+}
+
+/* 獎項標題 */
+.prize-header {
+    text-align: center;
+    margin: 30px 0;
+}
+
+.prize-title {
+    display: inline-flex;
+    align-items: center;
+    padding: 15px 40px;
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%);
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(255, 215, 0, 0.4), inset 0 2px 0 rgba(255, 255, 255, 0.3);
+}
+
+.prize-title::before,
+.prize-title::after {
+    content: '🎉';
+    font-size: 30px;
+    margin: 0 10px;
+}
+
+.prize-title h2 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 900;
+    color: #8B0000;
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+}
+
+.prize-count {
+    display: inline-block;
+    margin-left: 15px;
+    padding: 5px 15px;
+    background: #8B0000;
+    color: #FFD700;
+    border-radius: 20px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* 中獎者列表 */
+.winners-section {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
+
+.winners-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 10px;
+}
+
+.winners-table thead th {
+    background: rgba(139, 0, 0, 0.8);
+    color: #FFD700;
+    padding: 15px 20px;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    border: none;
+}
+
+.winners-table thead th:first-child {
+    border-radius: 10px 0 0 10px;
+}
+
+.winners-table thead th:last-child {
+    border-radius: 0 10px 10px 0;
+}
+
+.winners-table tbody tr {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 165, 0, 0.1) 100%);
+    transition: all 0.3s;
+    animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.winners-table tbody tr:hover {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.3) 0%, rgba(255, 165, 0, 0.2) 100%);
+    transform: scale(1.02);
+}
+
+.winners-table tbody td {
+    padding: 20px;
+    text-align: center;
+    color: #FFD700;
+    font-size: 24px;
+    font-weight: bold;
+    border: none;
+    border-top: 2px solid rgba(255, 215, 0, 0.3);
+    border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+}
+
+.winners-table tbody td:first-child {
+    border-left: 2px solid rgba(255, 215, 0, 0.3);
+    border-radius: 10px 0 0 10px;
+}
+
+.winners-table tbody td:last-child {
+    border-right: 2px solid rgba(255, 215, 0, 0.3);
+    border-radius: 0 10px 10px 0;
+}
+
+.winners-table tbody td.rank {
+    font-size: 20px;
+    color: #FFA500;
+    width: 60px;
+}
+
+.winners-table tbody td.uid {
+    font-size: 28px;
+    color: #FFD700;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.winners-table tbody td.name {
+    font-size: 32px;
+    color: #FFFFFF;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.winners-table tbody td.table-num {
+    font-size: 22px;
+    color: #FFA500;
+}
+
+/* 狀態訊息 */
+.drawing-status {
+    text-align: center;
+    margin-top: 30px;
+    padding: 15px 30px;
+    background: rgba(0, 128, 0, 0.3);
+    border: 2px solid #00FF00;
+    border-radius: 10px;
+    color: #00FF00;
+    font-size: 20px;
+    font-weight: bold;
+    display: none;
+}
+
+.drawing-status::before {
+    content: '✓ ';
+}
+
+/* 燈籠裝飾 */
+.lantern {
+    position: fixed;
+    font-size: 60px;
+    animation: sway 3s ease-in-out infinite;
+    z-index: 5;
+}
+
+.lantern-left {
+    top: 100px;
+    left: 30px;
+}
+
+.lantern-right {
+    top: 100px;
+    right: 30px;
+    animation-delay: -1.5s;
+}
+
+@keyframes sway {
+    0%, 100% { transform: rotate(-5deg); }
+    50% { transform: rotate(5deg); }
+}
+
+/* 煙火效果 */
+.firework {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    animation: firework 1.5s ease-out forwards;
+    pointer-events: none;
+    z-index: 100;
+}
+
+@keyframes firework {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(20);
+        opacity: 0;
+    }
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+    .top-nav {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+    
+    .school-name {
+        font-size: 20px;
+        letter-spacing: 4px;
+    }
+    
+    .prize-title {
+        padding: 10px 20px;
+    }
+    
+    .prize-title h2 {
+        font-size: 20px;
+    }
+    
+    .prize-title::before,
+    .prize-title::after {
+        font-size: 20px;
+        margin: 0 5px;
+    }
+    
+    .winners-table tbody td {
+        padding: 12px 8px;
+        font-size: 18px;
+    }
+    
+    .winners-table tbody td.name {
+        font-size: 22px;
+    }
+    
+    .winners-table tbody td.uid {
+        font-size: 20px;
+    }
+    
+    .lantern {
+        font-size: 40px;
+    }
+    
+    .lantern-left {
+        left: 10px;
+    }
+    
+    .lantern-right {
+        right: 10px;
+    }
+}
+
+</style>
 </head>
 
 <body>
-  <%- include('../partials/nav.ejs') %>
 
-<div class="container">
-  <div class="row">
-    <div class="col-md-12">
-      <h3>
+<!-- 飄落裝飾 -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const items = ['🧧', '💰', '🎊', '✨', '🎉', '💫', '🎁'];
+    const container = document.body;
+    
+    for (let i = 0; i < 25; i++) {
+        setTimeout(() => {
+            const item = document.createElement('div');
+            item.className = 'falling-item';
+            item.textContent = items[Math.floor(Math.random() * items.length)];
+            item.style.left = Math.random() * 100 + 'vw';
+            item.style.animationDuration = (Math.random() * 5 + 5) + 's';
+            item.style.animationDelay = (Math.random() * 5) + 's';
+            item.style.fontSize = (Math.random() * 20 + 20) + 'px';
+            container.appendChild(item);
+        }, i * 200);
+    }
+});
 
-      <% if (results && results.length > 0) { %>
-             <%= results[0].awardList %> 共 <%= results.length %> 個
-      <% } %>
-      </h3>
+// 煙火效果
+function createFirework(x, y) {
+    const colors = ['#FFD700', '#FF0000', '#FFA500', '#FF69B4', '#00FF00'];
+    for (let i = 0; i < 12; i++) {
+        const firework = document.createElement('div');
+        firework.className = 'firework';
+        firework.style.left = x + 'px';
+        firework.style.top = y + 'px';
+        firework.style.background = colors[Math.floor(Math.random() * colors.length)];
+        firework.style.boxShadow = `0 0 20px ${firework.style.background}`;
+        document.body.appendChild(firework);
+        
+        setTimeout(() => firework.remove(), 1500);
+    }
+}
+</script>
 
-      <% if (results && results.length > 0) { %>
-      <table  class="table table-bordered table-hover">
-        <thead>
-                <tr>
-                  <th></th>
-                  <th>號碼</th>
-                  <th>姓名</th>
-                  <th>桌次</th>
-                </tr>
-        </thead>
-        <tbody id="content" style="font-size:80px" />
-      </table>
-      <% } %>
+<!-- 燈籠裝飾 -->
+<div class="lantern lantern-left">🏮</div>
+<div class="lantern lantern-right">🏮</div>
 
-      <div id="drawingStatus" style="display:none; font-size:24px; color:green; margin-top:20px;">
-        ✓ 開獎結果已儲存
-      </div>
-
+<div class="lottery-container">
+    <!-- 頂部導航 -->
+    <div class="top-nav">
+        <a href="/gameplay" class="back-btn">返回管理</a>
+        <div class="school-name">國立屏東科技大學</div>
+        <div class="event-year">尾牙抽獎</div>
     </div>
-  </div>
+
+    <!-- 獎項標題 -->
+    <div class="prize-header">
+        <% if (results && results.length > 0) { %>
+        <div class="prize-title">
+            <h2><%= results[0].awardList %><span class="prize-count">共 <%= results.length %> 位</span></h2>
+        </div>
+        <% } %>
+    </div>
+
+    <!-- 中獎者列表 -->
+    <div class="winners-section">
+        <% if (results && results.length > 0) { %>
+        <table class="winners-table">
+            <thead>
+                <tr>
+                    <th>序號</th>
+                    <th>號碼</th>
+                    <th>姓名</th>
+                    <th>桌次</th>
+                </tr>
+            </thead>
+            <tbody id="content">
+            </tbody>
+        </table>
+        <% } %>
+
+        <div id="drawingStatus" class="drawing-status">
+            開獎結果已儲存
+        </div>
+    </div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 <% if (results && results.length > 0) { %>
     var rowLength = <%= results.length %>;
@@ -50,23 +466,37 @@
     var gid = '<%= gid %>';
 
     function showOne() {
-        $('#content').prepend(
-                      '<tr><td>'+ (count+1)  +'</td>'+
-                          '<td>'+ content[count].uid +'</td>'+
-                          '<td>'+ content[count].name +'</td>'+
-                          '<td>'+ content[count].table_num +'</td></tr>'
-        );
+        var row = '<tr style="animation-delay: ' + (count * 0.1) + 's">' +
+                  '<td class="rank">'+ (count+1) +'</td>' +
+                  '<td class="uid">'+ content[count].uid +'</td>' +
+                  '<td class="name">'+ content[count].name +'</td>' +
+                  '<td class="table-num">'+ content[count].table_num +'</td>' +
+                  '</tr>';
+        $('#content').prepend(row);
+        
+        // 隨機煙火效果
+        if (Math.random() > 0.5) {
+            createFirework(Math.random() * window.innerWidth, Math.random() * window.innerHeight * 0.5);
+        }
+        
         count++;
         
         // 當所有中獎者都顯示完畢
         if (count >= rowLength) {
             clearInterval(intervalId);
             
+            // 慶祝煙火
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    createFirework(Math.random() * window.innerWidth, Math.random() * window.innerHeight * 0.5);
+                }, i * 300);
+            }
+            
             // 如果是開獎中狀態，呼叫 API 完成開獎
             if (isDrawing) {
                 $.post('/completeNormalDrawing/' + gid, function(data) {
                     if (data.success) {
-                        $('#drawingStatus').show();
+                        $('#drawingStatus').fadeIn();
                         console.log('開獎結果已儲存');
                     }
                 }).fail(function(err) {
@@ -80,12 +510,13 @@
     function showAll() {
         // 直接顯示所有結果，不需動畫
         for (var i = 0; i < rowLength; i++) {
-            $('#content').append(
-                '<tr><td>'+ (i+1)  +'</td>'+
-                    '<td>'+ content[i].uid +'</td>'+
-                    '<td>'+ content[i].name +'</td>'+
-                    '<td>'+ content[i].table_num +'</td></tr>'
-            );
+            var row = '<tr style="animation-delay: ' + (i * 0.05) + 's">' +
+                      '<td class="rank">'+ (i+1) +'</td>' +
+                      '<td class="uid">'+ content[i].uid +'</td>' +
+                      '<td class="name">'+ content[i].name +'</td>' +
+                      '<td class="table-num">'+ content[i].table_num +'</td>' +
+                      '</tr>';
+            $('#content').append(row);
         }
     }
 
@@ -99,3 +530,6 @@
     }
 <% } %>
 </script>
+
+</body>
+</html>

@@ -158,6 +158,7 @@
   <table class="data-table">
     <thead>
       <tr>
+        <th>號碼</th>
         <th>姓名</th>
         <th>桌次</th>  
         <th>中獎獎品</th>
@@ -168,6 +169,7 @@
     <tbody>
     <% results.forEach( (it) => { %>
       <tr>
+        <td><%= it.uid %></td>
         <td><strong><%= it.name %></strong></td>
         <td><%= it.table_num %></td> 
         <td><%= it.award_list %></td>

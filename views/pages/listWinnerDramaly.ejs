@@ -45,10 +45,11 @@
     var rowLength = <%= results.length %>;
     var count = 0;
     var content = <%- JSON.stringify(results) %>;
-    var isDrawing = <%= isDrawing ? 'true' : 'false' %>;
+    var isDrawing = <%= typeof isDrawing !== 'undefined' && isDrawing ? 'true' : 'false' %>;
+    var showAnimation = <%= typeof showAnimation !== 'undefined' && showAnimation ? 'true' : 'false' %>;
     var gid = '<%= gid %>';
 
-    function show() {
+    function showOne() {
         $('#content').prepend(
                       '<tr><td>'+ (count+1)  +'</td>'+
                           '<td>'+ content[count].uid +'</td>'+
@@ -75,7 +76,26 @@
             }
         }
     }
+    
+    function showAll() {
+        // 直接顯示所有結果，不需動畫
+        for (var i = 0; i < rowLength; i++) {
+            $('#content').append(
+                '<tr><td>'+ (i+1)  +'</td>'+
+                    '<td>'+ content[i].uid +'</td>'+
+                    '<td>'+ content[i].name +'</td>'+
+                    '<td>'+ content[i].table_num +'</td></tr>'
+            );
+        }
+    }
 
-    var intervalId = setInterval(show, 2000);
+    var intervalId;
+    if (showAnimation) {
+        // 開獎主持人頁面：播放動畫
+        intervalId = setInterval(showOne, 2000);
+    } else {
+        // 觀眾頁面：直接顯示所有結果
+        showAll();
+    }
 <% } %>
 </script>

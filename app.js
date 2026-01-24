@@ -574,7 +574,8 @@ app.get('/listWinnerDramaly/:gid', (req, res) => {
                 res.render('pages/listWinnerDramaly', {
                     results: [],
                     gid: gid,
-                    isDrawing: true
+                    isDrawing: true,
+                    showAnimation: true
                 });
                 return;
             }
@@ -603,7 +604,8 @@ app.get('/listWinnerDramaly/:gid', (req, res) => {
                             res.render('pages/listWinnerDramaly', {
                                 results: winnersToShow,
                                 gid: gid,
-                                isDrawing: true  // 標記為開獎中
+                                isDrawing: true,  // 標記為開獎中
+                                showAnimation: true  // 開獎主持人頁面：顯示動畫
                             });
                         }
                     });
@@ -619,6 +621,7 @@ app.get('/listWinnerDramaly/:gid', (req, res) => {
                 console.log({length:rePerson.results.length});
                 rePerson.gid = gid;
                 rePerson.isDrawing = false;
+                rePerson.showAnimation = false;  // 觀眾頁面：不顯示動畫，直接列出結果
                 res.render('pages/listWinnerDramaly', rePerson);
             });
         }

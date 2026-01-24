@@ -524,6 +524,21 @@ app.get('/listWinnerDramaly/:gid', (req, res) => {
         var games = reGame.results;
         var game = games[0];
         
+        // 檢查 game 的 drawing_status
+        var drawingStatus = game.drawing_status || 0;
+        console.log('[listWinnerDramaly] game.drawing_status=' + drawingStatus);
+        
+        // 如果 game 正在開獎中但 session 沒有資料，說明流程被中斷
+        // 重置狀態並導回抽獎頁面
+        if (drawingStatus === 1 && (!pendingCandidates || !pendingGame || pendingGame.id != gid)) {
+            console.log('[listWinnerDramaly] 開獎中但 session 資料遺失，重置狀態');
+            gameDao.resetDrawingStatus(gid, () => {
+                req.session['msg'] = '抽獎流程中斷，請重新開始抽獎';
+                res.redirect('/playNormal/' + gid);
+            });
+            return;
+        }
+        
         // 如果是開獎中狀態（有 pending 資料），使用 session 中的候選人
         if (pendingCandidates && pendingCandidates.length > 0 && pendingGame && pendingGame.id == gid) {
             // 從候選人 uid 取得完整資料用於顯示

@@ -827,10 +827,14 @@ app.get('/playNormal/:gid', basicAuth, (req, res) => {
 
   gameDao.find(gid, (reGame) => {
     var game = reGame.results[0];
-    res.render('pages/startPlayNormal', {
-      reminderCount: game.reminder_count, 
-      gid: game.id,
-      gameName: game.award_list
+    // 載入已中獎者列表
+    personDao.findByGid(gid, (rePerson) => {
+      res.render('pages/startPlayNormal', {
+        reminderCount: game.reminder_count, 
+        gid: game.id,
+        gameName: game.award_list,
+        existingWinners: rePerson.results || []
+      });
     });
   });
 });

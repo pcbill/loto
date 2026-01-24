@@ -532,9 +532,11 @@ body::before {
 
     <!-- 說明文字 / 抽獎中提示 -->
     <div style="text-align: center;">
+        <% if (reminderCount > 0) { %>
         <div class="description" id="descriptionText">
             <p>快速抽出 <span class="highlight"><%= reminderCount %></span> 位幸運得獎者</p>
         </div>
+        <% } %>
         
         <div class="drawing-progress" id="drawingProgress">
             <p>🎰 抽獎中... 請稍候 🎰</p>
@@ -542,7 +544,7 @@ body::before {
     </div>
 
     <!-- 中獎者列表 -->
-    <div class="winners-section" id="winnersSection">
+    <div class="winners-section<%= (typeof existingWinners !== 'undefined' && existingWinners.length > 0) ? ' show' : '' %>" id="winnersSection">
         <table class="winners-table">
             <thead>
                 <tr>
@@ -553,6 +555,16 @@ body::before {
                 </tr>
             </thead>
             <tbody id="winnersBody">
+            <% if (typeof existingWinners !== 'undefined' && existingWinners.length > 0) { %>
+                <% existingWinners.forEach((winner, index) => { %>
+                <tr>
+                    <td class="rank"><%= index + 1 %></td>
+                    <td class="uid"><%= winner.uid %></td>
+                    <td class="name"><%= winner.name %></td>
+                    <td class="table-num"><%= winner.table_num %></td>
+                </tr>
+                <% }); %>
+            <% } %>
             </tbody>
         </table>
         

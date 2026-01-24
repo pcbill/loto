@@ -402,6 +402,9 @@ app.get('/execute/:gameId/:playRightNow', basicAuth, (req, res) => {
         req.session['msg'] = it.msg + 'Game Executed!!';
 
         req.session['gameName'] = game.award_list;
+        
+        console.log('[execute] gameType=' + gameType + ', reminderCount=' + reminderCount + ', count=' + count);
+        
         if (gameType == 0 && reminderCount >= count)
         {
           // normal game - 先設定為開獎中，動畫結束後才寫入結果
@@ -450,6 +453,17 @@ app.get('/execute/:gameId/:playRightNow', basicAuth, (req, res) => {
             req.session['winners'] = rePerson.results;
             res.redirect('/playBig');
           });
+        }
+        else
+        {
+          // 條件不滿足，顯示錯誤訊息
+          console.log('[execute] 條件不滿足: gameType=' + gameType + ', reminderCount=' + reminderCount + ', count=' + count);
+          if (reminderCount < count) {
+            req.session['msg'] = '錯誤：剩餘名額不足！剩餘 ' + reminderCount + ' 名，但需要抽出 ' + count + ' 名。';
+          } else {
+            req.session['msg'] = '錯誤：無法執行此獎項類型';
+          }
+          res.redirect('/gameplay');
         }
 
 

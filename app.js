@@ -764,6 +764,63 @@ app.get('/playBig', basicAuth, (req, res) => {
       reminderCount: reminderCount});
 });
 
+// API: 執行一般抽獎並返回 JSON 結果
+app.post('/api/executeNormal/:gameId', basicAuth, (req, res) => {
+    var gameId = req.params.gameId;
+
+    gameDao.find(gameId, (it) => {
+        var game = it.results[0];
+        var count = game.participant_count;
+        var reminderCount = game.reminder_count;
+
+        if (reminderCount < count) {
+            return res.json({ success: false, error: '剩餘名額不足！剩餘 ' + reminderCount + ' 名，但需要抽出 ' + count + ' 名。' });
+        }
+
+        personDao.findAllRegisteredWithoutAward((re) => {
+            var list = re.results;
+            var upairs = list.map((it) => { 
+                return { uid: it.uid, name: it.name, table_num: it.table_num };
+            });
+
+            if (upairs.length === 0) {
+                return res.json({ success: false, error: '沒有可抽獎的候選人！所有人都已中獎或尚未註冊。' });
+            }
+
+            if (upairs.length < count) {
+                return res.json({ success: false, error: '候選人數不足！目前只有 ' + upairs.length + ' 人，但需要抽出 ' + count + ' 人。' });
+            }
+
+            // 洗牌
+            for (let i = 0; i < 500; i++) {
+                shuffle(upairs);
+            }
+
+            // 取得中獎者
+            var winners = upairs.slice(0, count);
+            var winnerUids = winners.map(w => w.uid);
+
+            // 開始抽獎
+            gameDao.startDrawing(gameId, () => {
+                // 存入 session 以備完成時使用
+                req.session['pending_candidates'] = winnerUids;
+                req.session['pending_count'] = count;
+                req.session['pending_gameId'] = gameId;
+                req.session['pending_game'] = game;
+
+                req.session.save(function(err) {
+                    // 返回中獎者列表
+                    res.json({
+                        success: true,
+                        winners: winners,
+                        awardList: game.award_list,
+                        gid: gameId
+                    });
+                });
+            });
+        });
+    });
+});
 
 app.get('/playNormal/:gid', basicAuth, (req, res) => {
   var gid = req.params.gid;

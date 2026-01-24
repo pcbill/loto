@@ -11,6 +11,7 @@
 
 * {
     font-family: 'Noto Sans TC', sans-serif;
+    box-sizing: border-box;
 }
 
 body {
@@ -61,8 +62,6 @@ body::before {
     z-index: 10;
     padding: 20px;
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
 }
 
 /* 頂部導航 */
@@ -113,16 +112,6 @@ body::before {
     font-size: 18px;
     color: #FFA500;
     letter-spacing: 4px;
-}
-
-/* 主內容區 */
-.main-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 40px 20px;
 }
 
 /* 獎項標題 + 剩餘次數 + 開始按鈕 一行排列 */
@@ -222,11 +211,12 @@ body::before {
 /* 說明文字 */
 .description {
     text-align: center;
-    margin-top: 30px;
-    padding: 20px 40px;
+    margin: 20px auto;
+    padding: 15px 30px;
     background: rgba(0, 0, 0, 0.3);
     border-radius: 15px;
     border: 1px solid rgba(255, 215, 0, 0.3);
+    display: inline-block;
 }
 
 .description p {
@@ -239,6 +229,153 @@ body::before {
     color: #FFD700;
     font-weight: bold;
     font-size: 24px;
+}
+
+/* 中獎者列表區域 */
+.winners-section {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 0 20px;
+    display: none;
+}
+
+.winners-section.show {
+    display: block;
+}
+
+.winners-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 10px;
+}
+
+.winners-table thead th {
+    background: rgba(139, 0, 0, 0.8);
+    color: #FFD700;
+    padding: 15px 20px;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    border: none;
+}
+
+.winners-table thead th:first-child {
+    border-radius: 10px 0 0 10px;
+}
+
+.winners-table thead th:last-child {
+    border-radius: 0 10px 10px 0;
+}
+
+.winners-table tbody tr {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 165, 0, 0.1) 100%);
+    transition: all 0.3s;
+    animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.winners-table tbody tr:hover {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.3) 0%, rgba(255, 165, 0, 0.2) 100%);
+    transform: scale(1.02);
+}
+
+.winners-table tbody td {
+    padding: 20px;
+    text-align: center;
+    color: #FFD700;
+    font-size: 24px;
+    font-weight: bold;
+    border: none;
+    border-top: 2px solid rgba(255, 215, 0, 0.3);
+    border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+}
+
+.winners-table tbody td:first-child {
+    border-left: 2px solid rgba(255, 215, 0, 0.3);
+    border-radius: 10px 0 0 10px;
+}
+
+.winners-table tbody td:last-child {
+    border-right: 2px solid rgba(255, 215, 0, 0.3);
+    border-radius: 0 10px 10px 0;
+}
+
+.winners-table tbody td.rank {
+    font-size: 20px;
+    color: #FFA500;
+    width: 60px;
+}
+
+.winners-table tbody td.uid {
+    font-size: 28px;
+    color: #FFD700;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.winners-table tbody td.name {
+    font-size: 32px;
+    color: #FFFFFF;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.winners-table tbody td.table-num {
+    font-size: 22px;
+    color: #FFA500;
+}
+
+/* 狀態訊息 */
+.drawing-status {
+    text-align: center;
+    margin-top: 30px;
+    padding: 15px 30px;
+    background: rgba(0, 128, 0, 0.3);
+    border: 2px solid #00FF00;
+    border-radius: 10px;
+    color: #00FF00;
+    font-size: 20px;
+    font-weight: bold;
+    display: none;
+}
+
+.drawing-status::before {
+    content: '✓ ';
+}
+
+/* 抽獎中提示 */
+.drawing-progress {
+    text-align: center;
+    margin: 20px auto;
+    padding: 20px 40px;
+    background: rgba(255, 215, 0, 0.2);
+    border: 2px solid #FFD700;
+    border-radius: 15px;
+    display: none;
+}
+
+.drawing-progress.show {
+    display: block;
+}
+
+.drawing-progress p {
+    margin: 0;
+    font-size: 24px;
+    color: #FFD700;
+    animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
 }
 
 /* 燈籠裝飾 */
@@ -263,6 +400,28 @@ body::before {
 @keyframes sway {
     0%, 100% { transform: rotate(-5deg); }
     50% { transform: rotate(5deg); }
+}
+
+/* 煙火效果 */
+.firework {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    animation: firework 1.5s ease-out forwards;
+    pointer-events: none;
+    z-index: 100;
+}
+
+@keyframes firework {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(20);
+        opacity: 0;
+    }
 }
 
 /* 響應式設計 */
@@ -300,6 +459,19 @@ body::before {
         font-size: 28px;
     }
     
+    .winners-table tbody td {
+        padding: 12px 8px;
+        font-size: 18px;
+    }
+    
+    .winners-table tbody td.name {
+        font-size: 22px;
+    }
+    
+    .winners-table tbody td.uid {
+        font-size: 20px;
+    }
+    
     .lantern {
         font-size: 40px;
     }
@@ -318,10 +490,86 @@ body::before {
 
 <body>
 
-<!-- 飄落裝飾 -->
+<!-- 燈籠裝飾 -->
+<div class="lantern lantern-left">🏮</div>
+<div class="lantern lantern-right">🏮</div>
+
+<div class="lottery-container">
+    <!-- 頂部導航 -->
+    <div class="top-nav">
+        <a href="/gameplay" class="back-btn">返回管理</a>
+        <div class="school-name">國立屏東科技大學</div>
+        <div class="event-year">尾牙抽獎</div>
+    </div>
+
+    <!-- 獎項標題 + 剩餘次數 + 開始按鈕 排成一行 -->
+    <div class="prize-control-row">
+        <!-- 獎項標題 -->
+        <div class="prize-title">
+            <h2><%= gameName %></h2>
+        </div>
+
+        <!-- 剩餘次數 -->
+        <div class="remaining-count">
+            <img src="/img/still.png" alt="" />
+            <span class="count-number" id="reminderCount"><%= reminderCount %></span>
+            <span class="count-label">位得獎者</span>
+        </div>
+
+        <!-- 開始按鈕 -->
+        <div class="control-area">
+            <% if (reminderCount > 0) { %>
+            <a href="javascript:void(0)" class="play-button" id="startButton" onclick="startDraw()">
+                <img src="/img/button_start1.png" alt="開始抽獎" />
+            </a>
+            <% } else { %>
+            <span class="play-button disabled">
+                <img src="/img/button_start1.png" alt="" />
+            </span>
+            <% } %>
+        </div>
+    </div>
+
+    <!-- 說明文字 / 抽獎中提示 -->
+    <div style="text-align: center;">
+        <div class="description" id="descriptionText">
+            <p>快速抽出 <span class="highlight"><%= reminderCount %></span> 位幸運得獎者</p>
+        </div>
+        
+        <div class="drawing-progress" id="drawingProgress">
+            <p>🎰 抽獎中... 請稍候 🎰</p>
+        </div>
+    </div>
+
+    <!-- 中獎者列表 -->
+    <div class="winners-section" id="winnersSection">
+        <table class="winners-table">
+            <thead>
+                <tr>
+                    <th>序號</th>
+                    <th>號碼</th>
+                    <th>姓名</th>
+                    <th>桌次</th>
+                </tr>
+            </thead>
+            <tbody id="winnersBody">
+            </tbody>
+        </table>
+        
+        <div id="drawingStatus" class="drawing-status">
+            開獎結果已儲存
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+var gid = '<%= gid %>';
+var isDrawing = false;
+
+// 飄落裝飾
 document.addEventListener('DOMContentLoaded', function() {
-    const items = ['🧧', '💰', '🎊', '✨', '🎉', '💫'];
+    const items = ['🧧', '💰', '🎊', '✨', '🎉', '💫', '🎁'];
     const container = document.body;
     
     for (let i = 0; i < 20; i++) {
@@ -337,56 +585,110 @@ document.addEventListener('DOMContentLoaded', function() {
         }, i * 300);
     }
 });
+
+// 煙火效果
+function createFirework(x, y) {
+    const colors = ['#FFD700', '#FF0000', '#FFA500', '#FF69B4', '#00FF00'];
+    for (let i = 0; i < 12; i++) {
+        const firework = document.createElement('div');
+        firework.className = 'firework';
+        firework.style.left = x + 'px';
+        firework.style.top = y + 'px';
+        firework.style.background = colors[Math.floor(Math.random() * colors.length)];
+        firework.style.boxShadow = '0 0 20px ' + firework.style.background;
+        document.body.appendChild(firework);
+        
+        setTimeout(() => firework.remove(), 1500);
+    }
+}
+
+// 開始抽獎
+function startDraw() {
+    if (isDrawing) return;
+    isDrawing = true;
+    
+    // 隱藏按鈕和說明，顯示抽獎中
+    $('#startButton').addClass('disabled').css('pointer-events', 'none');
+    $('#descriptionText').hide();
+    $('#drawingProgress').addClass('show');
+    
+    // 呼叫 API
+    $.post('/api/executeNormal/' + gid, function(data) {
+        if (data.success) {
+            // 隱藏抽獎中提示
+            $('#drawingProgress').removeClass('show');
+            
+            // 顯示中獎者列表
+            $('#winnersSection').addClass('show');
+            
+            // 逐一顯示中獎者
+            showWinnersWithAnimation(data.winners, data.gid);
+        } else {
+            alert('錯誤：' + data.error);
+            isDrawing = false;
+            $('#startButton').removeClass('disabled').css('pointer-events', 'auto');
+            $('#descriptionText').show();
+            $('#drawingProgress').removeClass('show');
+        }
+    }).fail(function(err) {
+        alert('抽獎失敗，請重試');
+        isDrawing = false;
+        $('#startButton').removeClass('disabled').css('pointer-events', 'auto');
+        $('#descriptionText').show();
+        $('#drawingProgress').removeClass('show');
+    });
+}
+
+// 逐一顯示中獎者動畫
+function showWinnersWithAnimation(winners, gameId) {
+    var count = 0;
+    var total = winners.length;
+    
+    function showOne() {
+        if (count >= total) {
+            // 所有人都顯示完畢
+            clearInterval(intervalId);
+            
+            // 慶祝煙火
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    createFirework(Math.random() * window.innerWidth, Math.random() * window.innerHeight * 0.5);
+                }, i * 300);
+            }
+            
+            // 呼叫 API 完成抽獎
+            $.post('/completeNormalDrawing/' + gameId, function(res) {
+                if (res.success) {
+                    $('#drawingStatus').fadeIn();
+                    // 更新剩餘人數
+                    var newCount = parseInt($('#reminderCount').text()) - total;
+                    $('#reminderCount').text(newCount > 0 ? newCount : 0);
+                }
+            });
+            
+            return;
+        }
+        
+        var winner = winners[count];
+        var row = '<tr style="animation-delay: ' + (count * 0.1) + 's">' +
+                  '<td class="rank">'+ (count+1) +'</td>' +
+                  '<td class="uid">'+ winner.uid +'</td>' +
+                  '<td class="name">'+ winner.name +'</td>' +
+                  '<td class="table-num">'+ winner.table_num +'</td>' +
+                  '</tr>';
+        $('#winnersBody').prepend(row);
+        
+        // 隨機煙火
+        if (Math.random() > 0.5) {
+            createFirework(Math.random() * window.innerWidth, Math.random() * window.innerHeight * 0.5);
+        }
+        
+        count++;
+    }
+    
+    var intervalId = setInterval(showOne, 1500);
+}
 </script>
-
-<!-- 燈籠裝飾 -->
-<div class="lantern lantern-left">🏮</div>
-<div class="lantern lantern-right">🏮</div>
-
-<div class="lottery-container">
-    <!-- 頂部導航 -->
-    <div class="top-nav">
-        <a href="/gameplay" class="back-btn">返回管理</a>
-        <div class="school-name">國立屏東科技大學</div>
-        <div class="event-year">尾牙抽獎</div>
-    </div>
-
-    <!-- 主內容區 -->
-    <div class="main-content">
-        <!-- 獎項標題 + 剩餘次數 + 開始按鈕 排成一行 -->
-        <div class="prize-control-row">
-            <!-- 獎項標題 -->
-            <div class="prize-title">
-                <h2><%= gameName %></h2>
-            </div>
-
-            <!-- 剩餘次數 -->
-            <div class="remaining-count">
-                <img src="/img/still.png" alt="" />
-                <span class="count-number" id="reminderCount"><%= reminderCount %></span>
-                <span class="count-label">位得獎者</span>
-            </div>
-
-            <!-- 開始按鈕 -->
-            <div class="control-area">
-                <% if (reminderCount > 0) { %>
-                <a href="/execute/<%= gid %>/false" class="play-button">
-                    <img src="/img/button_start1.png" alt="開始抽獎" />
-                </a>
-                <% } else { %>
-                <span class="play-button disabled">
-                    <img src="/img/button_start1.png" alt="" />
-                </span>
-                <% } %>
-            </div>
-        </div>
-
-        <!-- 說明文字 -->
-        <div class="description">
-            <p>快速抽出 <span class="highlight"><%= reminderCount %></span> 位幸運得獎者</p>
-        </div>
-    </div>
-</div>
 
 </body>
 </html>

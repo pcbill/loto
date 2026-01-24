@@ -24,6 +24,39 @@
 </nav>
  
 <% if (typeof msg !== 'undefined' && msg) { %>
-  <div> <%= msg %> </div>
+<%
+  // 根據訊息內容自動判斷樣式類型
+  var alertType = 'info';
+  var alertIcon = 'info-sign';
+  var alertTitle = '系統訊息';
+  
+  if (msg.indexOf('錯誤') >= 0 || msg.indexOf('失敗') >= 0 || msg.indexOf('Error') >= 0) {
+    alertType = 'error';
+    alertIcon = 'exclamation-sign';
+    alertTitle = '錯誤提示';
+  } else if (msg.indexOf('成功') >= 0 || msg.indexOf('完成') >= 0 || msg.indexOf('Finished') >= 0 || msg.indexOf('Executed') >= 0) {
+    alertType = 'success';
+    alertIcon = 'ok-sign';
+    alertTitle = '操作成功';
+  } else if (msg.indexOf('警告') >= 0 || msg.indexOf('注意') >= 0 || msg.indexOf('請') >= 0) {
+    alertType = 'warning';
+    alertIcon = 'warning-sign';
+    alertTitle = '注意事項';
+  }
+%>
+<div class="container">
+  <div class="alert-message alert-message-<%= alertType %>">
+    <div class="alert-message-icon">
+      <span class="glyphicon glyphicon-<%= alertIcon %>"></span>
+    </div>
+    <div class="alert-message-content">
+      <strong><%= alertTitle %></strong>
+      <p><%= msg %></p>
+    </div>
+    <button type="button" class="alert-message-close" onclick="this.parentElement.style.display='none';">
+      <span>&times;</span>
+    </button>
+  </div>
+</div>
 <% } %>
   

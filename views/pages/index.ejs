@@ -2,6 +2,205 @@
 <html>
 <head>
   <%- include('../partials/header.ejs') %>
+<style>
+/* 歡迎橫幅 */
+.welcome-banner {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  padding: 40px;
+  color: white;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+  text-align: center;
+}
+
+.welcome-banner h1 {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.welcome-banner p {
+  font-size: 16px;
+  opacity: 0.9;
+  margin: 0;
+}
+
+.welcome-banner .emoji {
+  font-size: 48px;
+  margin-bottom: 15px;
+}
+
+/* 統計卡片 */
+.stats-row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.stats-card {
+  flex: 1;
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e9ecef;
+  text-align: center;
+}
+
+.stats-card .stats-icon {
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+
+.stats-card .stats-number {
+  font-size: 28px;
+  font-weight: 700;
+  color: #495057;
+  margin-bottom: 5px;
+}
+
+.stats-card .stats-label {
+  font-size: 14px;
+  color: #6c757d;
+}
+
+/* 表格樣式 */
+.data-table {
+  width: 100%;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.data-table thead th {
+  background: linear-gradient(135deg, #495057 0%, #343a40 100%);
+  color: white;
+  padding: 15px 12px;
+  font-weight: 600;
+  font-size: 14px;
+  text-align: left;
+  border: none;
+}
+
+.data-table tbody tr {
+  transition: background-color 0.2s;
+}
+
+.data-table tbody tr:nth-child(even) {
+  background-color: #f8f9fa;
+}
+
+.data-table tbody tr:hover {
+  background-color: #e3f2fd;
+}
+
+.data-table tbody td {
+  padding: 12px;
+  border-bottom: 1px solid #e9ecef;
+  font-size: 14px;
+  color: #495057;
+  vertical-align: middle;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.table-header h4 {
+  margin: 0;
+  color: #495057;
+  font-weight: 600;
+}
+
+.table-count {
+  background: #e9ecef;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  color: #495057;
+}
+
+/* 按鈕樣式 */
+.btn-view {
+  padding: 6px 14px;
+  font-size: 12px;
+  border-radius: 4px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  color: white;
+}
+
+.btn-view:hover {
+  background: linear-gradient(135deg, #5a6fd6 0%, #6a4190 100%);
+  color: white;
+}
+
+.btn-secondary-action {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 10px 20px;
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  color: #495057;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.btn-secondary-action:hover {
+  background: #f8f9fa;
+  border-color: #adb5bd;
+  text-decoration: none;
+  color: #495057;
+}
+
+.btn-secondary-action .glyphicon {
+  margin-right: 8px;
+}
+
+/* 類型標籤 */
+.type-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.type-badge.normal {
+  background: #e9ecef;
+  color: #495057;
+}
+
+.type-badge.big {
+  background: #fff3cd;
+  color: #856404;
+}
+
+/* 空狀態 */
+.empty-state {
+  text-align: center;
+  padding: 60px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.empty-state .glyphicon {
+  font-size: 48px;
+  color: #adb5bd;
+}
+
+.empty-state p {
+  color: #6c757d;
+  margin-top: 15px;
+}
+</style>
 </head>
 
 <body>
@@ -9,37 +208,79 @@
   <%- include('../partials/nav.ejs') %>
 
 <div class="container">
-  <div class="row">
-    <div class="col-md-6">
-      <h3>歡迎!!</h3>
+  <!-- 歡迎橫幅 -->
+  <div class="welcome-banner">
+    <div class="emoji">🎉</div>
+    <h1>歡迎參加抽獎活動！</h1>
+    <p>國立屏東科技大學 尾牙抽獎系統</p>
+  </div>
 
-      <% if (results) { %>
-        共有 <%= results.length %> 獎項
-        <table class="table table-bordered table-hover">
-          <tr>
-            <th>獎項</th>
-            <th>獎項名稱</th>
-            <th>數量</th>
-            <th>剩餘</th>
-            <th></th>
-          </tr>
-        <% results.forEach( (it) => { %>
-          <tr>
-            <td><%= it.gid %></td>
-            <td><%= it.award_list %></td>
-            <td><%= it.participant_count%></td>
-            <td><%= it.reminder_count %></td>
-            <td> <a class="btn btn-primary" href='/listWinner/<%= it.id %>'>得獎者列表</a> </td>
-          </tr>
-        <% }); %>
-        </table>
-        <a class="btn btn-primary" href='/listReplayWinner'>重抽後得獎者列表</a>
-      <% } %>
-
+  <% if (results && results.length > 0) { %>
+  <!-- 統計卡片 -->
+  <div class="stats-row">
+    <div class="stats-card">
+      <div class="stats-icon">🎁</div>
+      <div class="stats-number"><%= results.length %></div>
+      <div class="stats-label">獎項數量</div>
+    </div>
+    <div class="stats-card">
+      <div class="stats-icon">🏆</div>
+      <div class="stats-number"><%= results.reduce((sum, it) => sum + it.participant_count, 0) %></div>
+      <div class="stats-label">總獎品數</div>
+    </div>
+    <div class="stats-card">
+      <div class="stats-icon">⏳</div>
+      <div class="stats-number"><%= results.reduce((sum, it) => sum + it.reminder_count, 0) %></div>
+      <div class="stats-label">待抽出</div>
     </div>
   </div>
-</div>
 
+  <!-- 獎項列表 -->
+  <div class="table-header">
+    <h4><span class="glyphicon glyphicon-gift"></span> 獎項總覽</h4>
+    <span class="table-count">共 <%= results.length %> 個獎項</span>
+  </div>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>獎項</th>
+        <th>獎項名稱</th>
+        <th>數量</th>
+        <th>剩餘</th>
+        <th>類型</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+    <% results.forEach( (it) => { %>
+      <tr>
+        <td><strong><%= it.gid %></strong></td>
+        <td><%= it.award_list %></td>
+        <td><%= it.participant_count %></td>
+        <td><%= it.reminder_count %></td>
+        <td>
+          <% if (it.exec_type == 0) { %>
+            <span class="type-badge normal">快速抽獎</span>
+          <% } else { %>
+            <span class="type-badge big">大獎</span>
+          <% } %>
+        </td>
+        <td><a class="btn btn-view" href='/listWinner/<%= it.id %>'>得獎者列表</a></td>
+      </tr>
+    <% }); %>
+    </tbody>
+  </table>
+
+  <a class="btn-secondary-action" href='/listReplayWinner'>
+    <span class="glyphicon glyphicon-repeat"></span> 重抽後得獎者列表
+  </a>
+  <% } else { %>
+  <div class="empty-state">
+    <span class="glyphicon glyphicon-inbox"></span>
+    <p>尚無獎項資料</p>
+  </div>
+  <% } %>
+</div>
 
 </body>
 </html>

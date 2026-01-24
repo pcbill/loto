@@ -152,18 +152,67 @@ ul {
     font-size: 30px;
     margin: 0 10px;
 }
-    font-size: 40px;
-}
-
-.prize-title::before { left: 10px; }
-.prize-title::after { right: 10px; }
 
 .prize-title h2 {
     margin: 0;
-    font-size: 36px;
+    font-size: 28px;
     font-weight: 900;
     color: #8B0000;
     text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+}
+
+/* 剩餘次數 - 行內樣式 */
+.remaining-count {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 25px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 50px;
+    border: 2px solid #FFD700;
+}
+
+.remaining-count img {
+    height: 40px;
+}
+
+.remaining-count .count-number {
+    font-size: 36px;
+    font-weight: 900;
+    color: #FFD700;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+    min-width: 40px;
+    text-align: center;
+}
+
+.remaining-count .count-label {
+    font-size: 16px;
+    color: #FFA500;
+}
+
+/* 控制區 - 行內樣式 */
+.control-area {
+    display: inline-flex;
+    align-items: center;
+}
+
+.play-button {
+    display: inline-block;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.play-button:hover {
+    transform: scale(1.15);
+}
+
+.play-button img {
+    width: 100px;
+    height: 100px;
+    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8));
 }
 
 /* 老虎機區域 */
@@ -265,76 +314,6 @@ ul {
 
 .fancy .slot li span {
     display: block;
-}
-
-/* 控制區 */
-.control-area {
-    text-align: center;
-    margin: 30px 0;
-}
-
-.play-button {
-    display: inline-block;
-    padding: 0;
-    border: none;
-    background: none;
-    cursor: pointer;
-    transition: all 0.3s;
-    position: relative;
-}
-
-.play-button:hover {
-    transform: scale(1.1);
-}
-
-.play-button img {
-    width: 120px;
-    height: 120px;
-    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8));
-}
-
-.play-button::after {
-    content: '點擊抽獎';
-    position: absolute;
-    bottom: -30px;
-    left: 50%;
-    transform: translateX(-50%);
-    color: #FFD700;
-    font-size: 14px;
-    font-weight: bold;
-    white-space: nowrap;
-}
-
-/* 剩餘次數 */
-.remaining-count {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 15px;
-    margin: 30px 0;
-    padding: 20px 40px;
-    background: rgba(0, 0, 0, 0.4);
-    border-radius: 50px;
-    border: 2px solid #FFD700;
-    display: inline-flex;
-}
-
-.remaining-count img {
-    height: 50px;
-}
-
-.remaining-count .count-number {
-    font-size: 48px;
-    font-weight: 900;
-    color: #FFD700;
-    text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
-    min-width: 60px;
-    text-align: center;
-}
-
-.remaining-count .count-label {
-    font-size: 20px;
-    color: #FFA500;
 }
 
 /* 得獎者列表 */

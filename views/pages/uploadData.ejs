@@ -1,0 +1,448 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <%- include('../partials/header.ejs') %>
+<title>上傳資料 - 屏東科技大學 尾牙抽獎</title>
+
+<style type="text/css">
+body {
+    background: linear-gradient(135deg, #1a0a0a 0%, #4a1515 30%, #8B0000 60%, #4a1515 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+}
+
+.upload-container {
+    max-width: 800px;
+    margin: 30px auto;
+    padding: 20px;
+}
+
+.page-title {
+    text-align: center;
+    color: #FFD700;
+    font-size: 28px;
+    margin-bottom: 30px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.page-title::before,
+.page-title::after {
+    content: '📁';
+    margin: 0 15px;
+}
+
+.upload-section {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    padding: 30px;
+    margin-bottom: 25px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    border: 2px solid #FFD700;
+}
+
+.section-title {
+    color: #8B0000;
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #FFD700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.section-title .icon {
+    font-size: 28px;
+}
+
+.upload-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.file-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.file-input {
+    flex: 1;
+    padding: 12px 15px;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    background: #f9f9f9;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.file-input:hover {
+    border-color: #FFD700;
+    background: #fff;
+}
+
+.file-input:focus {
+    outline: none;
+    border-color: #8B0000;
+}
+
+.upload-btn {
+    padding: 12px 30px;
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: #8B0000;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+}
+
+.upload-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
+}
+
+.upload-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.help-text {
+    color: #666;
+    font-size: 14px;
+    margin-top: 10px;
+    padding: 10px;
+    background: #f5f5f5;
+    border-radius: 5px;
+    border-left: 4px solid #FFD700;
+}
+
+.help-text strong {
+    color: #8B0000;
+}
+
+.result-message {
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 15px;
+    display: none;
+}
+
+.result-message.success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    display: block;
+}
+
+.result-message.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    display: block;
+}
+
+.template-download {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+.template-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #8B0000;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 8px 15px;
+    background: #f5f5f5;
+    border-radius: 5px;
+    transition: all 0.3s;
+}
+
+.template-link:hover {
+    background: #FFD700;
+    text-decoration: none;
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #FFD700;
+    text-decoration: none;
+    font-size: 16px;
+    margin-bottom: 20px;
+    transition: all 0.3s;
+}
+
+.back-link:hover {
+    color: #fff;
+    text-decoration: none;
+}
+
+/* 上傳進度 */
+.upload-progress {
+    display: none;
+    margin-top: 15px;
+}
+
+.upload-progress.show {
+    display: block;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 20px;
+    background: #e9ecef;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #FFD700, #FFA500);
+    width: 0%;
+    transition: width 0.3s;
+}
+
+.progress-text {
+    text-align: center;
+    margin-top: 5px;
+    color: #666;
+    font-size: 14px;
+}
+
+/* 警告訊息 */
+.warning-box {
+    background: #fff3cd;
+    color: #856404;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #ffc107;
+}
+
+.warning-box strong {
+    display: block;
+    margin-bottom: 5px;
+}
+
+@media (max-width: 768px) {
+    .upload-container {
+        padding: 15px;
+    }
+    
+    .file-input-wrapper {
+        flex-direction: column;
+    }
+    
+    .upload-btn {
+        width: 100%;
+    }
+    
+    .page-title {
+        font-size: 22px;
+    }
+}
+</style>
+
+</head>
+<body>
+<%- include('../partials/nav.ejs') %>
+
+<div class="upload-container">
+    <a href="/gameplay" class="back-link">
+        ← 返回抽獎管理
+    </a>
+    
+    <h1 class="page-title">上傳資料</h1>
+    
+    <div class="warning-box">
+        <strong>⚠️ 注意事項</strong>
+        上傳新資料將會覆蓋系統中的現有資料，請確認後再進行上傳。建議先下載範本確認格式正確。
+    </div>
+
+    <!-- 上傳獎項 -->
+    <div class="upload-section">
+        <h2 class="section-title">
+            <span class="icon">🎁</span>
+            上傳獎項資料
+        </h2>
+        
+        <form class="upload-form" id="gameUploadForm" enctype="multipart/form-data">
+            <div class="file-input-wrapper">
+                <input type="file" name="gameFile" id="gameFile" class="file-input" 
+                       accept=".xlsx,.xls" required>
+                <button type="submit" class="upload-btn" id="gameUploadBtn">
+                    📤 上傳獎項
+                </button>
+            </div>
+            
+            <div class="help-text">
+                <strong>檔案格式：</strong>Excel 檔案 (.xlsx, .xls)<br>
+                <strong>必要欄位：</strong>待後續定義
+            </div>
+            
+            <div class="upload-progress" id="gameProgress">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="gameProgressFill"></div>
+                </div>
+                <div class="progress-text" id="gameProgressText">上傳中...</div>
+            </div>
+            
+            <div class="result-message" id="gameResult"></div>
+        </form>
+        
+        <div class="template-download">
+            <a href="/templates/game_template.xlsx" class="template-link" download>
+                📥 下載獎項範本
+            </a>
+        </div>
+    </div>
+
+    <!-- 上傳人員資料 -->
+    <div class="upload-section">
+        <h2 class="section-title">
+            <span class="icon">👥</span>
+            上傳人員資料
+        </h2>
+        
+        <form class="upload-form" id="personUploadForm" enctype="multipart/form-data">
+            <div class="file-input-wrapper">
+                <input type="file" name="personFile" id="personFile" class="file-input" 
+                       accept=".xlsx,.xls" required>
+                <button type="submit" class="upload-btn" id="personUploadBtn">
+                    📤 上傳人員
+                </button>
+            </div>
+            
+            <div class="help-text">
+                <strong>檔案格式：</strong>Excel 檔案 (.xlsx, .xls)<br>
+                <strong>必要欄位：</strong>待後續定義
+            </div>
+            
+            <div class="upload-progress" id="personProgress">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="personProgressFill"></div>
+                </div>
+                <div class="progress-text" id="personProgressText">上傳中...</div>
+            </div>
+            
+            <div class="result-message" id="personResult"></div>
+        </form>
+        
+        <div class="template-download">
+            <a href="/templates/person_template.xlsx" class="template-link" download>
+                📥 下載人員範本
+            </a>
+        </div>
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+$(document).ready(function() {
+    // 上傳獎項
+    $('#gameUploadForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        var fileInput = $('#gameFile')[0];
+        if (!fileInput.files.length) {
+            alert('請選擇檔案');
+            return;
+        }
+        
+        var formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+        
+        uploadFile('/api/upload/games', formData, 'game');
+    });
+    
+    // 上傳人員
+    $('#personUploadForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        var fileInput = $('#personFile')[0];
+        if (!fileInput.files.length) {
+            alert('請選擇檔案');
+            return;
+        }
+        
+        var formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+        
+        uploadFile('/api/upload/persons', formData, 'person');
+    });
+    
+    function uploadFile(url, formData, type) {
+        var progressDiv = $('#' + type + 'Progress');
+        var progressFill = $('#' + type + 'ProgressFill');
+        var progressText = $('#' + type + 'ProgressText');
+        var resultDiv = $('#' + type + 'Result');
+        var uploadBtn = $('#' + type + 'UploadBtn');
+        
+        // 顯示進度
+        progressDiv.addClass('show');
+        resultDiv.removeClass('success error').hide();
+        uploadBtn.prop('disabled', true);
+        
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            xhr: function() {
+                var xhr = new window.XMLHttpRequest();
+                xhr.upload.addEventListener('progress', function(e) {
+                    if (e.lengthComputable) {
+                        var percent = Math.round((e.loaded / e.total) * 100);
+                        progressFill.css('width', percent + '%');
+                        progressText.text('上傳中... ' + percent + '%');
+                    }
+                });
+                return xhr;
+            },
+            success: function(response) {
+                progressDiv.removeClass('show');
+                uploadBtn.prop('disabled', false);
+                
+                if (response.success) {
+                    resultDiv.addClass('success').html(
+                        '✅ ' + response.message + '<br>' +
+                        '共處理 <strong>' + response.count + '</strong> 筆資料'
+                    ).show();
+                } else {
+                    resultDiv.addClass('error').html(
+                        '❌ ' + response.message
+                    ).show();
+                }
+            },
+            error: function(xhr, status, error) {
+                progressDiv.removeClass('show');
+                uploadBtn.prop('disabled', false);
+                
+                var message = '上傳失敗';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    message = xhr.responseJSON.message;
+                }
+                
+                resultDiv.addClass('error').html('❌ ' + message).show();
+            }
+        });
+    }
+});
+</script>
+
+</body>
+</html>

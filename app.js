@@ -21,6 +21,11 @@ var historyDao = require('./lib/dao/historyDao');
 
 var shuffle = require('./lib/random').shuffle;
 
+// Excel 上傳處理
+var multer = require('multer');
+var XLSX = require('xlsx');
+var upload = multer({ storage: multer.memoryStorage() });
+
 const connectionString = require('./lib/dao/config').connectionString;
 
 app.set('port', (process.env.PORT || 5000));
@@ -114,6 +119,78 @@ app.get('/', (req, res) => {
     });
   }
 );
+
+//// upload data ///////////////////////////
+app.get('/uploadData', basicAuth, (req, res) => {
+    res.render('pages/uploadData', { msg: req.session['msg'] || '' });
+    req.session['msg'] = '';
+});
+
+// 上傳獎項資料 API
+app.post('/api/upload/games', basicAuth, upload.single('file'), (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ success: false, message: '請選擇檔案' });
+        }
+        
+        // 讀取 Excel 檔案
+        var workbook = XLSX.read(req.file.buffer, { type: 'buffer' });
+        var sheetName = workbook.SheetNames[0];
+        var worksheet = workbook.Sheets[sheetName];
+        var data = XLSX.utils.sheet_to_json(worksheet);
+        
+        if (data.length === 0) {
+            return res.status(400).json({ success: false, message: 'Excel 檔案沒有資料' });
+        }
+        
+        // TODO: 後續根據用戶提供的欄位對應實作
+        console.log('上傳獎項資料:', data);
+        
+        res.json({ 
+            success: true, 
+            message: '獎項資料上傳成功',
+            count: data.length,
+            preview: data.slice(0, 3) // 預覽前3筆
+        });
+        
+    } catch (err) {
+        console.error('上傳獎項資料失敗:', err);
+        res.status(500).json({ success: false, message: '處理檔案失敗: ' + err.message });
+    }
+});
+
+// 上傳人員資料 API
+app.post('/api/upload/persons', basicAuth, upload.single('file'), (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ success: false, message: '請選擇檔案' });
+        }
+        
+        // 讀取 Excel 檔案
+        var workbook = XLSX.read(req.file.buffer, { type: 'buffer' });
+        var sheetName = workbook.SheetNames[0];
+        var worksheet = workbook.Sheets[sheetName];
+        var data = XLSX.utils.sheet_to_json(worksheet);
+        
+        if (data.length === 0) {
+            return res.status(400).json({ success: false, message: 'Excel 檔案沒有資料' });
+        }
+        
+        // TODO: 後續根據用戶提供的欄位對應實作
+        console.log('上傳人員資料:', data);
+        
+        res.json({ 
+            success: true, 
+            message: '人員資料上傳成功',
+            count: data.length,
+            preview: data.slice(0, 3) // 預覽前3筆
+        });
+        
+    } catch (err) {
+        console.error('上傳人員資料失敗:', err);
+        res.status(500).json({ success: false, message: '處理檔案失敗: ' + err.message });
+    }
+});
 
 //// registration //////////////////////////
 app.get('/registration', basicAuth, (req, res) => {

@@ -18,6 +18,7 @@ var personDao = require('./lib/dao/personDao');
 var registrationHistoryDao = require('./lib/dao/registrationHistoryDao');
 var gameDao = require('./lib/dao/gameDao');
 var historyDao = require('./lib/dao/historyDao'); 
+var dbPool = require('./lib/dao/utils').pool;
 
 var shuffle = require('./lib/random').shuffle;
 
@@ -272,8 +273,8 @@ app.post('/api/upload/games', basicAuth, upload.single('file'), async (req, res)
             });
         }
         
-        // 使用 pg 直接執行批次操作
-        var client = await pg.connect();
+        // 使用連線池執行批次操作
+        var client = await dbPool.connect();
         try {
             await client.query('BEGIN');
             
@@ -362,8 +363,8 @@ app.post('/api/upload/persons', basicAuth, upload.single('file'), async (req, re
             });
         }
         
-        // 使用 pg 直接執行批次操作
-        var client = await pg.connect();
+        // 使用連線池執行批次操作
+        var client = await dbPool.connect();
         try {
             await client.query('BEGIN');
             

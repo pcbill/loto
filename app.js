@@ -127,7 +127,8 @@ app.get('/uploadData', basicAuth, (req, res) => {
 });
 
 // 上傳獎項資料 API
-app.post('/api/upload/games', basicAuth, upload.single('file'), (req, res) => {
+// Excel 欄位: gid, award_list, participant_count, reminder_count, exec_type
+app.post('/api/upload/games', basicAuth, upload.single('file'), async (req, res) => {
     try {
         if (!req.file) {
             return res.status(400).json({ success: false, message: '請選擇檔案' });
@@ -143,15 +144,58 @@ app.post('/api/upload/games', basicAuth, upload.single('file'), (req, res) => {
             return res.status(400).json({ success: false, message: 'Excel 檔案沒有資料' });
         }
         
-        // TODO: 後續根據用戶提供的欄位對應實作
-        console.log('上傳獎項資料:', data);
+        // 驗證必要欄位
+        var requiredFields = ['gid', 'award_list', 'participant_count', 'exec_type'];
+        var firstRow = data[0];
+        var missingFields = requiredFields.filter(f => !(f in firstRow));
+        if (missingFields.length > 0) {
+            return res.status(400).json({ 
+                success: false, 
+                message: '缺少必要欄位: ' + missingFields.join(', ') 
+            });
+        }
         
-        res.json({ 
-            success: true, 
-            message: '獎項資料上傳成功',
-            count: data.length,
-            preview: data.slice(0, 3) // 預覽前3筆
-        });
+        // 使用 pg 直接執行批次操作
+        var client = await pg.connect();
+        try {
+            await client.query('BEGIN');
+            
+            // 清空現有獎項資料
+            await client.query('DELETE FROM game');
+            
+            // 批次插入新資料
+            var insertCount = 0;
+            for (var row of data) {
+                var gid = String(row.gid || '').trim();
+                var award_list = String(row.award_list || '').trim();
+                var participant_count = parseInt(row.participant_count) || 0;
+                var reminder_count = parseInt(row.reminder_count) || participant_count;
+                var exec_type = parseInt(row.exec_type) || 0;
+                
+                if (gid && award_list) {
+                    await client.query(
+                        'INSERT INTO game(gid, award_list, participant_count, reminder_count, exec_type) VALUES($1, $2, $3, $4, $5)',
+                        [gid, award_list, participant_count, reminder_count, exec_type]
+                    );
+                    insertCount++;
+                }
+            }
+            
+            await client.query('COMMIT');
+            
+            console.log('上傳獎項資料成功，共 ' + insertCount + ' 筆');
+            res.json({ 
+                success: true, 
+                message: '獎項資料上傳成功',
+                count: insertCount
+            });
+            
+        } catch (dbErr) {
+            await client.query('ROLLBACK');
+            throw dbErr;
+        } finally {
+            client.release();
+        }
         
     } catch (err) {
         console.error('上傳獎項資料失敗:', err);
@@ -160,7 +204,8 @@ app.post('/api/upload/games', basicAuth, upload.single('file'), (req, res) => {
 });
 
 // 上傳人員資料 API
-app.post('/api/upload/persons', basicAuth, upload.single('file'), (req, res) => {
+// Excel 欄位: uid, name, table_num
+app.post('/api/upload/persons', basicAuth, upload.single('file'), async (req, res) => {
     try {
         if (!req.file) {
             return res.status(400).json({ success: false, message: '請選擇檔案' });
@@ -176,15 +221,56 @@ app.post('/api/upload/persons', basicAuth, upload.single('file'), (req, res) => 
             return res.status(400).json({ success: false, message: 'Excel 檔案沒有資料' });
         }
         
-        // TODO: 後續根據用戶提供的欄位對應實作
-        console.log('上傳人員資料:', data);
+        // 驗證必要欄位
+        var requiredFields = ['uid', 'name', 'table_num'];
+        var firstRow = data[0];
+        var missingFields = requiredFields.filter(f => !(f in firstRow));
+        if (missingFields.length > 0) {
+            return res.status(400).json({ 
+                success: false, 
+                message: '缺少必要欄位: ' + missingFields.join(', ') 
+            });
+        }
         
-        res.json({ 
-            success: true, 
-            message: '人員資料上傳成功',
-            count: data.length,
-            preview: data.slice(0, 3) // 預覽前3筆
-        });
+        // 使用 pg 直接執行批次操作
+        var client = await pg.connect();
+        try {
+            await client.query('BEGIN');
+            
+            // 清空現有人員資料
+            await client.query('DELETE FROM person');
+            
+            // 批次插入新資料
+            var insertCount = 0;
+            for (var row of data) {
+                var uid = String(row.uid || '').trim();
+                var name = String(row.name || '').trim();
+                var table_num = parseInt(row.table_num) || 0;
+                
+                if (uid && name) {
+                    await client.query(
+                        'INSERT INTO person(uid, name, table_num) VALUES($1, $2, $3)',
+                        [uid, name, table_num]
+                    );
+                    insertCount++;
+                }
+            }
+            
+            await client.query('COMMIT');
+            
+            console.log('上傳人員資料成功，共 ' + insertCount + ' 筆');
+            res.json({ 
+                success: true, 
+                message: '人員資料上傳成功',
+                count: insertCount
+            });
+            
+        } catch (dbErr) {
+            await client.query('ROLLBACK');
+            throw dbErr;
+        } finally {
+            client.release();
+        }
         
     } catch (err) {
         console.error('上傳人員資料失敗:', err);

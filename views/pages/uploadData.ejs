@@ -282,14 +282,14 @@ body {
         <form class="upload-form" id="gameUploadForm" enctype="multipart/form-data">
             <div class="file-input-wrapper">
                 <input type="file" name="gameFile" id="gameFile" class="file-input" 
-                       accept=".xlsx,.xls" required>
+                       accept=".xlsx,.xls,.csv" required>
                 <button type="submit" class="upload-btn" id="gameUploadBtn">
                     📤 上傳獎項
                 </button>
             </div>
             
             <div class="help-text">
-                <strong>檔案格式：</strong>Excel 檔案 (.xlsx, .xls)<br>
+                <strong>檔案格式：</strong>Excel (.xlsx, .xls) 或 CSV (.csv)<br>
                 <strong>必要欄位：</strong>gid (獎項代碼), award_list (獎項名稱), participant_count (數量), exec_type (0=一般獎/1=大獎)<br>
                 <strong>選填欄位：</strong>reminder_count (剩餘數量，預設同 participant_count)
             </div>
@@ -305,8 +305,11 @@ body {
         </form>
         
         <div class="template-download">
-            <a href="/templates/game_template.xlsx" class="template-link" download>
-                📥 下載獎項範本
+            <a href="/api/template/game.xlsx" class="template-link" download="game_template.xlsx">
+                📥 下載獎項範本 (Excel)
+            </a>
+            <a href="/templates/game_template.csv" class="template-link" download>
+                📥 下載獎項範本 (CSV)
             </a>
         </div>
     </div>
@@ -321,14 +324,14 @@ body {
         <form class="upload-form" id="personUploadForm" enctype="multipart/form-data">
             <div class="file-input-wrapper">
                 <input type="file" name="personFile" id="personFile" class="file-input" 
-                       accept=".xlsx,.xls" required>
+                       accept=".xlsx,.xls,.csv" required>
                 <button type="submit" class="upload-btn" id="personUploadBtn">
                     📤 上傳人員
                 </button>
             </div>
             
             <div class="help-text">
-                <strong>檔案格式：</strong>Excel 檔案 (.xlsx, .xls)<br>
+                <strong>檔案格式：</strong>Excel (.xlsx, .xls) 或 CSV (.csv)<br>
                 <strong>必要欄位：</strong>uid (員工編號), name (姓名), table_num (桌號)
             </div>
             
@@ -343,8 +346,11 @@ body {
         </form>
         
         <div class="template-download">
-            <a href="/templates/person_template.xlsx" class="template-link" download>
-                📥 下載人員範本
+            <a href="/api/template/person.xlsx" class="template-link" download="person_template.xlsx">
+                📥 下載人員範本 (Excel)
+            </a>
+            <a href="/templates/person_template.csv" class="template-link" download>
+                📥 下載人員範本 (CSV)
             </a>
         </div>
     </div>

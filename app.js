@@ -1060,12 +1060,29 @@ app.get('/playBig', basicAuth, (req, res) => {
 
 // API: 獲取一般獎項中已中獎但尚未領獎的得獎者名單
 app.get('/api/normalGameWinnersNotReceived', basicAuth, (req, res) => {
-    personDao.findNormalGameWinnersNotReceived((result) => {
-        res.json({
-            success: true,
-            winners: result.results || []
+    try {
+        personDao.findNormalGameWinnersNotReceived((result) => {
+            if (result.error) {
+                console.error('findNormalGameWinnersNotReceived error:', result.error);
+                return res.json({
+                    success: false,
+                    error: result.error,
+                    winners: []
+                });
+            }
+            res.json({
+                success: true,
+                winners: result.results || []
+            });
         });
-    });
+    } catch (err) {
+        console.error('API error:', err);
+        res.json({
+            success: false,
+            error: err.message,
+            winners: []
+        });
+    }
 });
 
 // API: 執行一般抽獎並返回 JSON 結果

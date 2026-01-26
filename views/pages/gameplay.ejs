@@ -599,8 +599,15 @@ function loadWinnersNotReceived() {
     emptyEl.style.display = 'none';
     bodyEl.innerHTML = '';
     
-    fetch('/api/normalGameWinnersNotReceived')
-        .then(function(response) { return response.json(); })
+    fetch('/api/normalGameWinnersNotReceived', {
+        credentials: 'include'
+    })
+        .then(function(response) {
+            if (!response.ok) {
+                throw new Error('HTTP error ' + response.status);
+            }
+            return response.json();
+        })
         .then(function(data) {
             loadingEl.style.display = 'none';
             

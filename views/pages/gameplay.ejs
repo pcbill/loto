@@ -498,28 +498,18 @@
         此功能會將所有「<strong>快速抽獎</strong>」類型獎項中，<strong>尚未領獎</strong>的得獎者清除，並重新抽出新的得獎者。
       </p>
       
-      <!-- 尚未領獎的得獎者名單 -->
+      <!-- 尚未領獎的得獎者名單（按獎項分組） -->
       <div id="winnersNotReceivedSection" style="margin: 16px 0;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-          <strong style="color: #495057;">📋 尚未領獎的得獎者 (<span id="winnersNotReceivedCount">0</span> 人)</strong>
+          <strong style="color: #495057;">📋 尚未領獎統計 (<span id="winnersNotReceivedCount">0</span> 人)</strong>
           <span id="winnersLoading" style="color: #6c757d; font-size: 13px;">載入中...</span>
         </div>
-        <div id="winnersNotReceivedList" style="max-height: 200px; overflow-y: auto; border: 1px solid #e9ecef; border-radius: 6px; background: #f8f9fa;">
-          <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
-            <thead>
-              <tr style="background: #e9ecef; position: sticky; top: 0;">
-                <th style="padding: 8px 10px; text-align: left; border-bottom: 1px solid #dee2e6;">號碼</th>
-                <th style="padding: 8px 10px; text-align: left; border-bottom: 1px solid #dee2e6;">姓名</th>
-                <th style="padding: 8px 10px; text-align: left; border-bottom: 1px solid #dee2e6;">桌次</th>
-                <th style="padding: 8px 10px; text-align: left; border-bottom: 1px solid #dee2e6;">獎項</th>
-              </tr>
-            </thead>
-            <tbody id="winnersNotReceivedBody">
-              <!-- 動態載入 -->
-            </tbody>
-          </table>
+        
+        <div id="winnersGroupList" style="max-height: 280px; overflow-y: auto;">
+          <!-- 動態載入獎項分組 -->
         </div>
-        <div id="winnersNotReceivedEmpty" style="display: none; padding: 20px; text-align: center; color: #6c757d;">
+        
+        <div id="winnersNotReceivedEmpty" style="display: none; padding: 20px; text-align: center; color: #6c757d; background: #f8f9fa; border-radius: 6px;">
           ✅ 目前沒有尚未領獎的得獎者
         </div>
       </div>
@@ -585,19 +575,18 @@ function hideReplayModal() {
     document.getElementById('replayModal').classList.remove('show');
 }
 
-// 載入尚未領獎的得獎者名單
+// 載入尚未領獎的得獎者名單（按獎項分組）
 function loadWinnersNotReceived() {
     var loadingEl = document.getElementById('winnersLoading');
-    var listEl = document.getElementById('winnersNotReceivedList');
+    var groupListEl = document.getElementById('winnersGroupList');
     var emptyEl = document.getElementById('winnersNotReceivedEmpty');
-    var bodyEl = document.getElementById('winnersNotReceivedBody');
     var countEl = document.getElementById('winnersNotReceivedCount');
     var btnConfirm = document.getElementById('btnConfirmReplay');
     
     loadingEl.style.display = 'inline';
-    listEl.style.display = 'block';
+    groupListEl.style.display = 'block';
+    groupListEl.innerHTML = '';
     emptyEl.style.display = 'none';
-    bodyEl.innerHTML = '';
     
     fetch('/api/normalGameWinnersNotReceived', {
         credentials: 'include'
@@ -613,23 +602,74 @@ function loadWinnersNotReceived() {
             
             if (data.success && data.winners && data.winners.length > 0) {
                 countEl.textContent = data.winners.length;
-                listEl.style.display = 'block';
+                groupListEl.style.display = 'block';
                 emptyEl.style.display = 'none';
                 btnConfirm.disabled = false;
                 btnConfirm.style.opacity = '1';
                 
+                // 按獎項分組
+                var groups = {};
                 data.winners.forEach(function(winner) {
-                    var tr = document.createElement('tr');
-                    tr.innerHTML = 
-                        '<td style="padding: 8px 10px; border-bottom: 1px solid #e9ecef;">' + escapeHtml(winner.uid) + '</td>' +
-                        '<td style="padding: 8px 10px; border-bottom: 1px solid #e9ecef;">' + escapeHtml(winner.name) + '</td>' +
-                        '<td style="padding: 8px 10px; border-bottom: 1px solid #e9ecef;">' + escapeHtml(winner.table_num || '-') + '</td>' +
-                        '<td style="padding: 8px 10px; border-bottom: 1px solid #e9ecef;">' + escapeHtml(winner.game_gid) + '</td>';
-                    bodyEl.appendChild(tr);
+                    var key = winner.game_gid;
+                    if (!groups[key]) {
+                        groups[key] = {
+                            gid: winner.game_gid,
+                            award_list: winner.award_list || winner.game_gid,
+                            winners: []
+                        };
+                    }
+                    groups[key].winners.push(winner);
+                });
+                
+                // 渲染分組
+                Object.keys(groups).sort().forEach(function(key, index) {
+                    var group = groups[key];
+                    var groupId = 'group_' + index;
+                    
+                    var groupDiv = document.createElement('div');
+                    groupDiv.style.cssText = 'margin-bottom: 8px; border: 1px solid #e9ecef; border-radius: 6px; overflow: hidden;';
+                    
+                    // 獎項標題列（可展開）
+                    var headerDiv = document.createElement('div');
+                    headerDiv.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: #f8f9fa; cursor: pointer; user-select: none;';
+                    headerDiv.onclick = function() { toggleGroup(groupId); };
+                    headerDiv.innerHTML = 
+                        '<div style="display: flex; align-items: center; gap: 8px;">' +
+                        '  <span id="arrow_' + groupId + '" style="transition: transform 0.2s; display: inline-block;">▶</span>' +
+                        '  <strong style="color: #495057;">' + escapeHtml(group.gid) + '</strong>' +
+                        '  <span style="color: #6c757d; font-size: 12px;">' + escapeHtml(group.award_list) + '</span>' +
+                        '</div>' +
+                        '<span style="background: #dc3545; color: white; padding: 2px 8px; border-radius: 10px; font-size: 12px; font-weight: bold;">' + 
+                        group.winners.length + ' 人未領' +
+                        '</span>';
+                    
+                    // 展開的人員列表
+                    var contentDiv = document.createElement('div');
+                    contentDiv.id = groupId;
+                    contentDiv.style.cssText = 'display: none; background: white; border-top: 1px solid #e9ecef;';
+                    
+                    var table = document.createElement('table');
+                    table.style.cssText = 'width: 100%; border-collapse: collapse; font-size: 13px;';
+                    
+                    var tbody = document.createElement('tbody');
+                    group.winners.forEach(function(winner) {
+                        var tr = document.createElement('tr');
+                        tr.innerHTML = 
+                            '<td style="padding: 8px 12px; border-bottom: 1px solid #f0f0f0; width: 30%;">' + escapeHtml(winner.uid) + '</td>' +
+                            '<td style="padding: 8px 12px; border-bottom: 1px solid #f0f0f0; width: 40%; font-weight: 500;">' + escapeHtml(winner.name) + '</td>' +
+                            '<td style="padding: 8px 12px; border-bottom: 1px solid #f0f0f0; width: 30%; color: #6c757d;">桌 ' + escapeHtml(winner.table_num || '-') + '</td>';
+                        tbody.appendChild(tr);
+                    });
+                    table.appendChild(tbody);
+                    contentDiv.appendChild(table);
+                    
+                    groupDiv.appendChild(headerDiv);
+                    groupDiv.appendChild(contentDiv);
+                    groupListEl.appendChild(groupDiv);
                 });
             } else {
                 countEl.textContent = '0';
-                listEl.style.display = 'none';
+                groupListEl.style.display = 'none';
                 emptyEl.style.display = 'block';
                 btnConfirm.disabled = true;
                 btnConfirm.style.opacity = '0.5';
@@ -638,12 +678,26 @@ function loadWinnersNotReceived() {
         .catch(function(error) {
             loadingEl.style.display = 'none';
             countEl.textContent = '0';
-            listEl.style.display = 'none';
+            groupListEl.style.display = 'none';
             emptyEl.style.display = 'block';
             emptyEl.innerHTML = '❌ 載入失敗，請重試';
             btnConfirm.disabled = true;
             btnConfirm.style.opacity = '0.5';
         });
+}
+
+// 展開/收合獎項人員列表
+function toggleGroup(groupId) {
+    var contentEl = document.getElementById(groupId);
+    var arrowEl = document.getElementById('arrow_' + groupId);
+    
+    if (contentEl.style.display === 'none') {
+        contentEl.style.display = 'block';
+        arrowEl.style.transform = 'rotate(90deg)';
+    } else {
+        contentEl.style.display = 'none';
+        arrowEl.style.transform = 'rotate(0deg)';
+    }
 }
 
 // HTML 跳脫函數

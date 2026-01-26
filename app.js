@@ -323,11 +323,15 @@ app.post('/api/upload/games', basicAuth, upload.single('file'), async (req, res)
 
 // 上傳人員資料 API
 // Excel/CSV 欄位: uid, name, table_num
+// 可選參數: autoRegister (1=自動報到)
 app.post('/api/upload/persons', basicAuth, upload.single('file'), async (req, res) => {
     try {
         if (!req.file) {
             return res.status(400).json({ success: false, message: '請選擇檔案' });
         }
+        
+        // 是否自動報到
+        var autoRegister = req.body.autoRegister === '1';
         
         // 根據檔案類型讀取資料
         var data;
@@ -379,20 +383,29 @@ app.post('/api/upload/persons', basicAuth, upload.single('file'), async (req, re
                 var table_num = parseInt(row.table_num) || 0;
                 
                 if (uid && name) {
-                    await client.query(
-                        'INSERT INTO person(uid, name, table_num) VALUES($1, $2, $3)',
-                        [uid, name, table_num]
-                    );
+                    if (autoRegister) {
+                        // 自動報到：同時設定 registration_time
+                        await client.query(
+                            'INSERT INTO person(uid, name, table_num, registration_time) VALUES($1, $2, $3, NOW())',
+                            [uid, name, table_num]
+                        );
+                    } else {
+                        await client.query(
+                            'INSERT INTO person(uid, name, table_num) VALUES($1, $2, $3)',
+                            [uid, name, table_num]
+                        );
+                    }
                     insertCount++;
                 }
             }
             
             await client.query('COMMIT');
             
-            console.log('上傳人員資料成功，共 ' + insertCount + ' 筆');
+            var registerMsg = autoRegister ? '（已自動報到）' : '';
+            console.log('上傳人員資料成功，共 ' + insertCount + ' 筆' + registerMsg);
             res.json({ 
                 success: true, 
-                message: '人員資料上傳成功',
+                message: '人員資料上傳成功' + registerMsg,
                 count: insertCount
             });
             

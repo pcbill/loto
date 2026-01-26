@@ -330,6 +330,16 @@ body {
                 </button>
             </div>
             
+            <div style="margin: 10px 0; padding: 12px 15px; background: #f9f9f9; border-radius: 8px; border: 1px solid #e0e0e0;">
+                <label style="display: flex; align-items: center; cursor: pointer; user-select: none;">
+                    <input type="checkbox" id="autoRegister" name="autoRegister" 
+                           style="width: 18px; height: 18px; margin-right: 10px; cursor: pointer;">
+                    <span style="font-size: 15px; color: #333;">
+                        <strong>📋 自動報到</strong> - 上傳時自動將所有人員標記為已報到
+                    </span>
+                </label>
+            </div>
+            
             <div class="help-text">
                 <strong>檔案格式：</strong>Excel (.xlsx, .xls) 或 CSV (.csv)<br>
                 <strong>必要欄位：</strong>uid (員工編號), name (姓名), table_num (桌號)
@@ -387,6 +397,10 @@ $(document).ready(function() {
         
         var formData = new FormData();
         formData.append('file', fileInput.files[0]);
+        
+        // 加入自動報到參數
+        var autoRegister = $('#autoRegister').is(':checked') ? '1' : '0';
+        formData.append('autoRegister', autoRegister);
         
         uploadFile('/api/upload/persons', formData, 'person');
     });

@@ -488,7 +488,7 @@
 
 <!-- 一般獎項重抽獎 Modal -->
 <div class="modal-overlay" id="replayModal">
-  <div class="modal-dialog">
+  <div class="modal-dialog" style="max-width: 600px;">
     <div class="modal-header">
       <div class="icon warning">🔄</div>
       <h4>一般獎項重抽獎</h4>
@@ -497,6 +497,33 @@
       <p class="description">
         此功能會將所有「<strong>快速抽獎</strong>」類型獎項中，<strong>尚未領獎</strong>的得獎者清除，並重新抽出新的得獎者。
       </p>
+      
+      <!-- 尚未領獎的得獎者名單 -->
+      <div id="winnersNotReceivedSection" style="margin: 16px 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <strong style="color: #495057;">📋 尚未領獎的得獎者 (<span id="winnersNotReceivedCount">0</span> 人)</strong>
+          <span id="winnersLoading" style="color: #6c757d; font-size: 13px;">載入中...</span>
+        </div>
+        <div id="winnersNotReceivedList" style="max-height: 200px; overflow-y: auto; border: 1px solid #e9ecef; border-radius: 6px; background: #f8f9fa;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+            <thead>
+              <tr style="background: #e9ecef; position: sticky; top: 0;">
+                <th style="padding: 8px 10px; text-align: left; border-bottom: 1px solid #dee2e6;">號碼</th>
+                <th style="padding: 8px 10px; text-align: left; border-bottom: 1px solid #dee2e6;">姓名</th>
+                <th style="padding: 8px 10px; text-align: left; border-bottom: 1px solid #dee2e6;">桌次</th>
+                <th style="padding: 8px 10px; text-align: left; border-bottom: 1px solid #dee2e6;">獎項</th>
+              </tr>
+            </thead>
+            <tbody id="winnersNotReceivedBody">
+              <!-- 動態載入 -->
+            </tbody>
+          </table>
+        </div>
+        <div id="winnersNotReceivedEmpty" style="display: none; padding: 20px; text-align: center; color: #6c757d;">
+          ✅ 目前沒有尚未領獎的得獎者
+        </div>
+      </div>
+      
       <div class="warning-box">
         <span class="warning-icon">⚠️</span>
         <p>確認後無法反悔！尚未領獎的得獎紀錄將被清除並重新抽獎。</p>
@@ -508,7 +535,7 @@
     </div>
     <div class="modal-footer">
       <button class="btn-cancel" onclick="hideReplayModal()">取消</button>
-      <button class="btn-confirm warning" onclick="confirmReplay()">確認重抽</button>
+      <button class="btn-confirm warning" id="btnConfirmReplay" onclick="confirmReplay()">確認重抽</button>
     </div>
   </div>
 </div>
@@ -551,10 +578,73 @@ function terms(el) {
 // Modal 控制函數
 function showReplayModal() {
     document.getElementById('replayModal').classList.add('show');
+    loadWinnersNotReceived();
 }
 
 function hideReplayModal() {
     document.getElementById('replayModal').classList.remove('show');
+}
+
+// 載入尚未領獎的得獎者名單
+function loadWinnersNotReceived() {
+    var loadingEl = document.getElementById('winnersLoading');
+    var listEl = document.getElementById('winnersNotReceivedList');
+    var emptyEl = document.getElementById('winnersNotReceivedEmpty');
+    var bodyEl = document.getElementById('winnersNotReceivedBody');
+    var countEl = document.getElementById('winnersNotReceivedCount');
+    var btnConfirm = document.getElementById('btnConfirmReplay');
+    
+    loadingEl.style.display = 'inline';
+    listEl.style.display = 'block';
+    emptyEl.style.display = 'none';
+    bodyEl.innerHTML = '';
+    
+    fetch('/api/normalGameWinnersNotReceived')
+        .then(function(response) { return response.json(); })
+        .then(function(data) {
+            loadingEl.style.display = 'none';
+            
+            if (data.success && data.winners && data.winners.length > 0) {
+                countEl.textContent = data.winners.length;
+                listEl.style.display = 'block';
+                emptyEl.style.display = 'none';
+                btnConfirm.disabled = false;
+                btnConfirm.style.opacity = '1';
+                
+                data.winners.forEach(function(winner) {
+                    var tr = document.createElement('tr');
+                    tr.innerHTML = 
+                        '<td style="padding: 8px 10px; border-bottom: 1px solid #e9ecef;">' + escapeHtml(winner.uid) + '</td>' +
+                        '<td style="padding: 8px 10px; border-bottom: 1px solid #e9ecef;">' + escapeHtml(winner.name) + '</td>' +
+                        '<td style="padding: 8px 10px; border-bottom: 1px solid #e9ecef;">' + escapeHtml(winner.table_num || '-') + '</td>' +
+                        '<td style="padding: 8px 10px; border-bottom: 1px solid #e9ecef;">' + escapeHtml(winner.game_gid) + '</td>';
+                    bodyEl.appendChild(tr);
+                });
+            } else {
+                countEl.textContent = '0';
+                listEl.style.display = 'none';
+                emptyEl.style.display = 'block';
+                btnConfirm.disabled = true;
+                btnConfirm.style.opacity = '0.5';
+            }
+        })
+        .catch(function(error) {
+            loadingEl.style.display = 'none';
+            countEl.textContent = '0';
+            listEl.style.display = 'none';
+            emptyEl.style.display = 'block';
+            emptyEl.innerHTML = '❌ 載入失敗，請重試';
+            btnConfirm.disabled = true;
+            btnConfirm.style.opacity = '0.5';
+        });
+}
+
+// HTML 跳脫函數
+function escapeHtml(text) {
+    if (text === null || text === undefined) return '';
+    var div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }
 
 function confirmReplay() {

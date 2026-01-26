@@ -1058,6 +1058,16 @@ app.get('/playBig', basicAuth, (req, res) => {
       reminderCount: reminderCount});
 });
 
+// API: 獲取一般獎項中已中獎但尚未領獎的得獎者名單
+app.get('/api/normalGameWinnersNotReceived', basicAuth, (req, res) => {
+    personDao.findNormalGameWinnersNotReceived((result) => {
+        res.json({
+            success: true,
+            winners: result.results || []
+        });
+    });
+});
+
 // API: 執行一般抽獎並返回 JSON 結果
 app.post('/api/executeNormal/:gameId', basicAuth, (req, res) => {
     var gameId = req.params.gameId;

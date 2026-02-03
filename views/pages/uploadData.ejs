@@ -174,6 +174,16 @@ body {
     text-decoration: none;
 }
 
+.template-link.disabled-link {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.template-link.disabled-link:hover {
+    background: #f5f5f5;
+}
+
 .back-link {
     display: inline-flex;
     align-items: center;
@@ -325,10 +335,10 @@ body {
         </form>
         
         <div class="template-download">
-            <a href="/api/template/game.xlsx" class="template-link" download="game_template.xlsx">
+            <a href="/api/template/game.xlsx" class="template-link <%= uploadEnabled ? '' : 'disabled-link' %>" download="game_template.xlsx" <%= uploadEnabled ? '' : 'onclick="return false;"' %>>
                 📥 下載獎項範本 (Excel)
             </a>
-            <a href="/templates/game_template.csv" class="template-link" download>
+            <a href="/templates/game_template.csv" class="template-link <%= uploadEnabled ? '' : 'disabled-link' %>" download <%= uploadEnabled ? '' : 'onclick="return false;"' %>>
                 📥 下載獎項範本 (CSV)
             </a>
         </div>
@@ -350,10 +360,10 @@ body {
                 </button>
             </div>
             
-            <div style="margin: 10px 0; padding: 12px 15px; background: #f9f9f9; border-radius: 8px; border: 1px solid #e0e0e0;">
-                <label style="display: flex; align-items: center; cursor: pointer; user-select: none;">
+            <div style="margin: 10px 0; padding: 12px 15px; background: #f9f9f9; border-radius: 8px; border: 1px solid #e0e0e0; <%= uploadEnabled ? '' : 'opacity: 0.5;' %>">
+                <label style="display: flex; align-items: center; cursor: <%= uploadEnabled ? 'pointer' : 'not-allowed' %>; user-select: none;">
                     <input type="checkbox" id="autoRegister" name="autoRegister" 
-                           style="width: 18px; height: 18px; margin-right: 10px; cursor: pointer;">
+                           style="width: 18px; height: 18px; margin-right: 10px; cursor: <%= uploadEnabled ? 'pointer' : 'not-allowed' %>;" <%= uploadEnabled ? '' : 'disabled' %>>
                     <span style="font-size: 15px; color: #333;">
                         <strong>📋 自動報到</strong> - 上傳時自動將所有人員標記為已報到
                     </span>
@@ -376,10 +386,10 @@ body {
         </form>
         
         <div class="template-download">
-            <a href="/api/template/person.xlsx" class="template-link" download="person_template.xlsx">
+            <a href="/api/template/person.xlsx" class="template-link <%= uploadEnabled ? '' : 'disabled-link' %>" download="person_template.xlsx" <%= uploadEnabled ? '' : 'onclick="return false;"' %>>
                 📥 下載人員範本 (Excel)
             </a>
-            <a href="/templates/person_template.csv" class="template-link" download>
+            <a href="/templates/person_template.csv" class="template-link <%= uploadEnabled ? '' : 'disabled-link' %>" download <%= uploadEnabled ? '' : 'onclick="return false;"' %>>
                 📥 下載人員範本 (CSV)
             </a>
         </div>
@@ -410,11 +420,25 @@ $(document).ready(function() {
                         // 啟用上傳元件
                         $('#gameFile, #personFile').prop('disabled', false);
                         $('#gameUploadBtn, #personUploadBtn').prop('disabled', false);
+                        // 啟用自動報到
+                        $('#autoRegister').prop('disabled', false);
+                        $('#autoRegister').closest('div').css('opacity', '1');
+                        $('#autoRegister').closest('label').css('cursor', 'pointer');
+                        $('#autoRegister').css('cursor', 'pointer');
+                        // 啟用下載範本連結
+                        $('.template-link').removeClass('disabled-link').off('click');
                     } else {
                         statusSpan.css({ 'background': '#f8d7da', 'color': '#721c24' }).text('🚫 已停用');
                         // 停用上傳元件
                         $('#gameFile, #personFile').prop('disabled', true);
                         $('#gameUploadBtn, #personUploadBtn').prop('disabled', true);
+                        // 停用自動報到
+                        $('#autoRegister').prop('disabled', true);
+                        $('#autoRegister').closest('div').css('opacity', '0.5');
+                        $('#autoRegister').closest('label').css('cursor', 'not-allowed');
+                        $('#autoRegister').css('cursor', 'not-allowed');
+                        // 停用下載範本連結
+                        $('.template-link').addClass('disabled-link').on('click', function(e) { e.preventDefault(); });
                     }
                     $('#toggleResult').html('<span style="color: #155724;">✅ 已成功切換</span>');
                     $('#adminPassword').val('');

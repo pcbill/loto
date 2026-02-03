@@ -122,7 +122,7 @@ app.get('/', (req, res) => {
 );
 
 //// upload data ///////////////////////////
-app.get('/uploadData', basicAuth, (req, res) => {
+app.get('/nook', basicAuth, (req, res) => {
     res.render('pages/uploadData', { msg: req.session['msg'] || '' });
     req.session['msg'] = '';
 });

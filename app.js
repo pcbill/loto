@@ -58,6 +58,9 @@ function basicAuth(req, res, next) {
     }
 }
 
+// 上傳功能開關 (預設關閉)
+var uploadEnabled = false;
+
 app.use(express.static(__dirname + '/public'));
 
 // Session 設定 - 使用環境變數設定 secret
@@ -123,8 +126,24 @@ app.get('/', (req, res) => {
 
 //// upload data ///////////////////////////
 app.get('/nook', basicAuth, (req, res) => {
-    res.render('pages/uploadData', { msg: req.session['msg'] || '' });
+    res.render('pages/uploadData', { msg: req.session['msg'] || '', uploadEnabled: uploadEnabled });
     req.session['msg'] = '';
+});
+
+// 取得上傳功能狀態
+app.get('/api/nook/status', basicAuth, (req, res) => {
+    res.json({ enabled: uploadEnabled });
+});
+
+// Toggle 上傳功能開關 (需要 admin 密碼)
+app.post('/api/nook/toggle', basicAuth, express.json(), (req, res) => {
+    const { password } = req.body;
+    if (password !== ADMIN_PASS) {
+        return res.status(403).json({ success: false, message: '密碼錯誤' });
+    }
+    uploadEnabled = !uploadEnabled;
+    console.log('上傳功能已' + (uploadEnabled ? '啟用' : '停用'));
+    res.json({ success: true, enabled: uploadEnabled });
 });
 
 // 動態生成獎項 Excel 範本
@@ -235,6 +254,9 @@ app.get('/api/template/person.xlsx', basicAuth, (req, res) => {
 // Excel/CSV 欄位: gid, award_list, participant_count, reminder_count, exec_type
 app.post('/api/upload/games', basicAuth, upload.single('file'), async (req, res) => {
     try {
+        if (!uploadEnabled) {
+            return res.status(403).json({ success: false, message: '上傳功能已停用' });
+        }
         if (!req.file) {
             return res.status(400).json({ success: false, message: '請選擇檔案' });
         }
@@ -326,6 +348,9 @@ app.post('/api/upload/games', basicAuth, upload.single('file'), async (req, res)
 // 可選參數: autoRegister (1=自動報到)
 app.post('/api/upload/persons', basicAuth, upload.single('file'), async (req, res) => {
     try {
+        if (!uploadEnabled) {
+            return res.status(403).json({ success: false, message: '上傳功能已停用' });
+        }
         if (!req.file) {
             return res.status(400).json({ success: false, message: '請選擇檔案' });
         }

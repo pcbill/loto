@@ -261,11 +261,31 @@ body {
 <%- include('../partials/nav.ejs') %>
 
 <div class="upload-container">
-    <a href="/gameplay" class="back-link">
-        ← 返回抽獎管理
-    </a>
-    
     <h1 class="page-title">上傳資料</h1>
+    
+    <!-- 上傳功能開關 -->
+    <div class="upload-section" style="margin-bottom: 25px;">
+        <h2 class="section-title">
+            <span class="icon">🔐</span>
+            上傳功能控制
+        </h2>
+        <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+            <div style="font-size: 18px;">
+                目前狀態：
+                <span id="uploadStatus" style="font-weight: bold; padding: 5px 15px; border-radius: 5px; <%= uploadEnabled ? 'background: #d4edda; color: #155724;' : 'background: #f8d7da; color: #721c24;' %>">
+                    <%= uploadEnabled ? '✅ 已啟用' : '🚫 已停用' %>
+                </span>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <input type="password" id="adminPassword" placeholder="輸入 admin 密碼" 
+                       style="padding: 10px 15px; border: 2px solid #ccc; border-radius: 8px; font-size: 14px;">
+                <button type="button" id="toggleUploadBtn" class="upload-btn" style="padding: 10px 20px;">
+                    🔄 切換開關
+                </button>
+            </div>
+        </div>
+        <div id="toggleResult" style="margin-top: 10px;"></div>
+    </div>
     
     <div class="warning-box">
         <strong>⚠️ 注意事項</strong>
@@ -369,6 +389,43 @@ body {
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
 $(document).ready(function() {
+    // Toggle 上傳功能開關
+    $('#toggleUploadBtn').on('click', function() {
+        var password = $('#adminPassword').val();
+        if (!password) {
+            alert('請輸入 admin 密碼');
+            return;
+        }
+        
+        $.ajax({
+            url: '/api/nook/toggle',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ password: password }),
+            success: function(response) {
+                if (response.success) {
+                    var statusSpan = $('#uploadStatus');
+                    if (response.enabled) {
+                        statusSpan.css({ 'background': '#d4edda', 'color': '#155724' }).text('✅ 已啟用');
+                    } else {
+                        statusSpan.css({ 'background': '#f8d7da', 'color': '#721c24' }).text('🚫 已停用');
+                    }
+                    $('#toggleResult').html('<span style="color: #155724;">✅ 已成功切換</span>');
+                    $('#adminPassword').val('');
+                } else {
+                    $('#toggleResult').html('<span style="color: #721c24;">❌ ' + response.message + '</span>');
+                }
+            },
+            error: function(xhr) {
+                var message = '操作失敗';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    message = xhr.responseJSON.message;
+                }
+                $('#toggleResult').html('<span style="color: #721c24;">❌ ' + message + '</span>');
+            }
+        });
+    });
+    
     // 上傳獎項
     $('#gameUploadForm').on('submit', function(e) {
         e.preventDefault();

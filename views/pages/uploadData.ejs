@@ -302,8 +302,8 @@ body {
         <form class="upload-form" id="gameUploadForm" enctype="multipart/form-data">
             <div class="file-input-wrapper">
                 <input type="file" name="gameFile" id="gameFile" class="file-input" 
-                       accept=".xlsx,.xls,.csv" required>
-                <button type="submit" class="upload-btn" id="gameUploadBtn">
+                       accept=".xlsx,.xls,.csv" required <%= uploadEnabled ? '' : 'disabled' %>>
+                <button type="submit" class="upload-btn" id="gameUploadBtn" <%= uploadEnabled ? '' : 'disabled' %>>
                     📤 上傳獎項
                 </button>
             </div>
@@ -344,8 +344,8 @@ body {
         <form class="upload-form" id="personUploadForm" enctype="multipart/form-data">
             <div class="file-input-wrapper">
                 <input type="file" name="personFile" id="personFile" class="file-input" 
-                       accept=".xlsx,.xls,.csv" required>
-                <button type="submit" class="upload-btn" id="personUploadBtn">
+                       accept=".xlsx,.xls,.csv" required <%= uploadEnabled ? '' : 'disabled' %>>
+                <button type="submit" class="upload-btn" id="personUploadBtn" <%= uploadEnabled ? '' : 'disabled' %>>
                     📤 上傳人員
                 </button>
             </div>
@@ -407,8 +407,14 @@ $(document).ready(function() {
                     var statusSpan = $('#uploadStatus');
                     if (response.enabled) {
                         statusSpan.css({ 'background': '#d4edda', 'color': '#155724' }).text('✅ 已啟用');
+                        // 啟用上傳元件
+                        $('#gameFile, #personFile').prop('disabled', false);
+                        $('#gameUploadBtn, #personUploadBtn').prop('disabled', false);
                     } else {
                         statusSpan.css({ 'background': '#f8d7da', 'color': '#721c24' }).text('🚫 已停用');
+                        // 停用上傳元件
+                        $('#gameFile, #personFile').prop('disabled', true);
+                        $('#gameUploadBtn, #personUploadBtn').prop('disabled', true);
                     }
                     $('#toggleResult').html('<span style="color: #155724;">✅ 已成功切換</span>');
                     $('#adminPassword').val('');

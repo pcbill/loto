@@ -136,7 +136,7 @@ app.get('/api/nook/status', basicAuth, (req, res) => {
 });
 
 // Toggle 上傳功能開關 (需要 admin 密碼)
-app.post('/api/nook/toggle', basicAuth, express.json(), (req, res) => {
+app.post('/api/nook/toggle', basicAuth, (req, res) => {
     const { password } = req.body;
     if (password !== ADMIN_PASS) {
         return res.status(403).json({ success: false, message: '密碼錯誤' });

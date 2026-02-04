@@ -182,19 +182,6 @@
 </head>
 
 <body>
-<%
-// 號碼隱碼函數：將第4~7碼隱藏
-function maskUid(uid) {
-  if (!uid) return '';
-  var str = String(uid);
-  if (str.length <= 3) return str;
-  var prefix = str.substring(0, 3);
-  var suffix = str.length > 7 ? str.substring(7) : '';
-  var maskLength = Math.min(4, str.length - 3);
-  var mask = '****'.substring(0, maskLength);
-  return prefix + mask + suffix;
-}
-%>
   <%- include('../partials/nav.ejs') %>
 
 <div class="container">
@@ -250,7 +237,7 @@ function maskUid(uid) {
         <tbody>
         <% results.forEach( (it) => {%>
           <tr>
-            <td><strong><%= maskUid(it.uid) %></strong></td> 
+            <td><strong><%= it.uid %></strong></td> 
             <td><%= it.name %></td> 
             <td><%= it.table_num %></td> 
             <td><%= it.registration_time %></td>

@@ -1244,29 +1244,55 @@ function searchSubmit(req, res, target) {
     }
   
     personDao.findByUid(uid, (reObj) => {
-      var person = reObj.results[0];
-      if (person) {
-        var gameid = person.award_game_id;
-        if (gameid) {
-          gameDao.find(gameid, (reGame) => {
-            if (reGame.results.length > 0) {
-              person.awardList = reGame.results[0].award_list;
-            } else {
-              person.awardList = "員生消費合作社500元兌換券";
-            }
+      var results = reObj.results;
+      if (results && results.length > 0) {
+        // 收集所有不同的 game id
+        var gameIds = [...new Set(results.filter(p => p.award_game_id).map(p => p.award_game_id))];
+        
+        if (gameIds.length > 0) {
+          // 查詢所有相關的 game
+          var completed = 0;
+          var gameMap = {};
+          
+          gameIds.forEach(gid => {
+            gameDao.find(gid, (reGame) => {
+              if (reGame.results.length > 0) {
+                gameMap[gid] = reGame.results[0].award_list;
+              } else {
+                gameMap[gid] = "員生消費合作社500元兌換券";
+              }
+              completed++;
+              
+              if (completed === gameIds.length) {
+                // 所有 game 查詢完成，設定每個 person 的 awardList
+                results.forEach(person => {
+                  if (person.award_game_id) {
+                    person.awardList = gameMap[person.award_game_id] || '';
+                  } else {
+                    person.awardList = '';
+                  }
+                });
+                
+                reObj.msg = req.session['msg'];
+                req.session['msg'] = '';
+                res.render('pages' + target, reObj);
+              }
+            });
           });
         } else {
-            person.awardList = "";
+          // 沒有人中獎
+          results.forEach(person => {
+            person.awardList = '';
+          });
+          reObj.msg = req.session['msg'];
+          req.session['msg'] = '';
+          res.render('pages' + target, reObj);
         }
-        reObj.results[0] = person;
       } else {
-      }
-
-      setTimeout(function() {
         reObj.msg = req.session['msg'];
         req.session['msg'] = '';
         res.render('pages' + target, reObj);
-      }, 1000);
+      }
     });
   }
 
@@ -1286,29 +1312,55 @@ function searchPersonByNameForMana (req, res, target) {
     }
   
     personDao.findByName(name, (reObj) => {
-      var person = reObj.results[0];
-      if (person) {
-        var gameid = person.award_game_id;
-        if (gameid) {
-          gameDao.find(gameid, (reGame) => {
-            if (reGame.results.length > 0) {
-              person.awardList = reGame.results[0].award_list;
-            } else {
-              person.awardList = "員生消費合作社500元兌換券";
-            }
+      var results = reObj.results;
+      if (results && results.length > 0) {
+        // 收集所有不同的 game id
+        var gameIds = [...new Set(results.filter(p => p.award_game_id).map(p => p.award_game_id))];
+        
+        if (gameIds.length > 0) {
+          // 查詢所有相關的 game
+          var completed = 0;
+          var gameMap = {};
+          
+          gameIds.forEach(gid => {
+            gameDao.find(gid, (reGame) => {
+              if (reGame.results.length > 0) {
+                gameMap[gid] = reGame.results[0].award_list;
+              } else {
+                gameMap[gid] = "員生消費合作社500元兌換券";
+              }
+              completed++;
+              
+              if (completed === gameIds.length) {
+                // 所有 game 查詢完成，設定每個 person 的 awardList
+                results.forEach(person => {
+                  if (person.award_game_id) {
+                    person.awardList = gameMap[person.award_game_id] || '';
+                  } else {
+                    person.awardList = '';
+                  }
+                });
+                
+                reObj.msg = req.session['msg'];
+                req.session['msg'] = '';
+                res.render('pages' + target, reObj);
+              }
+            });
           });
         } else {
-            person.awardList = "";
+          // 沒有人中獎
+          results.forEach(person => {
+            person.awardList = '';
+          });
+          reObj.msg = req.session['msg'];
+          req.session['msg'] = '';
+          res.render('pages' + target, reObj);
         }
-        reObj.results[0] = person;
       } else {
-      }
-
-      setTimeout(function() {
         reObj.msg = req.session['msg'];
         req.session['msg'] = '';
         res.render('pages' + target, reObj);
-      }, 1000);
+      }
     });
 }
 

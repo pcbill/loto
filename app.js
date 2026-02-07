@@ -149,19 +149,210 @@ app.get('/nook', basicAuth, (req, res) => {
                     time_slot: item.time_slot,
                     winner_count: winnerCount,
                     total_count: totalCount,
-                    ratio: ratio
+                    ratio: parseFloat(ratio)
                 };
             });
+            
+            // 進行卡方檢定統計分析
+            var statisticsResult = performChiSquareTest(combinedData);
             
             res.render('pages/uploadData', { 
                 msg: req.session['msg'] || '', 
                 uploadEnabled: uploadEnabled,
-                registrationDistribution: combinedData
+                registrationDistribution: combinedData,
+                statistics: statisticsResult
             });
             req.session['msg'] = '';
         });
     });
 });
+
+// 卡方檢定函數：檢驗各時間區塊的中獎比例是否具有顯著差異
+function performChiSquareTest(data) {
+    if (!data || data.length < 2) {
+        return { 
+            canAnalyze: false, 
+            message: '資料不足，無法進行統計分析（需要至少2個時間區塊）' 
+        };
+    }
+    
+    // 計算總數
+    var totalWinners = data.reduce((sum, item) => sum + item.winner_count, 0);
+    var totalRegistered = data.reduce((sum, item) => sum + item.total_count, 0);
+    
+    if (totalRegistered === 0 || totalWinners === 0) {
+        return { 
+            canAnalyze: false, 
+            message: '資料不足，無法進行統計分析' 
+        };
+    }
+    
+    // 整體中獎比例
+    var overallRatio = totalWinners / totalRegistered;
+    
+    // 計算卡方統計量
+    // H0: 各時間區塊的中獎比例相同
+    // H1: 至少有一個時間區塊的中獎比例不同
+    var chiSquare = 0;
+    var validGroups = 0;
+    
+    data.forEach(item => {
+        if (item.total_count > 0) {
+            // 期望中獎人數
+            var expectedWinners = item.total_count * overallRatio;
+            // 期望未中獎人數
+            var expectedNonWinners = item.total_count * (1 - overallRatio);
+            
+            // 實際未中獎人數
+            var actualNonWinners = item.total_count - item.winner_count;
+            
+            // 避免期望值為0的情況
+            if (expectedWinners > 0 && expectedNonWinners > 0) {
+                chiSquare += Math.pow(item.winner_count - expectedWinners, 2) / expectedWinners;
+                chiSquare += Math.pow(actualNonWinners - expectedNonWinners, 2) / expectedNonWinners;
+                validGroups++;
+            }
+        }
+    });
+    
+    // 自由度 = 時間區塊數 - 1
+    var df = validGroups - 1;
+    
+    if (df < 1) {
+        return { 
+            canAnalyze: false, 
+            message: '有效資料不足，無法進行統計分析' 
+        };
+    }
+    
+    // 卡方分布臨界值表 (α = 0.05, 95% 信賴水準)
+    var chiSquareCritical = getChiSquareCriticalValue(df, 0.05);
+    
+    // 計算 p-value (近似)
+    var pValue = 1 - chiSquareCDF(chiSquare, df);
+    
+    // 計算各時間區塊的95%信賴區間
+    var confidenceIntervals = data.map(item => {
+        if (item.total_count > 0) {
+            var p = item.winner_count / item.total_count;
+            var se = Math.sqrt(p * (1 - p) / item.total_count);
+            var z = 1.96; // 95% 信賴區間的 z 值
+            return {
+                time_slot: item.time_slot,
+                ratio: (p * 100).toFixed(1),
+                lower: Math.max(0, (p - z * se) * 100).toFixed(1),
+                upper: Math.min(100, (p + z * se) * 100).toFixed(1)
+            };
+        }
+        return null;
+    }).filter(item => item !== null);
+    
+    // 判斷是否顯著
+    var isSignificant = chiSquare > chiSquareCritical;
+    
+    return {
+        canAnalyze: true,
+        chiSquare: chiSquare.toFixed(4),
+        df: df,
+        criticalValue: chiSquareCritical.toFixed(4),
+        pValue: pValue < 0.0001 ? '< 0.0001' : pValue.toFixed(4),
+        isSignificant: isSignificant,
+        overallRatio: (overallRatio * 100).toFixed(2),
+        confidenceIntervals: confidenceIntervals,
+        conclusion: isSignificant 
+            ? '各時間區塊的中獎比例存在顯著差異 (p < 0.05)，報到時間與中獎機率可能存在關聯。'
+            : '各時間區塊的中獎比例無顯著差異 (p ≥ 0.05)，報到時間與中獎機率無明顯關聯。'
+    };
+}
+
+// 卡方分布臨界值 (α = 0.05)
+function getChiSquareCriticalValue(df, alpha) {
+    // 常用的臨界值表 (α = 0.05)
+    var criticalValues = {
+        1: 3.841, 2: 5.991, 3: 7.815, 4: 9.488, 5: 11.070,
+        6: 12.592, 7: 14.067, 8: 15.507, 9: 16.919, 10: 18.307,
+        11: 19.675, 12: 21.026, 13: 22.362, 14: 23.685, 15: 24.996,
+        16: 26.296, 17: 27.587, 18: 28.869, 19: 30.144, 20: 31.410,
+        25: 37.652, 30: 43.773, 40: 55.758, 50: 67.505, 60: 79.082
+    };
+    
+    if (criticalValues[df]) {
+        return criticalValues[df];
+    }
+    
+    // 對於更大的自由度，使用近似公式
+    // χ²(α, df) ≈ df * (1 - 2/(9*df) + z * sqrt(2/(9*df)))^3
+    // where z = 1.645 for α = 0.05
+    var z = 1.645;
+    return df * Math.pow(1 - 2/(9*df) + z * Math.sqrt(2/(9*df)), 3);
+}
+
+// 卡方分布累積分布函數 (近似)
+function chiSquareCDF(x, df) {
+    // 使用不完全伽瑪函數的近似
+    // 對於大的 df，使用正態近似
+    if (df > 100) {
+        var z = Math.pow(x/df, 1/3) - (1 - 2/(9*df));
+        z = z / Math.sqrt(2/(9*df));
+        return normalCDF(z);
+    }
+    
+    // 對於較小的 df，使用級數展開近似
+    var k = df / 2;
+    var xHalf = x / 2;
+    
+    if (x <= 0) return 0;
+    if (x > 1000) return 1;
+    
+    // 使用正則化不完全伽瑪函數的近似
+    var sum = Math.exp(-xHalf) * Math.pow(xHalf, k) / gamma(k + 1);
+    var term = sum;
+    
+    for (var i = 1; i < 200; i++) {
+        term *= xHalf / (k + i);
+        sum += term;
+        if (Math.abs(term) < 1e-10) break;
+    }
+    
+    return Math.min(1, Math.max(0, sum));
+}
+
+// 標準正態分布累積分布函數
+function normalCDF(x) {
+    var a1 =  0.254829592;
+    var a2 = -0.284496736;
+    var a3 =  1.421413741;
+    var a4 = -1.453152027;
+    var a5 =  1.061405429;
+    var p  =  0.3275911;
+
+    var sign = x < 0 ? -1 : 1;
+    x = Math.abs(x) / Math.sqrt(2);
+
+    var t = 1.0 / (1.0 + p * x);
+    var y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
+
+    return 0.5 * (1.0 + sign * y);
+}
+
+// 伽瑪函數 (Stirling 近似)
+function gamma(n) {
+    if (n === 1) return 1;
+    if (n === 0.5) return Math.sqrt(Math.PI);
+    if (n < 0.5) {
+        return Math.PI / (Math.sin(Math.PI * n) * gamma(1 - n));
+    }
+    n -= 1;
+    var x = 0.99999999999980993;
+    var pj = [676.5203681218851, -1259.1392167224028, 771.32342877765313,
+              -176.61502916214059, 12.507343278686905, -0.13857109526572012,
+              9.9843695780195716e-6, 1.5056327351493116e-7];
+    for (var j = 0; j < 8; j++) {
+        x += pj[j] / (n + j + 1);
+    }
+    var t = n + 7.5;
+    return Math.sqrt(2 * Math.PI) * Math.pow(t, n + 0.5) * Math.exp(-t) * x;
+}
 
 // 取得上傳功能狀態
 app.get('/api/nook/status', basicAuth, (req, res) => {

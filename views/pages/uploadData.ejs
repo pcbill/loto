@@ -399,6 +399,104 @@ body {
     flex-shrink: 0;
 }
 
+/* 統計分析區塊樣式 */
+.statistics-section {
+    margin-top: 30px;
+    padding-top: 25px;
+    border-top: 2px solid #e9ecef;
+}
+
+.stats-title {
+    color: #333;
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+.stats-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.stats-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: white;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.stats-label {
+    color: #666;
+    font-size: 13px;
+}
+
+.stats-value {
+    font-weight: bold;
+    color: #333;
+    font-size: 14px;
+}
+
+.stats-conclusion {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.stats-conclusion.significant {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%);
+    border: 2px solid #ffc107;
+}
+
+.stats-conclusion.not-significant {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    border: 2px solid #28a745;
+}
+
+.conclusion-icon {
+    font-size: 32px;
+    flex-shrink: 0;
+}
+
+.conclusion-text {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #333;
+}
+
+.conclusion-text small {
+    display: block;
+    margin-top: 8px;
+    color: #666;
+    font-size: 13px;
+}
+
+.stats-note {
+    background: #e9ecef;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #555;
+}
+
+.stats-note ul {
+    margin: 10px 0 0 0;
+    padding-left: 20px;
+}
+
+.stats-note li {
+    margin-bottom: 5px;
+}
+
 @media (max-width: 768px) {
     .bar-label {
         width: 55px;
@@ -418,6 +516,15 @@ body {
     .chart-legend {
         flex-direction: column;
         gap: 8px;
+    }
+    
+    .stats-summary {
+        grid-template-columns: 1fr;
+    }
+    
+    .stats-conclusion {
+        flex-direction: column;
+        text-align: center;
     }
 }
 </style>
@@ -598,6 +705,66 @@ body {
                 </div>
                 <% }); %>
             </div>
+            
+            <!-- 統計分析結論 -->
+            <% if (typeof statistics !== 'undefined' && statistics.canAnalyze) { %>
+            <div class="statistics-section">
+                <h3 class="stats-title">📈 統計分析結論（95% 信賴水準）</h3>
+                
+                <div class="stats-summary">
+                    <div class="stats-item">
+                        <span class="stats-label">整體中獎比例：</span>
+                        <span class="stats-value"><%= statistics.overallRatio %>%</span>
+                    </div>
+                    <div class="stats-item">
+                        <span class="stats-label">卡方統計量 (χ²)：</span>
+                        <span class="stats-value"><%= statistics.chiSquare %></span>
+                    </div>
+                    <div class="stats-item">
+                        <span class="stats-label">自由度 (df)：</span>
+                        <span class="stats-value"><%= statistics.df %></span>
+                    </div>
+                    <div class="stats-item">
+                        <span class="stats-label">臨界值 (α=0.05)：</span>
+                        <span class="stats-value"><%= statistics.criticalValue %></span>
+                    </div>
+                    <div class="stats-item">
+                        <span class="stats-label">p-value：</span>
+                        <span class="stats-value"><%= statistics.pValue %></span>
+                    </div>
+                </div>
+                
+                <div class="stats-conclusion <%= statistics.isSignificant ? 'significant' : 'not-significant' %>">
+                    <div class="conclusion-icon"><%= statistics.isSignificant ? '⚠️' : '✅' %></div>
+                    <div class="conclusion-text">
+                        <strong>結論：</strong><%= statistics.conclusion %>
+                        <br>
+                        <small>
+                            <% if (statistics.isSignificant) { %>
+                            χ² = <%= statistics.chiSquare %> > <%= statistics.criticalValue %>（臨界值），拒絕虛無假設 H₀
+                            <% } else { %>
+                            χ² = <%= statistics.chiSquare %> ≤ <%= statistics.criticalValue %>（臨界值），無法拒絕虛無假設 H₀
+                            <% } %>
+                        </small>
+                    </div>
+                </div>
+                
+                <div class="stats-note">
+                    <strong>說明：</strong>
+                    <ul>
+                        <li>H₀（虛無假設）：各時間區塊的中獎比例相同（報到時間與中獎無關）</li>
+                        <li>H₁（對立假設）：至少有一個時間區塊的中獎比例不同（報到時間與中獎有關）</li>
+                        <li>使用卡方獨立性檢定，信賴水準 95%（α = 0.05）</li>
+                    </ul>
+                </div>
+            </div>
+            <% } else if (typeof statistics !== 'undefined') { %>
+            <div class="statistics-section">
+                <div class="stats-note" style="background: #f8f9fa;">
+                    <strong>📊 統計分析：</strong><%= statistics.message %>
+                </div>
+            </div>
+            <% } %>
         </div>
         <% } else { %>
         <div style="text-align: center; padding: 40px; color: #666;">

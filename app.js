@@ -126,8 +126,15 @@ app.get('/', (req, res) => {
 
 //// upload data ///////////////////////////
 app.get('/nook', basicAuth, (req, res) => {
-    res.render('pages/uploadData', { msg: req.session['msg'] || '', uploadEnabled: uploadEnabled });
-    req.session['msg'] = '';
+    // 取得非普獎中獎者報到時間分布
+    personDao.getSpecialWinnerRegistrationDistribution((distResult) => {
+        res.render('pages/uploadData', { 
+            msg: req.session['msg'] || '', 
+            uploadEnabled: uploadEnabled,
+            registrationDistribution: distResult.results || []
+        });
+        req.session['msg'] = '';
+    });
 });
 
 // 取得上傳功能狀態

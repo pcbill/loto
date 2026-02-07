@@ -128,12 +128,38 @@ app.get('/', (req, res) => {
 app.get('/nook', basicAuth, (req, res) => {
     // 取得非普獎中獎者報到時間分布
     personDao.getSpecialWinnerRegistrationDistribution((distResult) => {
-        res.render('pages/uploadData', { 
-            msg: req.session['msg'] || '', 
-            uploadEnabled: uploadEnabled,
-            registrationDistribution: distResult.results || []
+        // 取得所有報到人員時間分布
+        personDao.getRegistrationDistribution((regResult) => {
+            // 合併資料：將報到人數加入中獎資料中
+            var winnerDist = distResult.results || [];
+            var regDist = regResult.results || [];
+            
+            // 建立報到人數的 map
+            var regMap = {};
+            regDist.forEach(item => {
+                regMap[item.time_slot] = parseInt(item.count);
+            });
+            
+            // 合併資料
+            var combinedData = winnerDist.map(item => {
+                var winnerCount = parseInt(item.count);
+                var totalCount = regMap[item.time_slot] || 0;
+                var ratio = totalCount > 0 ? (winnerCount / totalCount * 100).toFixed(1) : 0;
+                return {
+                    time_slot: item.time_slot,
+                    winner_count: winnerCount,
+                    total_count: totalCount,
+                    ratio: ratio
+                };
+            });
+            
+            res.render('pages/uploadData', { 
+                msg: req.session['msg'] || '', 
+                uploadEnabled: uploadEnabled,
+                registrationDistribution: combinedData
+            });
+            req.session['msg'] = '';
         });
-        req.session['msg'] = '';
     });
 });
 

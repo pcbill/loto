@@ -271,27 +271,59 @@ body {
 }
 
 .chart-info {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     padding: 12px 15px;
     background: #f8f9fa;
     border-radius: 8px;
     font-size: 16px;
 }
 
+.chart-legend {
+    display: flex;
+    gap: 25px;
+    margin-bottom: 20px;
+    padding: 10px 15px;
+    background: #fff;
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #555;
+}
+
+.legend-color {
+    width: 20px;
+    height: 12px;
+    border-radius: 3px;
+}
+
+.legend-color.winner {
+    background: linear-gradient(90deg, #FFD700, #FFA500);
+}
+
+.legend-color.total {
+    background: linear-gradient(90deg, #6c9bd1, #4a7fb8);
+}
+
 .bar-chart {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 12px;
 }
 
-.bar-row {
+.bar-group {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
 .bar-label {
-    width: 90px;
+    width: 70px;
     font-size: 14px;
     font-weight: 500;
     color: #333;
@@ -299,40 +331,93 @@ body {
     flex-shrink: 0;
 }
 
+.bar-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.bar-row-dual {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
 .bar-wrapper {
     flex: 1;
-    height: 28px;
-    background: #e9ecef;
-    border-radius: 4px;
+    height: 16px;
+    background: #f0e6c8;
+    border-radius: 3px;
     overflow: hidden;
+}
+
+.bar-wrapper.total-wrapper {
+    background: #d6e4f0;
 }
 
 .bar {
     height: 100%;
-    background: linear-gradient(90deg, #FFD700, #FFA500);
-    border-radius: 4px;
+    border-radius: 3px;
     min-width: 2px;
     transition: width 0.3s ease;
 }
 
+.bar.winner-bar {
+    background: linear-gradient(90deg, #FFD700, #FFA500);
+}
+
+.bar.total-bar {
+    background: linear-gradient(90deg, #6c9bd1, #4a7fb8);
+}
+
 .bar-value {
-    width: 60px;
-    font-size: 14px;
+    width: 35px;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: left;
+    flex-shrink: 0;
+}
+
+.bar-value.winner-value {
+    color: #b8860b;
+}
+
+.bar-value.total-value {
+    color: #4a7fb8;
+}
+
+.bar-ratio {
+    width: 55px;
+    font-size: 13px;
     font-weight: bold;
     color: #8B0000;
-    text-align: left;
+    text-align: center;
+    background: #fff3cd;
+    padding: 4px 8px;
+    border-radius: 4px;
     flex-shrink: 0;
 }
 
 @media (max-width: 768px) {
     .bar-label {
-        width: 70px;
+        width: 55px;
         font-size: 12px;
     }
     
     .bar-value {
-        width: 50px;
-        font-size: 12px;
+        width: 30px;
+        font-size: 11px;
+    }
+    
+    .bar-ratio {
+        width: 45px;
+        font-size: 11px;
+    }
+    
+    .chart-legend {
+        flex-direction: column;
+        gap: 8px;
     }
 }
 </style>
@@ -476,21 +561,40 @@ body {
         <% if (registrationDistribution && registrationDistribution.length > 0) { %>
         <div class="chart-container">
             <div class="chart-info">
-                <span>📈 總計：<strong><%= registrationDistribution.reduce((sum, item) => sum + parseInt(item.count), 0) %></strong> 人</span>
+                <span>🏆 非普獎中獎：<strong><%= registrationDistribution.reduce((sum, item) => sum + item.winner_count, 0) %></strong> 人</span>
+                <span style="margin-left: 15px;">👥 對應時段報到：<strong><%= registrationDistribution.reduce((sum, item) => sum + item.total_count, 0) %></strong> 人</span>
                 <span style="margin-left: 20px; color: #666; font-size: 14px;">（非普獎 = 獎項代碼非 99999 / 99998）</span>
+            </div>
+            <div class="chart-legend">
+                <span class="legend-item"><span class="legend-color winner"></span> 非普獎中獎人數</span>
+                <span class="legend-item"><span class="legend-color total"></span> 該時段報到人數</span>
             </div>
             <div class="bar-chart">
                 <% 
-                var maxCount = Math.max(...registrationDistribution.map(item => parseInt(item.count)));
+                var maxWinnerCount = Math.max(...registrationDistribution.map(item => item.winner_count));
+                var maxTotalCount = Math.max(...registrationDistribution.map(item => item.total_count));
+                var maxCount = Math.max(maxWinnerCount, maxTotalCount);
                 registrationDistribution.forEach(function(item) { 
-                    var percentage = maxCount > 0 ? (parseInt(item.count) / maxCount * 100) : 0;
+                    var winnerPercentage = maxCount > 0 ? (item.winner_count / maxCount * 100) : 0;
+                    var totalPercentage = maxCount > 0 ? (item.total_count / maxCount * 100) : 0;
                 %>
-                <div class="bar-row">
+                <div class="bar-group">
                     <div class="bar-label"><%= item.time_slot %></div>
-                    <div class="bar-wrapper">
-                        <div class="bar" style="width: <%= percentage %>%;"></div>
+                    <div class="bar-content">
+                        <div class="bar-row-dual">
+                            <div class="bar-wrapper">
+                                <div class="bar winner-bar" style="width: <%= winnerPercentage %>%;"></div>
+                            </div>
+                            <div class="bar-value winner-value"><%= item.winner_count %></div>
+                        </div>
+                        <div class="bar-row-dual">
+                            <div class="bar-wrapper total-wrapper">
+                                <div class="bar total-bar" style="width: <%= totalPercentage %>%;"></div>
+                            </div>
+                            <div class="bar-value total-value"><%= item.total_count %></div>
+                        </div>
                     </div>
-                    <div class="bar-value"><%= item.count %> 人</div>
+                    <div class="bar-ratio"><%= item.ratio %>%</div>
                 </div>
                 <% }); %>
             </div>
